@@ -1,0 +1,805 @@
+{
+  "header": {
+    "search": "Search products...",
+    "login": "Login",
+    "profile": "Profile",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "close": "Close",
+    "enterPhoneNumber": "Enter your phone number",
+    "enterOTP": "Enter OTP",
+    "verifyDetails": "Verify your details",
+    "phoneNumber": "Phone Number",
+    "next": "Next",
+    "back": "Back",
+    "verify": "Verify",
+    "verificationComplete": "Verification Complete!",
+    "loggedIn": "You are now logged in.",
+    "finish": "Finish",
+    "title": "Courses",
+    "allCourses": "All Courses",
+    "categories": "Categories",
+    "allCategories": "All Categories",
+    "allProducts": "All Products"
+  },
+
+  "label": {
+    "Shopping": "Shopping",
+    "Food": "Food",
+    "Grocery": "Grocery",
+    "Pharmacy": "Pharmacy",
+    "Gift": "Gift",
+    "Ride Share": "Ride Share",
+    "Top Up": "Top Up",
+    "Parcel": "Parcel",
+    "Mobile": "Mobile",
+    "Drive Offer": "Drive Offer",
+    "Air Ticket": "Air Ticket",
+    "News Paper": "News Paper",
+    "Live TV": "Live TV",
+    "Blood Bank": "Blood Bank",
+    "STU Product": "STU Product",
+    "Online Shop": "Online Shop",
+    "Covid Business": "Covid Business",
+    "Local Outlet": "Local Outlet"
+  },
+  "courseNames": {
+    "webDevelopment": "Web Development",
+    "dataScience": "Data Science",
+    "graphicDesign": "Graphic Design",
+    "digitalMarketing": "Digital Marketing",
+    "appDevelopment": "App Development",
+    "machineLearning": "Machine Learning",
+    "cybersecurity": "Cybersecurity",
+    "uiUxDesign": "UI/UX Design",
+    "cloudComputing": "Cloud Computing",
+    "blockchain": "Blockchain",
+    "softwareTesting": "Software Testing",
+    "bigData": "Big Data"
+  },
+  "buttons": {
+    "addToCart": "Add",
+    "addToCart2": "  Add to Cart",
+    "enroll": "Enroll in Course",
+    "show": "Show",
+    "promo": "Promo code"
+  },
+  "categories": {
+    "beautyCare": "Beauty & Personal Care",
+    "womensApparels": "Women's Apparels",
+    "mensWear": "Men's Wear",
+    "mobileGadgets": "Mobile & Gadgets",
+    "homeDecoration": "Home Decoration",
+    "homeAppliances": "Home Appliances",
+    "toysKidsBabies": "Toys, Kids & Babies",
+    "kidsFashion": "Kids Fashion",
+    "jewelleryAccessories": "Jewellery & Accessories",
+    "womensBag": "Women's Bag",
+    "mensBag": "Men's Bag",
+    "watchesAccessories": "Watches & Accessories"
+  },
+  "productCategories": {
+    "heading": "Special Products",
+    "allProducts": "All Products",
+    "priceLabel": "Price",
+    "addToCart": "Add",
+    "currency": "$"
+  },
+  "products": {
+    "onePieceGown": "One piece gown",
+    "smartWatch": "Smart Watch & Device",
+    "snapAndGrip": "Snap and Grip",
+    "ladiesWinterOvercoat": "Ladies Winter Overcoat",
+    "stylishShirt": "Attractive Stylish Shirt",
+    "m19Original": "M19 100% Original",
+    "samsungGalaxy": "Samsung Galaxy",
+    "LadisWatchwith": "Ladis Watch with",
+    "pulseOximeter": "Pulse Oximeter",
+    "SkatingShoe": "Skating Shoe",
+    "EidCollection": "Eid Collection",
+    "Silk Katan Saree": "Silk Katan Saree",
+    "product1": "Koss KPH7 Portable",
+    "product2": "Beats Solo2 Solo 2",
+    "product3": "Beats EP Wired",
+    "product4": "Bose SoundLink Bluetooth",
+    "product5": "Sony WH-1000XM4",
+    "product6": "AirPods Pro"
+  },
+  "newArrivals": {
+    "heading": "New Arrivals",
+    "seeAll": "See All"
+  },
+  "common": {
+    "cartAdded": "Item added to the cart"
+  },
+  "freshSell": {
+    "hours": "hours",
+    "minutes": "minutes",
+    "seconds": "seconds",
+    "addToCart": "Add to Cart"
+  },
+  "time": {
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "product": {
+    "price": "Price",
+    "originalPrice": "Original Price",
+    "discountedPrice": "Discounted Price"
+  },
+  "sections": {
+    "freshSell": "Fresh Sell",
+    "trendingProductsTitle": "Trending Products",
+    "trendingProductsDescription": "Contemporary, minimal, and modern designs embody the Lavish Alice handwriting.",
+    "discount": "-10%",
+    "oldPrice": "Old Price",
+    "price": "Price"
+  },
+  "course": {
+    "HSC242526": "HSC 24, 25, 26",
+    "১০ম শ্রেণি": "10th Grade",
+    "৯ম শ্রেণি": "9th Grade",
+    "৮ম শ্রেণি": "8th Grade",
+    "৭ম শ্রেণি": "7th Grade",
+    "৬ষ্ঠ শ্রেণি": "6th Grade",
+    "p": "Enjoy special prices on selected Golden Life courses throughout the month. Start learning now with Golden Life!",
+    "h": "Amazing Discounts on Skill Development Courses!",
+    "fb": "Facebook Marketing",
+    "yt": "YouTube Marketing",
+    "seo": "SEO",
+    "smm": "SMM"
+  },
+  "name": {
+    "ayman": "Ayman Sadiq & Sadman Sadiq",
+    "shahid": "Shahidul Islam",
+    "sakib": "Sakib Bin Rashid"
+  },
+  "type": {
+    "1": "HSC Advanced Mathematics 1st Paper",
+    "2": "HSC Advanced Mathematics 2nd Paper",
+    "3": "HSC Higher Mathematics 1st Paper",
+    "4": "HSC Higher Mathematics 2nd Paper",
+    "5": "HSC Physics 1st Paper"
+  },
+  "title": {
+    "1": "Nature of Light",
+    "2": "Wave Theory of Light",
+    "3": "Geometrical Optics",
+    "4": "Physical Optics"
+  },
+  "badge": {
+    "SSC": "SSC",
+    "HSC": "HSC",
+    "JSC": "JSC",
+    "PSC": "PSC"
+  },
+
+  "categories2": {
+    "title": "Shopping",
+    "title1": "Courses",
+    "title2": "Percel",
+    "title3": "Topup",
+    "title4": "Drive",
+    "title5": "Outlet",
+    "title6": "Help"
+  },
+  "navMain": {
+    "title1": "fruits Vegetables",
+    "title2": "snacksConfectionery",
+    "title3": "dairyEggs",
+    "title4": "Seafood",
+    "title5": "beverages",
+    "title6": "Meat",
+    "title7": "pantryStaples",
+    "title8": "frozenFoods",
+    "title9": "personalCare",
+    "title10": "household",
+    "title11": "babyKids",
+    "title12": "healthWellness",
+    "title13": "bakery",
+    "title14": "meatSeafood",
+    "title15": "Milk",
+    "title16": "Programming",
+    "title17": "Business",
+    "title18": "Design",
+    "title19": "Technology",
+    "title20": "Photography",
+    "title21": "Language",
+    "title22": "Mathematics",
+    "title23": "Health & Fitness",
+    "title24": "Science",
+    "title25": "Environmental Studies",
+    "title26": "Finance",
+    "title27": "Social Sciences",
+    "title28": "Engineering",
+    "title29": "Writing",
+    "title30": "Personal Development",
+    "title31": "Percel Services"
+  },
+  "help": "Help",
+  "login": "Login",
+  "comming": {
+    "title1": "Coming Soon",
+    "title2": "We're working on something exciting! Stay tuned for updates.",
+    "title3": "Expected launch:",
+    "title4": "[Your Date Here]",
+    "title5": "Enter your email",
+    "title6": "Notify Me",
+    "title7": "Subscribe to receive updates and announcements."
+  },
+
+  "checkout": {
+    "Name": "Name",
+    "Address": "Address",
+    "District": "District",
+    "1": "Select a district",
+    "2": "Uttar Badda",
+    "3": "Banani"
+  },
+  "Hmenu": {
+    "story": "Our Story ",
+    "Career": "Career",
+    "ContactUs": "Contact Us",
+    "PrivacyPolicy": "Privacy Policy",
+    "TermsofUse": "Terms of Use",
+    "WelcometoHelp": "Welcome to Help",
+    "1": " Our Story",
+    "2": "Career",
+    "3": "Contact Us",
+    "4": "Privacy Policy",
+    "5": "Terms of Use",
+    "6": "Welcome to Help"
+  },
+  "cart": {
+    "CartButton": "Shopping Cart Button",
+    "TotalItems": " Items",
+    "TotalPrice": "Total Price",
+    "CheckoutButton": "Place Order",
+    "QuantityUp": "Increase Quantity",
+    "QuantityDown": "Decrease Quantity",
+    "RemoveItem": "Remove Item",
+    "CartEmpty": "Your cart is empty",
+    "ApplyCode": "Have a special code?",
+    "CodePlaceholder": "Referral/Discount Code",
+    "CloseCodeInput": "Close ",
+    "GoButton": " Code"
+  },
+
+  "DecreaseQuantity": "Decrease quantity for {{itemName}}",
+  "IncreaseQuantity": "Increase quantity for {{itemName}}",
+  "Quantity": "{{quantity}}",
+  "ItemTotal": "৳ {{price}} × {{quantity}} = ৳ {{total}}",
+
+  "ITEMS": "ITEMS",
+  "orderDetails": {
+    "title": "Order Details",
+    "companyName": "Creative Software",
+    "companyAddress": "123 Tech Street, Digital City",
+    "companyPhone": "+1 (555) 123-4567",
+    "printButtonLabel": "Print order details",
+    "orderNumber": "Order #18769",
+    "orderPlacedOn": "Placed on 31 Dec 2024 20:16:02",
+    "totalLabel": "Total:",
+    "totalAmount": "৳ 779.00",
+    "orderProgress": {
+      "step1": "order placed",
+      "step2": "order confirmed",
+      "step3": "ready for shipment",
+      "step4": "ship to courier",
+      "step5": "order on the way",
+      "step6": "order delivered"
+    },
+    "packageLabel": "Package 1",
+    "visitShop": "Visit Shop",
+    "soldBy": "sold by PICKY MALL",
+    "productName": "Ignite Breast Bigger for girls women and Lady",
+    "sizeLabel": "Size:",
+    "colorLabel": "Color:",
+    "quantityLabel": "Qty:",
+    "shippingAddress": "Shipping Address",
+    "totalSummary": "Total Summary",
+    "subTotal": "Sub Total",
+    "deliveryFee": "Delivery Fee",
+    "total": "Total",
+    "paidBy": "Paid by",
+    "paymentMethod": "cash"
+  },
+
+  "addressManager": {
+    "form": {
+      "name": "Name",
+      "address": "Address",
+      "district": "District",
+      "phone": "Phone",
+      "notes": "Delivery Notes",
+      "notesPlaceholder": "Add any specific delivery instructions",
+      "label": "Add a label",
+      "saveButton": "Save Address",
+      "defaultSwitch": "Save as default address"
+    },
+    "labels": {
+      "home": "Home",
+      "work": "Work",
+      "partner": "Partner",
+      "other": "Other"
+    },
+    "districts": {
+      "select": "Select a district",
+      "uttarBadda": "Uttar Badda",
+      "banani": "Banani"
+    }
+  },
+
+  "checkoutModal": {
+    "address": {
+      "change": "Change",
+      "name": "Name",
+      "address": "Address",
+      "district": "District"
+    },
+    "cart": {
+      "totalItems": "Total Items:",
+      "subtotal": "Subtotal:",
+      "deliveryCharge": "Delivery Charge:",
+      "totalPrice": "Total Price:"
+    },
+    "payment": {
+      "paymentOption": "Payment Option",
+      "wallet": "Wallet",
+      "bkash": "Bkash",
+      "nogod": "Nogod"
+    },
+    "terms": {
+      "accept": "I accept the",
+      "privacyPolicy": "Privacy Policy",
+      "termsAndConditions": "Terms and Conditions"
+    },
+    "errorMessage": "Please accept the terms and conditions before proceeding.",
+    "confirm": "Confirm",
+    "product": {
+      "unknownProduct": "Unknown Product",
+      "priceCalculation": "x {quantity} = ৳{totalPrice}"
+    },
+    "addressManager": {
+      "saveAddress": "Save Address"
+    }
+  },
+  "instructor": {
+    "profile": {
+      "name": "Munzereen Shahid",
+      "qualifications": [
+        "MSc (English), University of Oxford (UK);",
+        "BA, MA (English), University of Dhaka;",
+        "IELTS: 8.5"
+      ],
+      "imageAlt": "Instructor profile picture"
+    },
+    "ui": {
+      "change": "Change",
+      "viewMore": "View More",
+      "contact": "Contact"
+    }
+  },
+  "courseStructure": {
+    "title": "How the Course is Structured"
+  },
+  "features": {
+    "text1": "45 Example Video Lectures",
+
+    "text2": "24/7 Support via Chatbot",
+
+    "text3": "Live Q&A Classes",
+
+    "text4": "Facebook Support Group"
+  },
+
+  "faqItems": {
+    "question1": "Who is the 'Complete English Grammar Course' for?",
+    "answer1": "Course content details here...",
+
+    "question2": "What is the 'Complete English Grammar Course' details section (Earning Area)?",
+    "answer2": "Course section details here...",
+
+    "question3": "How long will the 'Complete English Grammar Course' be, and what can you do?",
+    "answer3": "Course duration and activities details here...",
+
+    "question4": "Why should you take the 'Complete English Grammar Course'?",
+    "answer4": "Course benefits details here...",
+
+    "question5": "What is the utility of the 'Complete English Grammar Course'?",
+    "answer5": "Course utility details here...",
+
+    "question6": "Final Words:",
+    "answer6": "Concluding remarks here..."
+  },
+  "features2": {
+    "title": "Course Features",
+    "text1": "All the basic topics and concepts generally required to learn English",
+    "text2": "Opportunity to evaluate each grammar rule through assessment questions at the end",
+    "text3": "Initiative to cover English grammar with a focus on various exams",
+    "text4": "Examples and concepts of different ways to express the same grammar rules",
+    "text5": "Primary English grammar rules and examples based on school, college, and university syllabuses",
+    "text6": "Assimilation and application of simple to complex English grammar concepts in everyday language"
+  },
+  "Popular Courses": "Popular Courses",
+  "All Courses": "All Courses",
+
+  "buttons2": {
+    "addToCart": "Add to Cart",
+    "wishlist": "Add to Wishlist",
+    "viewDetails": "Details"
+  },
+  "labels": {
+    "price": "Price",
+    "mrp": "MRP",
+    "discount": "Discount",
+    "quantity": "Quantity",
+    "weight": "Weight",
+    "freshVegetables": "Fresh Vegetables"
+  },
+  "messages": {
+    "cartUpdated": "Cart has been successfully updated.",
+    "addedToWishlist": "Added to Wishlist.",
+    "quantityLimit": "Quantity must be at least 1."
+  },
+  "products2": {
+    "product1": {
+      "name": "Potato",
+      "description": "Regular potatoes, suitable for home cooking. Rich in carbohydrates and minerals."
+    },
+    "product2": {
+      "name": "Red Potato (Cardinal)",
+      "description": "Red Cardinal potatoes, suitable for home cooking. Rich in vitamins and minerals."
+    },
+    "product3": {
+      "name": "Garlic (Imported)",
+      "description": "Imported garlic, known for its strong flavor and health benefits."
+    }
+  },
+  "course1": {
+    "title": "Course 2.1",
+    "description": "Taught by Dr. Rahim Khan. Total duration: 8 weeks. Intermediate level curriculum. Title: Mathematical Lectures."
+  },
+  "course2": {
+    "title": "Course 8.1",
+    "description": "Taught by Professor Salma Begum. Total duration: 6 weeks. Basic level curriculum. Title: Physics."
+  },
+  "course3": {
+    "title": "Course 8.1",
+    "description": "Taught by Professor Salma Begum. Total duration: 6 weeks. Basic level curriculum. Title: Physics."
+  },
+  "course4": {
+    "title": "Course 8.1",
+    "description": "Taught by Professor Salma Begum. Total duration: 6 weeks. Basic level curriculum. Title: Physics."
+  },
+
+  "clickInfo": "Click on a course to know more details",
+  "webDev": "Web Development",
+  "dataSci": "Data Science",
+  "digitalMkt": "Digital Marketing",
+  "graphicDes": "Graphic Design",
+  "cyberSec": "Cybersecurity",
+  "projMgmt": "Project Management",
+  "uiUx": "UI/UX Design",
+  "ai": "Artificial Intelligence",
+  "cloudComp": "Cloud Computing",
+  "photo": "Photography",
+  "contentWrite": "Content Writing",
+  "appDev": "App Development",
+  "beautyPersonalCare": "Beauty & Personal Care",
+  "womensApparels": "Women's Apparels",
+  "mensWear": "Men's Wear",
+  "mobileGadgets": "Mobile & Gadgets",
+  "homeDecoration": "Home Decoration",
+  "homeAppliances": "Home Appliances",
+  "toyKidsBabies": "Toy, Kids & Babies",
+  "kidsFashion": "Kids Fashion",
+  "jewelleryAccessories": "Jewellery & Accessories",
+  "womensBag": "Women's Bag",
+  "mensBag": "Men's Bag",
+  "watchesAccessories": "Watches & Accessories",
+  "footwear": "Footwear",
+  "booksStationery": "Books & Stationery",
+  "groceries": "Groceries",
+  "healthWellness": "Health & Wellness",
+  "petSupplies": "Pet Supplies",
+  "sportsEquipment": "Sports Equipment",
+  "courses": {
+    "ssc": "SSC Courses",
+    "popular": "Popular Courses"
+  },
+
+  "lesson": {
+    "type": {
+      "hsc": "HSC Advanced Mathematics Part 1",
+      "ssc": "SSC Physics"
+    },
+    "badge": {
+      "hsc": "HSC",
+      "ssc": "SSC"
+    },
+    "vectorIntroduction": "Introduction to Vectors and Types",
+    "lightNature": "Nature of Light"
+  },
+  "carousel": {
+    "title": "Course Carousel"
+  },
+  "courses2": {
+    "hsc": "HSC Courses",
+    "popular": "Popular Courses"
+  },
+  "lesson2": {
+    "type": {
+      "hsc": "HSC Advanced Mathematics 1st Paper",
+      "ssc": "SSC Physics"
+    },
+    "badge": {
+      "hsc": "HSC",
+      "ssc": "SSC"
+    },
+    "vectorIntroduction": "Introduction to Vectors and Their Types",
+    "lightNature": "Nature of Light"
+  },
+  "carousel2": {
+    "title": "Course Carousel"
+  },
+  "title1": "HSC",
+  "carousell": {
+    "title": "Course Carousel",
+    "courses": [
+      {
+        "type": "HSC Advanced Mathematics 1st Paper",
+        "number": "2.1",
+        "title": "Introduction to Vectors and Types",
+        "badge": "HSC",
+        "button": "Enroll"
+      },
+      {
+        "type": "SSC Physics",
+        "number": "8.1",
+        "title": "Nature of Light",
+        "badge": "SSC",
+        "button": "Enroll"
+      },
+      {
+        "type": "HSC Advanced Mathematics 1st Paper",
+        "number": "2.1",
+        "title": "Introduction to Vectors and Types",
+        "badge": "HSC",
+        "button": "Enroll"
+      },
+      {
+        "type": "SSC Physics",
+        "number": "8.1",
+        "title": "Nature of Light",
+        "badge": "SSC",
+        "button": "Enroll"
+      }
+    ]
+  },
+  "chat": "chat with us",
+  "adminPage": {
+    "sections": {
+      "briefStats": {
+        "name": "Brief Stats",
+        "description": "An overview of key metrics related to your business performance."
+      },
+      "dateRangeSelector": {
+        "name": "Date Range Selector",
+        "description": "Select and display data for specific time periods: Today,This Week, This Month, or This Year."
+      },
+      "totalDelivered": {
+        "name": "Total Delivered",
+        "description": "Shows the total number of delivered orders along with pending deliveries and total returns."
+      },
+      "paymentInvoiced": {
+        "name": "Payment Invoiced",
+        "description": "Displays the total amount invoiced, payment due, and parcel in process details."
+      },
+      "outForDelivery": {
+        "name": "Out for Delivery",
+        "description": "Displays the current status of orders out for delivery."
+      },
+      "pickUpPending": {
+        "name": "Pick up Pending",
+        "description": "Shows the orders awaiting pickup from the merchant."
+      },
+      "deliverProducts": {
+        "name": "Deliver Products",
+        "description": "Encourages merchants to create orders for nationwide product delivery."
+      },
+      "quickLinks": {
+        "name": "Quick Links",
+        "description": "Provides easy access to create bulk or single delivery orders."
+      }
+    },
+    "buttons": {
+      "createOrder": {
+        "name": "Create Order",
+        "description": "Initiates the process to create a new delivery order."
+      },
+      "details": {
+        "name": "Details",
+        "description": "Displays detailed information about the payment invoiced."
+      },
+      "createBulkDelivery": {
+        "name": "Create Bulk Delivery",
+        "description": "Allows merchants to create delivery orders in bulk."
+      },
+      "createSingleDelivery": {
+        "name": "Create Single Delivery",
+        "description": "Allows merchants to create a delivery order for a single package."
+      }
+    }
+  },
+  "total_returned": "Total Returned",
+  "payment_invoiced": "Payment Invoiced",
+  "details": "Details",
+  "brief_stats": "Brief Stats",
+  "today": "Today",
+  "this_week": "This Week",
+  "this_month": "This Month",
+  "this_year": "This Year",
+  "total_delivered": "Total Delivered",
+  "pending_delivery": "Pending Delivery",
+  "payment_due": "Payment Due",
+  "parcel_in_process": "Parcel In Process",
+  "out_for_delivery": "Out for Delivery",
+  "pick_up_pending": "Pick up Pending",
+  "deliver_products": "Deliver Products",
+  "create_order": "Create Order",
+  "quick_links": "Quick Links",
+  "create_bulk_delivery": "Create Bulk Delivery",
+  "create_single_delivery": "Create Single Delivery",
+
+  "logo_alt": "Courier Delivery Limited",
+  "dashboard": "Dashboard",
+  "deliveries": "Deliveries",
+  "invoices": "Invoices",
+  "store": "Store",
+  "new_order": "New order",
+  "your_profile": "Your Profile",
+  "settings": "Settings",
+  "sign_out": "Sign out",
+  "instructor2": "Instructor",
+  "structure": "Structure",
+  "details2": "Details",
+  "feature": "Feature",
+  "add_to_cart": "Add To Cart",
+  "footer": {
+    "aboutGoldenLife": "About Golden Life",
+    "ourStory": "Our Story",
+    "team": "Team",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfUse": "Terms of Use",
+    "customerService": "Customer Service",
+    "contactUs": "Contact Us",
+    "faq": "FAQ",
+    "help": "Help",
+    "forBusiness": "For Business",
+    "corporate": "Corporate",
+    "phoneNumber": "Phone Number",
+    "getApp": "Get app",
+    "paymentMethods": "Payment Methods"
+  },
+  "socialLinks": {
+    "linkedin": "LinkedIn",
+    "youtube": "YouTube",
+    "facebook": "Facebook",
+    "twitter": "Twitter",
+    "instagram": "Instagram"
+  },
+  "language": {
+    "en": "EN",
+    "bn": "BN"
+  },
+  "copyright": "© {{year}} Golden Life Shopping.",
+
+  "walletAdd": {
+    "brands": {
+      "bkash": "bKash",
+      "nagad": "Nagad",
+      "bank": "Bank"
+    },
+    "guide": {
+      "tooltip": "Open payment guide",
+      "open": "Open guide",
+      "modalTitle": "Payment guideline",
+      "modalSubtitle": "Check the visual flow and written instructions before making the payment.",
+      "tabs": {
+        "steps": "Step guide",
+        "instructions": "Instructions"
+      },
+      "stepsHeading": "How to make the payment",
+      "stepsSubtitle": "Follow the verified merchant-payment flow before submitting your top-up request.",
+      "stepsNote": "You will receive a confirmation SMS after successful payment.",
+      "step1": {
+        "title": "Dial USSD to start"
+      },
+      "step2": {
+        "title": "Select Payment",
+        "value": "3 / Payment"
+      },
+      "step3": {
+        "title": "Enter merchant wallet number",
+        "value": "01XXXXXXXXX"
+      },
+      "step4": {
+        "title": "Enter amount",
+        "value": "XXXX"
+      },
+      "step5": {
+        "title": "Enter reference",
+        "value": "Invoice No"
+      },
+      "step6": {
+        "title": "Enter counter number",
+        "value": "1"
+      },
+      "step7": {
+        "title": "Enter PIN to confirm",
+        "value": "Your PIN"
+      },
+      "instructions": {
+        "intro": "With the payment service, you can pay any merchant that accepts {{methodName}} from your {{methodName}} account. You can now use {{methodName}} to pay at more than 47,000 shops nationwide.",
+        "heading": "Follow these steps to complete the payment:",
+        "item1": "Dial {{ussdCode}} to open the {{methodName}} mobile menu.",
+        "item2": "Select “Payment”.",
+        "item3": "Enter the merchant {{methodName}} wallet number you want to pay.",
+        "item4": "Type the amount you want to pay.",
+        "item5": "Enter a reference for the purchase, for example: Bill.",
+        "item6": "Enter the counter number provided by the seller.",
+        "item7": "Complete the payment using your {{methodName}} PIN.",
+        "confirmation": "You will receive a confirmation message from {{methodName}}.",
+        "note": "If the reference or counter number is not required, enter “0” in those steps and continue."
+      },
+      "bank": {
+        "heading": "Bank transfer guide",
+        "subtitle": "Use these details when bank transfer support is enabled.",
+        "note": "Please include your student ID in the transfer reference for faster approval.",
+        "step1": {
+          "title": "Transfer to the bank account"
+        },
+        "step2": {
+          "title": "Account name"
+        },
+        "step3": {
+          "title": "Bank and branch"
+        },
+        "step4": {
+          "title": "Keep your transfer reference",
+          "value": "Reference / Transaction ID"
+        },
+        "instructions": {
+          "intro": "You can also top up using a bank transfer. Keep the transfer reference ready before submitting your request from this page.",
+          "heading": "Bank transfer steps:",
+          "item1": "Transfer the exact amount to the academy bank account.",
+          "item2": "Add your student ID or full name in the reference field if your bank supports it.",
+          "item3": "After the transfer, submit the sender/account number and transaction reference from this form.",
+          "item4": "Approval may take a little longer outside banking hours.",
+          "note": "Keep the transfer slip or screenshot until the balance is approved."
+        }
+      }
+    }
+  },
+  "chatbot": {
+    "title": "Golden Life AI",
+    "status": "Online • Always Active",
+    "welcome": "Welcome! I am your AI Assistant",
+    "askPrompt": "Ask any question. I'm ready to help you.",
+    "inputPlaceholder": "Write here...",
+    "questions": {
+      "earnMoney": "How can I earn money from the student panel?",
+      "referralIncome": "How does the referral income work?",
+      "walletWithdraw": "How do I withdraw my wallet balance?",
+      "courseEnroll": "How do I enroll in a course?",
+      "supportTicket": "How do I create a support ticket?",
+      "vendor_startReseller": "I want to start working as a reseller",
+      "vendor_listProduct": "How do I list a product?",
+      "vendor_paymentMethods": "What are the payment methods?",
+      "vendor_trackOrder": "How do I track an order?",
+      "vendor_withdrawTime": "How long does a withdrawal take?"
+    }
+  }
+}

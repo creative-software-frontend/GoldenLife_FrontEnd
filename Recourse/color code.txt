@@ -1,0 +1,2 @@
+primary #FF9100
+Secondary #67AC79
