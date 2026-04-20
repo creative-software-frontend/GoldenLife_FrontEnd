@@ -22,7 +22,7 @@ const RegisterRightSideContent = () => {
       growth: "+312%",
       period: "6 months",
       quote: "Best decision for my business",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
+      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
       name: "Fatema's Fashion",
@@ -30,7 +30,7 @@ const RegisterRightSideContent = () => {
       growth: "+245%",
       period: "4 months",
       quote: "From home to nationwide",
-      image: "https://images.unsplash.com/photo-1494790108777-466fd034c0b1?w=150&h=150&fit=crop"
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
       name: "Hasan's Mart",
@@ -38,7 +38,7 @@ const RegisterRightSideContent = () => {
       growth: "+189%",
       period: "3 months",
       quote: "Support is exceptional",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
+      image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200&h=200"
     }
   ];
 

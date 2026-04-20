@@ -76,20 +76,12 @@ export function useProductMutation() {
       }
 
 
-      // Ensure product_id is in the form data, matching API expectations
-      formData.append('product_id', id.toString()); console.log('🟢 [API] Sending update request for product ID:', id);
-      console.log('🟢 [API] Full API URL:', `${baseURL}/api/vendor/product/update?product_id=${id}`);
-      console.log('🟢 [API] FormData entries:');
-      for (const [key, value] of formData.entries()) {
-        if (value instanceof File) {
-          console.log(`  ${key}: File - ${value.name} (${value.size} bytes)`);
-        } else {
-          console.log(`  ${key}: ${value}`);
-        }
-      }
+      // Many Laravel backends require product_id as a query parameter + in body when using multipart/form-data
+      formData.append('product_id', id.toString());
+      console.log('🟢 [API] Sending update request for product ID:', id);
 
       const response = await axios.post(
-        `${baseURL}/api/vendor/product/update`,
+        `${baseURL}/api/vendor/product/update?product_id=${id}`,
         formData,
         {
           headers: {
@@ -100,10 +92,12 @@ export function useProductMutation() {
       );
 
       console.log('🟢 [API] Update response received:', response.data);
-      console.log('🟢 [API] Checking success criteria...');
 
+      // Check for success more flexibly
       const isSuccess = response.data?.success === true ||
         response.data?.status === 'success' ||
+        response.data?.status === true ||
+        response.data?.data?.product?.id ||
         response.data?.message?.toLowerCase().includes('success');
 
       if (isSuccess) {
@@ -112,7 +106,7 @@ export function useProductMutation() {
       } else {
         const errorMessage = response.data?.message || 'Failed to update product';
         toast.error(errorMessage);
-        throw new Error(errorMessage);
+        return false;
       }
     } catch (err: any) {
       console.error('Update product error:', err);

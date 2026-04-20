@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import {
     Search, MapPin, User, ChevronDown, ArrowLeft,
     Wallet, PlusCircle, Landmark, Camera, History,
@@ -62,8 +64,24 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const handleLogout = () => {
-        navigate('/instructor/login');
+    const handleLogout = async () => {
+        try {
+            const session = sessionStorage.getItem('instructor_session');
+            const token = session ? JSON.parse(session).token : null;
+            const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+
+            if (token) {
+                await axios.post(`${baseURL}/api/vendor/logout`, {}, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+        } catch (err) {
+            console.error('Logout API failed:', err);
+        } finally {
+            sessionStorage.removeItem('instructor_session');
+            toast.success('Logged out successfully');
+            navigate('/instructor/login');
+        }
     };
 
     const renderWalletDropdown = (isMobile: boolean, ref: React.RefObject<HTMLDivElement>) => (
@@ -219,7 +237,7 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
 
                                 <div className="py-2">
                                     <Link
-                                        to="#"
+                                        to="/instructor/dashboard/profile"
                                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
                                         onClick={() => setIsProfileMenuOpen(false)}
                                     >

@@ -128,25 +128,20 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
   return (
     <>
       <style>{`
-        @media screen {
-          .print-only { display: none !important; }
-        }
         @media print {
-          body * { visibility: hidden; }
-          .print-only, .print-only * { visibility: visible; }
-          
+          /* Force visibility of the invoice container */
           .print-only {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            height: auto !important;
-            overflow: visible !important;
             display: block !important;
-            padding: 0 !important;
-            margin: 0 !important;
+            visibility: visible !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            background: white !important;
+            z-index: 9999 !important;
           }
           
+          /* Table page breaking logic */
           .print-only table {
             page-break-inside: auto;
           }
@@ -156,10 +151,6 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
           }
           .print-only thead {
             display: table-header-group;
-          }
-          
-          .no-break {
-            page-break-inside: auto;
           }
           
           @page { margin: 15mm; }

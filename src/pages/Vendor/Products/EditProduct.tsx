@@ -175,15 +175,24 @@ export default function EditProduct() {
 
       console.log('🔧 Building FormData:');
 
-      // Exclude all image-related keys
+      // Define keys to exclude from the automatic FormData append (handled manually)
       const excludedKeys = ['images', 'gallery_images', 'existing_gallery_images', 'removed_gallery_images'];
+      
+      // Ensure numeric fields are actually numbers and product_id is present
+      formData.append('product_id', id.toString());
 
       Object.keys(data).forEach((key) => {
         if (!excludedKeys.includes(key)) {
           const value = data[key];
+          
+          // Only append if value is valid
           if (value !== undefined && value !== null && value !== '') {
-            formData.append(key, value.toString());
-            console.log(`  ➕ Added ${key}: ${value}`);
+            // Special handling for numeric IDs to ensure they are sent as strings the backend expects
+            if (key.includes('id') && !isNaN(Number(value))) {
+              formData.append(key, Math.floor(Number(value)).toString());
+            } else {
+              formData.append(key, value.toString());
+            }
           }
         }
       });

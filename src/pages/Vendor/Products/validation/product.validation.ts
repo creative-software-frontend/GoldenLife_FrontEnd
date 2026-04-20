@@ -4,13 +4,13 @@ export const productSchema = z.object({
   product_title_english: z.string().min(3, 'English title must be at least 3 characters'),
   product_title_bangla: z.string().min(3, 'Bangla title must be at least 3 characters'),
   category_id: z.union([
-    z.number().min(1, 'Category is required'),
-    z.string().min(1, 'Category is required')
-  ]),
+    z.number().min(0, 'Category is required'),
+    z.string().min(0, 'Category is required')
+  ]).optional().or(z.literal(0)),
   subcategory_id: z.union([
-    z.number().min(1, 'Subcategory is required'),
-    z.string().min(1, 'Subcategory is required')
-  ]),
+    z.number().min(0, 'Subcategory is required'),
+    z.string().min(0, 'Subcategory is required')
+  ]).optional().or(z.literal(0)),
   short_description_english: z.string()
     .max(200, 'Short description (English) must not exceed 200 characters')
     .optional()
@@ -36,7 +36,9 @@ export const productSchema = z.object({
     .url('Invalid URL format')
     .optional()
     .or(z.literal('')),
-  ebook: z.string().default('0'), // Default value '0' for regular products
+  ebook: z.union([z.string(), z.number()])
+    .transform(val => val.toString())
+    .default('0'), // Default value '0' for regular products
   images: z.array(z.instanceof(File)).optional(),
   existing_images: z.array(z.any().nullable()).optional(),
   gallery_images: z.array(z.any()).optional(), // Added for temporary storage in form

@@ -248,37 +248,61 @@ const Login: React.FC = () => {
             </p>
 
             {/* --- NEW VENDOR AND INSTRUCTOR LOGIN LINKS --- */}
-            <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col gap-4">
               <Link
                 to="/vendor/login"
-                className="group flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 hover:bg-orange-50 border border-gray-200 hover:border-orange-200 rounded-full text-sm font-medium text-gray-600 transition-all duration-300 shadow-sm hover:shadow w-full sm:w-auto"
+                className="group flex items-center justify-between px-6 py-4 bg-gray-50 hover:bg-orange-50 border border-gray-200 hover:border-orange-200 rounded-2xl text-sm font-medium text-gray-600 transition-all duration-300 shadow-sm hover:shadow-md w-full"
               >
-                <span>Are you a vendor?</span>
-                <span className="text-[#FF8A00] font-bold">Login here</span>
-                <svg
-                  className="w-4 h-4 text-[#FF8A00] transform group-hover:translate-x-1 transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 leading-none">Vendor Portal</p>
+                    <p className="text-xs text-gray-500 mt-1">Manage your store and products</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-orange-500 font-bold text-xs uppercase tracking-widest group-hover:mr-1 transition-all">Login</span>
+                  <svg
+                    className="w-4 h-4 text-orange-500 transform group-hover:translate-x-1 transition-transform duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
               </Link>
               
               <Link
                 to="/instructor/login"
-                className="group flex items-center justify-center gap-2 px-6 py-3 bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-full text-sm font-medium text-gray-600 transition-all duration-300 shadow-sm hover:shadow w-full sm:w-auto"
+                className="group flex items-center justify-between px-6 py-4 bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-2xl text-sm font-medium text-gray-600 transition-all duration-300 shadow-sm hover:shadow-md w-full"
               >
-                <span>Are you an instructor?</span>
-                <span className="text-indigo-600 font-bold">Login here</span>
-                <svg
-                  className="w-4 h-4 text-indigo-600 transform group-hover:translate-x-1 transition-transform duration-300"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 leading-none">Instructor Portal</p>
+                    <p className="text-xs text-gray-500 mt-1">Access your courses and students</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-indigo-600 font-bold text-xs uppercase tracking-widest group-hover:mr-1 transition-all">Login</span>
+                  <svg
+                    className="w-4 h-4 text-indigo-600 transform group-hover:translate-x-1 transition-transform duration-300"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
               </Link>
             </div>
 

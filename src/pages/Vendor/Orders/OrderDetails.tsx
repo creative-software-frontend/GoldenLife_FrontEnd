@@ -191,7 +191,7 @@ export default function OrderDetails() {
 
   return (
     <div className="max-w-[1400px] mx-auto p-6 space-y-6">
-
+      {/* 🧾 Print Component (Hidden on Screen) */}
       <PrintInvoice
         order={order}
         fullAddressText={fullAddressText}
@@ -199,94 +199,98 @@ export default function OrderDetails() {
         baseURL="https://admin.goldenlifeltd.com"
       />
 
-      <div className="screen-only flex items-center justify-between">
-        <Button onClick={() => navigate('/vendor/dashboard/orders')} variant="outline" className="gap-2 h-10 px-4 rounded-xl font-bold border-gray-200 hover:bg-gray-50 transition-all">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Button>
-      </div>
+      {/* 🖥️ Screen-Only UI Elements */}
+      <div className="screen-only space-y-6">
+        <div className="flex items-center justify-between">
+          <Button onClick={() => navigate('/vendor/dashboard/orders')} variant="outline" className="gap-2 h-10 px-4 rounded-xl font-bold border-gray-200 hover:bg-gray-50 transition-all">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </Button>
+        </div>
 
-      <div className="screen-only flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mt-4">
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Order #{order.order_no}</h1>
-            <OrderStatusBadge status={order.status} />
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mt-4">
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Order #{order.order_no}</h1>
+              <OrderStatusBadge status={order.status} />
+            </div>
+            <p className="text-gray-500 text-sm font-medium flex items-center gap-2">
+              <Calendar className="w-4 h-4" />
+              {formatDate(order.created_at)}
+            </p>
           </div>
-          <p className="text-gray-500 text-sm font-medium flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            {formatDate(order.created_at)}
-          </p>
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+            <Button
+              onClick={() => {
+                if (order) {
+                  const orderForPrint: OrderForPrint = {
+                    order_no: order.order_no,
+                    created_at: order.created_at,
+                    status: order.status,
+                    total: order.total,
+                    delivery_charge: order.delivery_charge,
+                    user_name: order.user_name,
+                    user_phone: order.user_phone,
+                    user_address: order.user_address,
+                    products: order.products || [],
+                    payment: (order as any).payment || null,
+                  };
+                  printInvoice(orderForPrint);
+                }
+              }}
+              variant="outline"
+              className="flex-1 sm:flex-none gap-2 h-11 px-6 font-bold"
+            >
+              <Printer className="w-4 h-4" /> PRINT
+            </Button>
+            <Button
+              onClick={() => setIsStatusModalOpen(true)}
+              className="flex-1 sm:flex-none bg-primary-light hover:bg-primary-light/90 text-white h-11 px-6 font-bold shadow-lg shadow-primary-light/20"
+            >
+              Update Status
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <Button
-            onClick={() => {
-              if (order) {
-                const orderForPrint: OrderForPrint = {
-                  order_no: order.order_no,
-                  created_at: order.created_at,
-                  status: order.status,
-                  total: order.total,
-                  delivery_charge: order.delivery_charge,
-                  user_name: order.user_name,
-                  user_phone: order.user_phone,
-                  user_address: order.user_address,
-                  products: order.products || [],
-                  payment: (order as any).payment || null,
-                };
-                printInvoice(orderForPrint);
-              }
-            }}
-            variant="outline"
-            className="flex-1 sm:flex-none gap-2 h-11 px-6 font-bold"
-          >
-            <Printer className="w-4 h-4" /> PRINT
-          </Button>
-          <Button
-            onClick={() => setIsStatusModalOpen(true)}
-            className="flex-1 sm:flex-none bg-primary-light hover:bg-primary-light/90 text-white h-11 px-6 font-bold shadow-lg shadow-primary-light/20"
-          >
-            Update Status
-          </Button>
-        </div>
-      </div>
 
-      {/* Order Progress Timeline */}
-      <div className="screen-only bg-white rounded-2xl border border-gray-100 p-5 sm:p-7 shadow-sm">
-        <h3 className="font-black text-xs sm:text-sm mb-8 text-gray-400 uppercase tracking-[0.2em]">ORDER PROGRESS</h3>
-        <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
-          <div className="flex items-center min-w-[900px] lg:min-w-0">
-            {progressSteps.map((step, index) => {
-              const isCompleted = index < currentStepIndex || order.status === step;
-              const isActive = index === currentStepIndex;
-              return (
-                <div key={step} className="flex-1 flex items-center">
-                  <div className="flex flex-col items-center gap-2 group cursor-default">
-                    <div
-                      className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl transition-all duration-500 shadow-sm ${isActive
-                        ? 'bg-primary-light text-white ring-4 ring-primary-light/10 shadow-primary-light/20 rotate-[-5deg]'
-                        : isCompleted
-                          ? 'bg-green-500 text-white ring-4 ring-green-100 shadow-green-100'
-                          : 'bg-gray-50 text-gray-300'
-                        }`}
-                    >
-                      {isCompleted ? <Check className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={3} /> : <Package className="w-5 h-5 opacity-40" />}
+        {/* Order Progress Timeline */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-7 shadow-sm">
+          <h3 className="font-black text-xs sm:text-sm mb-8 text-gray-400 uppercase tracking-[0.2em]">ORDER PROGRESS</h3>
+          <div className="overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+            <div className="flex items-center min-w-[900px] lg:min-w-0">
+              {progressSteps.map((step, index) => {
+                const isCompleted = index < currentStepIndex || order.status === step;
+                const isActive = index === currentStepIndex;
+                return (
+                  <div key={step} className="flex-1 flex items-center">
+                    <div className="flex flex-col items-center gap-2 group cursor-default">
+                      <div
+                        className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl transition-all duration-500 shadow-sm ${isActive
+                          ? 'bg-primary-light text-white ring-4 ring-primary-light/10 shadow-primary-light/20 rotate-[-5deg]'
+                          : isCompleted
+                            ? 'bg-green-500 text-white ring-4 ring-green-100 shadow-green-100'
+                            : 'bg-gray-50 text-gray-300'
+                          }`}
+                      >
+                        {isCompleted ? <Check className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={3} /> : <Package className="w-5 h-5 opacity-40" />}
+                      </div>
+                      <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider transition-colors duration-300 ${isActive ? 'text-primary-light' : 'text-gray-400'}`}>
+                        {step}
+                      </span>
                     </div>
-                    <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider transition-colors duration-300 ${isActive ? 'text-primary-light' : 'text-gray-400'}`}>
-                      {step}
-                    </span>
+                    {index < progressSteps.length - 1 && (
+                      <div className="flex-1 px-4">
+                        <div className={`h-[2px] rounded-full transition-all duration-700 min-w-[30px] ${index < currentStepIndex ? 'bg-green-500' : 'bg-gray-100'}`} />
+                      </div>
+                    )}
                   </div>
-                  {index < progressSteps.length - 1 && (
-                    <div className="flex-1 px-4">
-                      <div className={`h-[2px] rounded-full transition-all duration-700 min-w-[30px] ${index < currentStepIndex ? 'bg-green-500' : 'bg-gray-100'}`} />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
+      {/* Order Main Content */}
+      <div className="screen-only grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <Card className="screen-only border-gray-100 shadow-sm rounded-2xl overflow-hidden">
             <CardHeader className="bg-gray-50/50 border-b border-gray-100">

@@ -125,3 +125,37 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Printing Optimization */
+@media print {
+  /* Reset height/overflow for app layout containers to allow multi-page printing */
+  html, body, #root, [class*="h-screen"], [class*="overflow-hidden"], main, aside, nav {
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  /* Core utility classes for print/screen visibility */
+  .screen-only {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 10mm;
+    size: auto;
+  }
+}
+
+/* Screen defaults for print utilities */
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+}

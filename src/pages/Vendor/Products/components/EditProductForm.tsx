@@ -185,6 +185,16 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
     await onSubmit(submitData);
   };
 
+  const onErrors = (errors: any) => {
+    console.error('❌ [FORM VALIDATION ERRORS]:', errors);
+    const firstError = Object.values(errors)[0] as any;
+    if (firstError?.message) {
+      import('react-toastify').then(({ toast }) => {
+        toast.error(`Validation Error: ${firstError.message}`);
+      });
+    }
+  };
+
   // Update state when initialData changes
   // useEffect(() => {
   //   if (initialData?.ebook) {
@@ -262,7 +272,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
   // ... (Your JSX Return Statement goes here)
 
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onFormSubmit, onErrors)} className="space-y-6">
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -511,17 +521,32 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
           <CardTitle className="text-lg font-bold">Inventory</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-6 items-center">
             <div>
-              <Label htmlFor="stock">Stock Quantity *</Label>
+              <Label htmlFor="stock" className="font-semibold mb-1 block">Stock Quantity *</Label>
               <Input
                 id="stock"
                 type="number"
                 {...register('stock', { valueAsNumber: true })}
                 placeholder="Available quantity"
-                className={errors.stock ? 'border-red-500' : ''}
+                className={`h-11 ${errors.stock ? 'border-red-500' : ''}`}
               />
-              {errors.stock && <p className="mt-1 text-xs text-red-500">{errors.stock.message}</p>}
+              {errors.stock && <p className="mt-1 text-xs text-red-500 font-medium">{errors.stock.message}</p>}
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-primary-light/5 border border-primary-light/10 rounded-xl mt-6">
+              <div className="space-y-0.5">
+                <Label className="text-sm font-bold text-gray-900">E-book Product</Label>
+                <p className="text-xs text-gray-500 font-medium line-clamp-1">Deliverable digital file?</p>
+              </div>
+              <Switch
+                checked={isEbook}
+                onCheckedChange={(checked) => {
+                  setIsEbook(checked);
+                  setValue('ebook', checked ? '1' : '0', { shouldDirty: true });
+                }}
+                className="data-[state=checked]:bg-primary-light"
+              />
             </div>
           </div>
         </CardContent>

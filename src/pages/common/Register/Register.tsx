@@ -317,21 +317,51 @@ const Register: React.FC = () => {
             </p>
 
             {/* --- NEW VENDOR AND INSTRUCTOR REGISTER LINKS --- */}
-            <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="pt-8 border-t border-slate-100 flex flex-col gap-4">
               <Link
                 to="/vendor/register"
-                className="group flex items-center justify-center gap-2 px-6 py-3 bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 rounded-2xl text-sm font-bold text-slate-600 transition-all duration-300 w-full sm:w-auto shadow-sm"
+                className="group flex items-center justify-between px-6 py-4 bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 rounded-2xl text-sm font-bold text-slate-600 transition-all duration-300 shadow-sm hover:shadow-md w-full"
               >
-                <span>Become a Vendor?</span>
-                <span className="text-orange-500">Register</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-orange-100 text-orange-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-slate-900 leading-none">Become a Vendor</p>
+                    <p className="text-[10px] text-slate-400 mt-1 font-medium uppercase tracking-wider">Start selling today</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-orange-500">
+                  <span>Register</span>
+                  <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
               </Link>
               
               <Link
                 to="/instructor/register"
-                className="group flex items-center justify-center gap-2 px-6 py-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-2xl text-sm font-bold text-slate-600 transition-all duration-300 w-full sm:w-auto shadow-sm"
+                className="group flex items-center justify-between px-6 py-4 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-2xl text-sm font-bold text-slate-600 transition-all duration-300 shadow-sm hover:shadow-md w-full"
               >
-                <span>Become an Instructor?</span>
-                <span className="text-indigo-600">Register</span>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-slate-900 leading-none">Become an Instructor</p>
+                    <p className="text-[10px] text-slate-400 mt-1 font-medium uppercase tracking-wider">Share your knowledge</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 text-indigo-600">
+                  <span>Register</span>
+                  <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
               </Link>
             </div>
           </form>
