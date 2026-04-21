@@ -65,6 +65,8 @@ import InstructorRegister from "@/pages/common/Instructor/InstructorRegister";
 import InstructorLayout from "@/layout/InstructorLayout/InstructorLayout";
 import InstructorHome from "@/pages/InstructorHome/InstructorHome";
 import InstructorProfile from "@/pages/Instructor/Profile/index";
+import InstructorCourseList from "@/pages/Instructor/Courses/InstrutorCourseList";
+import InstructorEnrollList from "@/pages/Instructor/Enrollments/InstructorEnrollList";
 
 
 // Vendor Profile
@@ -495,6 +497,14 @@ export const routes = createBrowserRouter([
                             {
                                 path: 'profile',
                                 element: <InstructorProfile />
+                            },
+                            {
+                                path: 'courses',
+                                element: <InstructorCourseList />
+                            },
+                            {
+                                path: 'enrollments',
+                                element: <InstructorEnrollList />
                             }
                         ]
                     }
