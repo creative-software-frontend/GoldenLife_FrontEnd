@@ -66,6 +66,7 @@ import InstructorLayout from "@/layout/InstructorLayout/InstructorLayout";
 import InstructorHome from "@/pages/InstructorHome/InstructorHome";
 import InstructorProfile from "@/pages/Instructor/Profile/index";
 import InstructorCourseList from "@/pages/Instructor/Courses/InstrutorCourseList";
+import InstructorAddCourse from "@/pages/Instructor/Courses/InstructorAddCourse";
 import InstructorEnrollList from "@/pages/Instructor/Enrollments/InstructorEnrollList";
 
 
@@ -500,7 +501,10 @@ export const routes = createBrowserRouter([
                             },
                             {
                                 path: 'courses',
-                                element: <InstructorCourseList />
+                                children: [
+                                    { index: true, element: <InstructorCourseList /> },
+                                    { path: 'add', element: <InstructorAddCourse /> }
+                                ]
                             },
                             {
                                 path: 'enrollments',

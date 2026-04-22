@@ -15,13 +15,17 @@ export const getAuthToken = () => {
     // Check path to prioritize session
     const isVendorPath = window.location.pathname.startsWith('/vendor');
     const isDashboardPath = window.location.pathname.startsWith('/dashboard');
+    const isInstructorPath = window.location.pathname.startsWith('/instructor');
 
     const vendorSession = sessionStorage.getItem("vendor_session");
     const studentSession = sessionStorage.getItem("student_session");
+    const instructorSession = sessionStorage.getItem("instructor_session");
 
     let session = null;
 
-    if (isVendorPath) {
+    if (isInstructorPath) {
+        session = instructorSession || studentSession;
+    } else if (isVendorPath) {
         session = vendorSession || studentSession;
     } else if (isDashboardPath) {
         session = studentSession || vendorSession;

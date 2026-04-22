@@ -13,12 +13,15 @@ import {
     Headphones,
     Phone,
     HelpCircle,
-    Ticket as TicketIcon
+    Ticket as TicketIcon,
+    RefreshCw,
+    Loader2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatBDT } from '@/utils/currencyFormatter';
 import { cn } from "@/lib/utils";
 import useModalStore from '@/store/modalStore';
+import { useInstructorDashboardQuery } from '@/hooks/useInstructorAuth';
 
 // Quick Action Button Component
 const QuickActionButton = ({ icon: Icon, label, onClick, variant = 'primary' }: any) => {
@@ -69,21 +72,23 @@ const InstructorHome: React.FC = () => {
 
     const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
 
-    const businessName = 'Instructor Name';
     const tabs: ('Today' | 'Weekly' | 'Monthly' | 'Yearly')[] = ['Today', 'Weekly', 'Monthly', 'Yearly'];
 
-    // STATIC DUMMY DATA FOR UI ONLY
-    const currentStats = {
+    // ─── Live API Data ────────────────────────────────────────────────────────
+    const { data: dashboardData, isLoading, isError, refetch, isFetching } = useInstructorDashboardQuery();
+
+    const overview = dashboardData?.overview;
+    const currentStats = overview ?? {
         total_parcel: { count: 0, amount: 0 },
         delivered: { count: 0, amount: 0 },
         pending: { count: 0, amount: 0 },
         cancel: { count: 0, amount: 0, percentage: 0 }
     };
-    const total_revenue = 40377.00;
-    const active_orders = 1;
-    const store_rating = 4.8;
-    const inventory = { low_stock_count: 0 };
-    const recentOrders: any[] = [];
+    const total_revenue = dashboardData?.total_revenue ?? 0;
+    const active_orders = dashboardData?.active_orders ?? 0;
+    const store_rating = dashboardData?.store_rating ?? 0;
+    const inventory = dashboardData?.inventory ?? { low_stock_count: 0 };
+    const recentOrders = dashboardData?.recent_orders ?? [];
 
     return (
         <div className="p-4 sm:p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-500">
@@ -92,19 +97,36 @@ const InstructorHome: React.FC = () => {
             <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                        Welcome back, <span className="text-primary">{businessName}</span>!
+                        Welcome back, <span className="text-primary">Instructor</span>!
                     </h1>
                     <p className="text-sm text-muted-foreground mt-1">
-                        Showing statistics for {activeTab.toLowerCase()}
+                        {isLoading ? 'Loading dashboard...' : isError ? 'Could not load data — showing cached values.' : `Live dashboard · ${activeTab.toLowerCase()} view`}
                     </p>
                 </div>
                 <button
-                    className="flex items-center gap-2 px-4 py-2 bg-background border rounded-lg hover:bg-muted transition-colors text-sm font-semibold"
+                    onClick={() => refetch()}
+                    disabled={isFetching}
+                    className="flex items-center gap-2 px-4 py-2 bg-background border rounded-lg hover:bg-muted transition-colors text-sm font-semibold disabled:opacity-60"
                 >
-                    <TrendingUp className="w-4 h-4" />
-                    Refresh Data
+                    {isFetching
+                        ? <Loader2 className="w-4 h-4 animate-spin" />
+                        : <RefreshCw className="w-4 h-4" />}
+                    {isFetching ? 'Refreshing...' : 'Refresh Data'}
                 </button>
             </div>
+
+            {/* Loading skeleton */}
+            {isLoading && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    {[...Array(4)].map((_, i) => (
+                        <div key={i} className="bg-card rounded-xl border border-border p-5 shadow-sm animate-pulse">
+                            <div className="h-4 bg-muted rounded w-1/2 mb-4" />
+                            <div className="h-8 bg-muted rounded w-1/3 mb-2" />
+                            <div className="h-3 bg-muted rounded w-1/4" />
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* ========== BOTTOM SECTION - Order Cards with Filters ========== */}
             <div className="mt-8 mb-8 bg-card rounded-xl p-6 shadow-sm border">
@@ -326,26 +348,30 @@ const InstructorHome: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Inventory Status Proxy */}
+                    {/* Course Status / Inventory */}
                     <div className="bg-card rounded-xl p-5 shadow-sm border">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="font-semibold text-lg text-foreground">Course Status</h3>
-                            <AlertCircle className="w-5 h-5 text-green-500" />
+                            <AlertCircle className={`w-5 h-5 ${inventory.low_stock_count > 0 ? 'text-yellow-500' : 'text-green-500'}`} />
                         </div>
                         <div className="space-y-3">
-                            <div className="flex items-center justify-between p-3 rounded-lg border bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                                <div>
-                                    <p className="text-sm font-semibold text-green-700 dark:text-green-400">
-                                        All Courses Active
-                                    </p>
-                                    <p className="text-xs text-green-500">
-                                        No pending issues
-                                    </p>
+                            {inventory.low_stock_count > 0 ? (
+                                <div className="flex items-center justify-between p-3 rounded-lg border bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
+                                    <div>
+                                        <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-400">Low Stock Courses</p>
+                                        <p className="text-xs text-yellow-500">Needs attention</p>
+                                    </div>
+                                    <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">{inventory.low_stock_count}</p>
                                 </div>
-                                <p className="text-xl font-bold text-green-600 dark:text-green-400">
-                                    0
-                                </p>
-                            </div>
+                            ) : (
+                                <div className="flex items-center justify-between p-3 rounded-lg border bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+                                    <div>
+                                        <p className="text-sm font-semibold text-green-700 dark:text-green-400">All Courses Active</p>
+                                        <p className="text-xs text-green-500">No pending issues</p>
+                                    </div>
+                                    <p className="text-xl font-bold text-green-600 dark:text-green-400">0</p>
+                                </div>
+                            )}
                         </div>
                     </div>
 

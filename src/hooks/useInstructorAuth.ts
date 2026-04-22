@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
@@ -79,6 +79,8 @@ export interface VerifyRegisterOtpPayload {
 export interface VerifyRegisterOtpResponse {
   success: boolean;
   message?: string;
+  user?: any;
+  token?: string;
 }
 
 export interface ForgotPasswordPayload {
@@ -205,8 +207,8 @@ export const useInstructorRegisterMutation = () =>
 
 /**
  * 3rd: Verify Registration OTP
- * POST /instructor/verify-otp  (query params: user_id, otp)
- * Response: { success, message }
+ * POST /api/instructor/verify-otp?user_id=X&otp=Y
+ * Response: { success, message, user, token } — logs the user in on success
  */
 export const useVerifyRegisterOtpMutation = () =>
   useMutation<VerifyRegisterOtpResponse, Error, VerifyRegisterOtpPayload>({
@@ -219,15 +221,82 @@ export const useVerifyRegisterOtpMutation = () =>
           headers: { Accept: 'application/json' },
         }
       );
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'OTP verification failed.');
+      const data = response.data;
+      if (!data.success) {
+        throw new Error(data.message || 'OTP verification failed.');
       }
-      return response.data;
+      // The verify-otp endpoint returns a token → store session immediately
+      if (data.token) {
+        storeInstructorSession(data.token, data.user);
+      }
+      return data;
     },
     onError: (err: any) => {
       throw new Error(extractError(err));
     },
   });
+
+// ─── Dashboard Query ─────────────────────────────────────────────────────────
+
+export interface InstructorDashboardData {
+  active_orders: number;
+  total_revenue: number;
+  overview: {
+    total_parcel: { count: number; amount: number };
+    delivered: { count: number; amount: number };
+    pending: { count: number; amount: number };
+    cancel: { count: number; percentage: number; amount: number };
+  };
+  store_rating: number;
+  sales_charts: {
+    week: { highest: number; lowest: number; performance: { date_label: string; total_sales: string }[] };
+    month: { highest: number; lowest: number; performance: { date_label: string; total_sales: string }[] };
+    year: { highest: number; lowest: number; performance: { date_label: string; total_sales: string }[] };
+  };
+  inventory: { low_stock_count: number };
+  recent_orders: {
+    id: number;
+    order_no: string;
+    user_name: string;
+    user_phone: string;
+    total: string;
+    status: string;
+    created_at: string;
+  }[];
+}
+
+/**
+ * Fetch Instructor Dashboard data
+ * GET /api/vendor/WebDashboard  (Bearer token required)
+ */
+export const useInstructorDashboardQuery = () => {
+  const getToken = () => {
+    try {
+      const raw = sessionStorage.getItem('instructor_session');
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed.expiry && new Date().getTime() > parsed.expiry) return null;
+      return parsed.token || null;
+    } catch {
+      return null;
+    }
+  };
+
+  return useQuery<InstructorDashboardData>({
+    queryKey: ['instructorDashboard'],
+    queryFn: async () => {
+      const token = getToken();
+      const response = await axios.get<{ status: boolean; data: InstructorDashboardData }>(
+        `${baseURL}/api/vendor/WebDashboard`,
+        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }
+      );
+      if (!response.data.status) throw new Error('Failed to load dashboard data.');
+      return response.data.data;
+    },
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnWindowFocus: true,
+  });
+};
 
 /**
  * Forgot Password – Send OTP

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -25,7 +25,17 @@ const InstructorRegister = () => {
   const [otp, setOtp] = useState(["", "", "", ""]); // 4-digit OTP
   const [userId, setUserId] = useState<number | null>(null);
   const [otpError, setOtpError] = useState("");
+  const [resendTimer, setResendTimer] = useState(0);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Timer logic for resend OTP
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      timer = setTimeout(() => setResendTimer((prev) => prev - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer]);
 
   // Inline Field Errors State
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -50,12 +60,16 @@ const InstructorRegister = () => {
   // ─── Handlers ─────────────────────────────────────────────────────────────
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value, type, checked } = e.target;
+    let finalValue = value;
+
+    if (name === 'mobile') {
+      finalValue = value.replace(/\D/g, '').slice(0, 11);
+    }
 
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : finalValue
     }));
 
     if (fieldErrors[name]) {
@@ -127,6 +141,7 @@ const InstructorRegister = () => {
 
       toast.success("Application submitted! Please verify your mobile.");
       setShowOtpModal(true);
+      setResendTimer(60); // Start the 60s timer
     } catch (error: any) {
       toast.error(error.message || "Registration failed. Please try again.");
     }
@@ -156,6 +171,8 @@ const InstructorRegister = () => {
     try {
       await resendOtpMutation.mutateAsync({ mobile: formData.mobile });
       toast.success("OTP resent successfully!");
+      setOtp(["", "", "", ""]); // Reset OTP inputs
+      setResendTimer(60); // Reset timer to 60s
     } catch (error: any) {
       setOtpError(error.message || "Failed to resend OTP. Please try again.");
     }
@@ -178,14 +195,10 @@ const InstructorRegister = () => {
     setOtpError("");
 
     try {
+      // verify-otp returns a token → user is logged in immediately
       await verifyOtpMutation.mutateAsync({ user_id: userId, otp: otpCode });
-      toast.success("Account verified! Please login.");
-      navigate("/instructor/login", {
-        state: {
-          message: "Account verified! Please login.",
-          mobile: formData.mobile
-        }
-      });
+      toast.success("Mobile verified! Welcome to Golden Life.");
+      navigate("/instructor/dashboard");
     } catch (error: any) {
       setOtpError(error.message || "Invalid OTP. Please try again.");
     }
@@ -213,23 +226,17 @@ const InstructorRegister = () => {
         <div className="w-full lg:w-1/2 flex flex-col items-center bg-gray-50/50 p-4 lg:py-12 md:py-8 py-6 overflow-y-auto custom-scrollbar">
           <div className="w-full max-w-2xl mx-auto flex flex-col items-center">
             {/* Navigation Bar */}
-            <div className="w-full flex items-center justify-between mb-10">
-              <Link
-                to="/"
-                className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors group"
-              >
-                <ArrowLeft size={18} className="transform group-hover:-translate-x-1 transition-transform" />
-                <span className="text-sm font-medium">Back to Home</span>
+
+
+
+            <div className="flex flex-col items-center transform scale-125 md:scale-150 mb-10 ">
+              <Link to="/">
+                <Logo />
               </Link>
-
-              <div className="flex flex-col items-center transform scale-125 md:scale-150 ">
-                <Link to="/">
-                  <Logo />
-                </Link>
-              </div>
-
-              <div className="w-24 hidden md:block"></div> {/* Spacer for symmetry */}
             </div>
+
+            <div className="w-24 hidden md:block"></div> {/* Spacer for symmetry */}
+
 
             {/* REGISTRATION CARD */}
             <div className="w-full bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden relative">
@@ -424,10 +431,10 @@ const InstructorRegister = () => {
                   <button
                     type="button"
                     onClick={handleResendOtp}
-                    disabled={isVerifying || isResending}
+                    disabled={isVerifying || isResending || resendTimer > 0}
                     className="text-[#FF8A00] hover:underline transition-colors font-medium disabled:opacity-50"
                   >
-                    {isResending ? 'Sending...' : 'Resend OTP'}
+                    {isResending ? 'Sending...' : resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
                   </button>
                 </p>
               </form>

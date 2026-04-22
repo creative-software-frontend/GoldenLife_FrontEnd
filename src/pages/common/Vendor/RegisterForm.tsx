@@ -1,5 +1,5 @@
 // src/components/vendor/RegisterForm.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -32,7 +32,17 @@ const RegisterForm = () => {
   const [apiToken, setApiToken] = useState(""); // <-- State to hold the API token
   const [otpError, setOtpError] = useState("");
   const [userId, setUserId] = useState<number | null>(null); // Store user_id from registration
+  const [resendTimer, setResendTimer] = useState(0);
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Timer logic for resend OTP
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      timer = setTimeout(() => setResendTimer((prev) => prev - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendTimer]);
 
   // API Feedback States
   const [errorMessage, setErrorMessage] = useState("");
@@ -57,9 +67,14 @@ const RegisterForm = () => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
 
+    let finalValue = value;
+    if (name === 'mobile') {
+      finalValue = value.replace(/\D/g, '').slice(0, 11);
+    }
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : finalValue
     }));
 
     if (fieldErrors[name]) {
@@ -170,6 +185,7 @@ const RegisterForm = () => {
 
       // Show the OTP modal!
       setShowOtpModal(true);
+      setResendTimer(60); // Start the 60s timer
 
     } catch (error: any) {
       console.error("Registration Error:", error);
@@ -202,7 +218,7 @@ const RegisterForm = () => {
   const handleResendOtp = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";
-      const endpoint = `${baseUrl}/api/vendor/register/send-otp?mobile=${encodeURIComponent(formData.mobile)}`;
+      const endpoint = `${baseUrl}/api/vendor/login/send-otp?mobile=${encodeURIComponent(formData.mobile)}`;
 
       console.log('🔵 [Register] Resending OTP to:', formData.mobile);
 
@@ -217,7 +233,8 @@ const RegisterForm = () => {
 
       if (data.success) {
         setSuccessMessage("OTP resent successfully!");
-
+        setOtp(["", "", "", ""]); // Reset OTP inputs
+        setResendTimer(60); // Reset timer to 60s
         console.log('✅ [Register] OTP resent successfully');
       } else {
         setOtpError(data.message || "Failed to resend OTP");
@@ -249,8 +266,8 @@ const RegisterForm = () => {
         throw new Error("User ID not found. Please register again.");
       }
 
-      const endpoint = `${baseUrl}/api/vendor/verify-otp`;
-      const queryParams = `?user_id=${userId}&otp=${encodeURIComponent(otpCode)}`;
+      const endpoint = `${baseUrl}/api/vendor/login/verify-otp`;
+      const queryParams = `?mobile=${formData.mobile}&otp=${encodeURIComponent(otpCode)}`;
 
       console.log('🔵 [Register] Verifying OTP:', { userId, otp: otpCode });
       console.log('📍 [Register] Endpoint:', endpoint + queryParams);
@@ -549,10 +566,10 @@ const RegisterForm = () => {
                   <button
                     type="button"
                     onClick={handleResendOtp}
-                    disabled={isVerifying}
+                    disabled={isVerifying || resendTimer > 0}
                     className="text-[#FF8A00] hover:underline hover:text-orange-700 transition-colors font-medium disabled:opacity-50"
                   >
-                    Resend OTP
+                    {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : 'Resend OTP'}
                   </button>
                 </p>
               </form>

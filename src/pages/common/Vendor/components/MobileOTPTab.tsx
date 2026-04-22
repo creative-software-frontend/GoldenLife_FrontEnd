@@ -6,7 +6,7 @@ import CountdownTimer from './CountdownTimer';
 
 interface MobileOTPTabProps {
   onSendOtp: (mobile: string) => Promise<any>;
-  onVerifyOtp: (otp: string) => Promise<any>;
+  onVerifyOtp: (otp: string, mobile: string) => Promise<any>;
   isLoading: boolean;
   error: string | null;
   onSuccess: () => void;
@@ -64,7 +64,7 @@ const MobileOTPTab: React.FC<MobileOTPTabProps> = ({
     setOtpError(null);
 
     try {
-      await onVerifyOtp(otpCode);
+      await onVerifyOtp(otpCode, mobile);
       onSuccess();
     } catch (err: any) {
       setOtpError(err.message || 'Invalid OTP. Please try again.');

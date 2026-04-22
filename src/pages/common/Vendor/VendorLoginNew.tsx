@@ -51,12 +51,12 @@ const VendorLoginNew: React.FC = () => {
   };
 
   // Handle Verify OTP (Mobile Tab)
-  const handleVerifyOtp = async (otpCode: string) => {
+  const handleVerifyOtp = async (otpCode: string, mobile: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await verifyOtp(otpCode);
+      const response = await verifyOtp(otpCode, mobile);
 
       if (!response.success || !response.token) {
         throw new Error('Invalid OTP or no token received');

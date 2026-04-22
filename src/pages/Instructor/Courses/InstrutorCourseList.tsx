@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
@@ -112,6 +113,7 @@ const itemVariants = {
 };
 
 const InstrutorCourseList: React.FC = () => {
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('grid');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -146,7 +148,10 @@ const InstrutorCourseList: React.FC = () => {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Button className="bg-gray-900 hover:bg-black text-white shadow-2xl shadow-black/10 px-8 py-6 rounded-2xl font-black gap-3 transition-all hover:scale-[1.02] active:scale-95 h-auto group border-none">
+          <Button 
+            onClick={() => navigate('add')}
+            className="bg-gray-900 hover:bg-black text-white shadow-2xl shadow-black/10 px-8 py-6 rounded-2xl font-black gap-3 transition-all hover:scale-[1.02] active:scale-95 h-auto group border-none"
+          >
             <Plus size={18} strokeWidth={4} />
             Add New Curriculum
           </Button>

@@ -276,7 +276,7 @@ const Login: React.FC = () => {
                   </svg>
                 </div>
               </Link>
-              
+
               <Link
                 to="/instructor/login"
                 className="group flex items-center justify-between px-6 py-4 bg-gray-50 hover:bg-indigo-50 border border-gray-200 hover:border-indigo-200 rounded-2xl text-sm font-medium text-gray-600 transition-all duration-300 shadow-sm hover:shadow-md w-full"
@@ -289,7 +289,7 @@ const Login: React.FC = () => {
                   </div>
                   <div>
                     <p className="font-bold text-gray-900 leading-none">Instructor Portal</p>
-                    <p className="text-xs text-gray-500 mt-1">Access your courses and students</p>
+                    <p className="text-xs text-gray-500 mt-1">Manage your course and enroll students</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">

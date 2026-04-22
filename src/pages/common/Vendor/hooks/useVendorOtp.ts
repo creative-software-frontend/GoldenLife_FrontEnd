@@ -82,19 +82,15 @@ export const useVendorOtp = () => {
   /**
    * Verify OTP and login vendor
    */
-  const verifyOtp = useCallback(async (otpCode: string): Promise<VendorOtpResponse> => {
-    if (!userId) {
-      throw new Error('User ID not found. Please request OTP first.');
-    }
-
+  const verifyOtp = useCallback(async (otpCode: string, mobile: string): Promise<VendorOtpResponse> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      console.log('🔵 [useVendorOtp] Verifying OTP:', { userId, otp: otpCode });
+      console.log('🔵 [useVendorOtp] Verifying OTP:', { mobile, otp: otpCode });
 
       const endpoint = `${baseURL}/api/vendor/login/verify-otp`;
-      const queryParams = `?user_id=${userId}&otp=${encodeURIComponent(otpCode)}`;
+      const queryParams = `?mobile=${encodeURIComponent(mobile)}&otp=${encodeURIComponent(otpCode)}`;
 
       const response = await axios.post(endpoint + queryParams, {}, {
         headers: {
@@ -128,7 +124,7 @@ export const useVendorOtp = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [baseURL, userId]);
+  }, [baseURL]);
 
   /**
    * Alternative: Direct login with OTP (single step)
@@ -140,7 +136,7 @@ export const useVendorOtp = () => {
     try {
       console.log('🔵 [useVendorOtp] Direct login with OTP:', { mobile, otp: otpCode });
 
-      const endpoint = `${baseURL}/api/vendor/loginWithOTP`;
+      const endpoint = `${baseURL}/api/vendor/login/verify-otp`;
       const queryParams = `?mobile=${encodeURIComponent(mobile)}&otp=${encodeURIComponent(otpCode)}`;
 
       const response = await axios.post(endpoint + queryParams, {}, {

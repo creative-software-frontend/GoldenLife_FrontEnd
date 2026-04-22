@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import ForgotPasswordModal from './components/ForgotPasswordModal';
 import OtpVerificationModal from './components/OtpVerificationModal';
 import ResetPasswordForm from './components/ResetPasswordForm';
+import { useVendorOtp } from './hooks/useVendorOtp';
 
 interface ForgotPasswordProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ const ForgotPassword = ({ isOpen, onClose }: ForgotPasswordProps) => {
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { verifyOtp, sendOtp } = useVendorOtp();
 
   useEffect(() => {
     setMounted(true);
@@ -45,9 +47,12 @@ const ForgotPassword = ({ isOpen, onClose }: ForgotPasswordProps) => {
     setIsLoading(true);
     setError(null);
     try {
-      // You can add API call here if needed
+      // ✅ Step 2: Use the unified verification API
+      await verifyOtp(verifiedOtp, mobile);
       setOtp(verifiedOtp);
       setStep('reset');
+    } catch (err: any) {
+      setError(err.message || 'Verification failed');
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +62,9 @@ const ForgotPassword = ({ isOpen, onClose }: ForgotPasswordProps) => {
     setIsLoading(true);
     setError(null);
     try {
-      // Add resend OTP logic here
+      await sendOtp(mobile, 'mobile');
+    } catch (err: any) {
+      setError(err.message || 'Failed to resend OTP');
     } finally {
       setIsLoading(false);
     }

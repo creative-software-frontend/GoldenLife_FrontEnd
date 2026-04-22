@@ -81,20 +81,14 @@ const InstructorLogin: React.FC = () => {
       <div className="w-full lg:w-1/2 flex flex-col items-center bg-gray-50/50 p-4 lg:py-16 md:py-12 py-8 overflow-y-auto custom-scrollbar">
         <div className="w-full max-w-lg mx-auto flex flex-col items-center">
           {/* Navigation Bar */}
-          <div className="w-full flex items-center justify-between mb-8">
-            <Link
-              to="/"
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors group"
-            >
-              <ArrowLeft size={18} className="transform group-hover:-translate-x-1 transition-transform" />
-              <span className="text-sm font-medium">Back to Home</span>
+
+
+
+          <div className="flex flex-col mb-8 items-center justify-center transform scale-125 md:scale-150">
+            <Link to="/">
+              <Logo />
             </Link>
 
-            <div className="flex flex-col items-center transform scale-125 md:scale-150">
-              <Link to="/">
-                <Logo />
-              </Link>
-            </div>
 
             <div className="w-24 hidden md:block"></div> {/* Spacer for symmetry */}
           </div>
