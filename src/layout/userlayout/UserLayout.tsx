@@ -486,7 +486,7 @@ export default function UserLayout() {
 
             <SidebarInset>
                 <Cart />
-                <LiveChat />
+                <LiveChat mode="student" />
                 <header className="flex flex-col sticky top-0 z-40 border-b bg-white lg:hidden">
 
                     {/* --- ROW 1: Identity, Language, & Profile --- */}

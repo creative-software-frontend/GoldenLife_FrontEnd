@@ -20,7 +20,7 @@ const InstructorLayout: React.FC = () => {
             <InstructorSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                <LiveChat showLegacy={false} />
+                <LiveChat showLegacy={false} mode="instructor" />
                 {/* Navbar receives state and toggle function so the custom icon works */}
                 <InstructorNavbar toggleSidebar={toggleSidebar} isOpen={isSidebarOpen} />
 

@@ -20,9 +20,10 @@ type Message = {
 
 interface LiveChatProps {
     showLegacy?: boolean;
+    mode?: 'student' | 'vendor' | 'instructor';
 }
 
-export default function LiveChat({ showLegacy = true }: LiveChatProps) {
+export default function LiveChat({ showLegacy = true, mode = 'student' }: LiveChatProps) {
     const [t] = useTranslation("global");
     const [isOpen, setIsOpen] = useState(false)
     const {
@@ -53,14 +54,14 @@ export default function LiveChat({ showLegacy = true }: LiveChatProps) {
         // If we have a token and it's different from the last one seen by the chatbot
         if (currentToken && currentToken !== lastToken) {
             console.log("🔄 Session changed or re-login detected. Clearing chatbot history.");
-            clearChatbotMessages();
+            clearChatbotMessages(mode);
             sessionStorage.setItem('last_chatbot_token', currentToken);
         } else if (!currentToken && lastToken) {
             // If they logged out, ensure we're ready for the next login
             sessionStorage.removeItem('last_chatbot_token');
-            clearChatbotMessages();
+            clearChatbotMessages(mode);
         }
-    }, [clearChatbotMessages]);
+    }, [clearChatbotMessages, mode]);
     const [messages, setMessages] = useState<Message[]>([
         { id: 1, text: "Hello! How can I help you today?", sender: 'agent' }
     ])
@@ -150,7 +151,7 @@ export default function LiveChat({ showLegacy = true }: LiveChatProps) {
             </div>
 
             {/* Support Modals */}
-            <AIChatbot isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
+            <AIChatbot isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} mode={mode} />
             <TicketModal />
             <HotlineModal />
             <FAQModal />

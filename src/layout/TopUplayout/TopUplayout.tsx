@@ -264,7 +264,7 @@ export default function TopupLayout() {
                     </button>
 
                     <Cart />
-                    <LiveChat />
+                    <LiveChat mode="student" />
 
                     <Outlet />
                     <Footer />

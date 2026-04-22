@@ -240,7 +240,7 @@ export default function PercelLayout() {
                     </button>
 
                     <Cart />
-                    <LiveChat />
+                    <LiveChat mode="student" />
 
                     <Outlet />
                     <Footer />

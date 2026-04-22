@@ -257,7 +257,7 @@ export default function OutletLayout() {
                     </button>
 
                     <Cart />
-                    <LiveChat />
+                    <LiveChat mode="student" />
 
                     <Outlet />
                     <Footer />

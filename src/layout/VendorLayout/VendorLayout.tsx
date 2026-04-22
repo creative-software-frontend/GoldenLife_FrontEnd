@@ -59,7 +59,7 @@ const VendorLayout: React.FC = () => {
             <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-                <LiveChat showLegacy={false} />
+                <LiveChat showLegacy={false} mode="vendor" />
                 {/* Navbar receives state and toggle function so the custom icon works */}
                 <Navbar toggleSidebar={toggleSidebar} isOpen={isSidebarOpen} />
 

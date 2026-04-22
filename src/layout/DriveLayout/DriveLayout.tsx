@@ -257,7 +257,7 @@ export default function DriveLayout() {
                     </button>
 
                     <Cart />
-                    <LiveChat />
+                    <LiveChat mode="student" />
 
                     <Outlet />
                     <Footer />

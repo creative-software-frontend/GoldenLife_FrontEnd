@@ -267,7 +267,7 @@ export default function CourseLayout() {
 
             {/* Global Overlays */}
             <Cart />
-            <LiveChat />
+            <LiveChat mode="student" />
         </SidebarProvider>
     )
 }

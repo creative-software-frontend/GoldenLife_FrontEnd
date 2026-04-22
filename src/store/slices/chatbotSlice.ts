@@ -11,20 +11,25 @@ export interface ChatMessage {
 }
 
 export interface ChatbotSlice {
-  chatbotMessages: ChatMessage[];
+  studentMessages: ChatMessage[];
+  vendorMessages: ChatMessage[];
+  instructorMessages: ChatMessage[];
   isChatbotLoading: boolean;
-  sendChatbotMessage: (message: string) => Promise<void>;
-  clearChatbotMessages: () => void;
+  sendChatbotMessage: (message: string, mode: 'student' | 'vendor' | 'instructor') => Promise<void>;
+  clearChatbotMessages: (mode: 'student' | 'vendor' | 'instructor') => void;
 }
 
 export const createChatbotSlice: StateCreator<AppState, [], [], ChatbotSlice> = (set, get) => ({
-  chatbotMessages: [],
+  studentMessages: [],
+  vendorMessages: [],
+  instructorMessages: [],
   isChatbotLoading: false,
 
-  sendChatbotMessage: async (text: string) => {
+  sendChatbotMessage: async (text: string, mode: 'student' | 'vendor' | 'instructor') => {
     if (!text.trim()) return;
 
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const key = mode === 'student' ? 'studentMessages' : mode === 'vendor' ? 'vendorMessages' : 'instructorMessages';
     
     // 1. Add User Message
     const userMsg: ChatMessage = {
@@ -35,7 +40,7 @@ export const createChatbotSlice: StateCreator<AppState, [], [], ChatbotSlice> = 
     };
 
     set((state) => ({
-      chatbotMessages: [...state.chatbotMessages, userMsg],
+      [key]: [...(state[key] as ChatMessage[]), userMsg],
       isChatbotLoading: true,
     }));
 
@@ -57,7 +62,7 @@ export const createChatbotSlice: StateCreator<AppState, [], [], ChatbotSlice> = 
       };
 
       set((state) => ({
-        chatbotMessages: [...state.chatbotMessages, botMsg],
+        [key]: [...(state[key] as ChatMessage[]), botMsg],
       }));
     } catch (error) {
       console.error("Chatbot API Error:", error);
@@ -70,12 +75,15 @@ export const createChatbotSlice: StateCreator<AppState, [], [], ChatbotSlice> = 
       };
       
       set((state) => ({
-        chatbotMessages: [...state.chatbotMessages, errorMsg],
+        [key]: [...(state[key] as ChatMessage[]), errorMsg],
       }));
     } finally {
       set({ isChatbotLoading: false });
     }
   },
 
-  clearChatbotMessages: () => set({ chatbotMessages: [] }),
+  clearChatbotMessages: (mode) => {
+    const key = mode === 'student' ? 'studentMessages' : mode === 'vendor' ? 'vendorMessages' : 'instructorMessages';
+    set({ [key]: [] });
+  },
 });

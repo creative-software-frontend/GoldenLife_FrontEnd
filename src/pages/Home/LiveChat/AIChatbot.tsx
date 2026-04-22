@@ -8,16 +8,30 @@ import { getVendorAvatarUrl, getVendorDisplayName } from '@/hooks/useVendorProfi
 interface AIChatbotProps {
   isOpen: boolean;
   onClose: () => void;
+  mode?: 'student' | 'vendor' | 'instructor';
 }
 
-const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
+const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose, mode = 'student' }) => {
   const { t } = useTranslation('global');
   const [view, setView] = useState<'initial' | 'chat'>('initial');
   const [inputText, setInputText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Access Zustand Store for both student & vendor profiles
-  const { chatbotMessages, isChatbotLoading, sendChatbotMessage, clearChatbotMessages, studentProfile, vendorProfile } = useAppStore();
+  const { 
+    studentMessages, 
+    vendorMessages, 
+    instructorMessages,
+    isChatbotLoading, 
+    sendChatbotMessage, 
+    clearChatbotMessages, 
+    studentProfile, 
+    vendorProfile 
+  } = useAppStore();
+
+  // Pick correct message list based on mode
+  const chatbotMessages = mode === 'student' ? studentMessages : mode === 'vendor' ? vendorMessages : instructorMessages;
+
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
 
   // Determine active user type from session storage
@@ -26,11 +40,11 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
 
   // Resolve profile image and display name for current panel
   const profileImageUrl: string | null = (() => {
-    if (isVendorSession && vendorProfile) {
+    if (mode === 'vendor' && vendorProfile) {
       const vendorUrl = getVendorAvatarUrl(vendorProfile as any);
       return vendorUrl || null;
     }
-    if (isStudentSession && studentProfile?.image) {
+    if (mode === 'student' && studentProfile?.image) {
       // Use the same path convention as UserLayout
       return studentProfile.image.startsWith('http')
         ? studentProfile.image
@@ -40,7 +54,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
   })();
 
   const displayName: string = (() => {
-    if (isVendorSession && vendorProfile) {
+    if (mode === 'vendor' && vendorProfile) {
       return getVendorDisplayName(vendorProfile as any);
     }
     return studentProfile?.name || '';
@@ -49,7 +63,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
   const nameInitial = displayName.charAt(0).toUpperCase() || '?';
 
   const handleClearChat = () => {
-    clearChatbotMessages();
+    clearChatbotMessages(mode);
     setView('initial');
   };
 
@@ -74,7 +88,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
     if (view === 'initial') setView('chat');
     setInputText('');
     
-    await sendChatbotMessage(text);
+    await sendChatbotMessage(text, mode);
   };
 
   const studentQuestions = [
@@ -93,7 +107,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose }) => {
     { id: 'vendor_withdrawTime',   icon: <MessageSquare size={18} /> },
   ];
 
-  const initialQuestions = isVendorSession ? vendorQuestions : studentQuestions;
+  const initialQuestions = mode === 'vendor' || mode === 'instructor' ? vendorQuestions : studentQuestions;
 
   return (
     <AnimatePresence>
