@@ -148,12 +148,12 @@ const InstrutorCourseList: React.FC = () => {
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <Button 
+          <Button
             onClick={() => navigate('add')}
             className="bg-gray-900 hover:bg-black text-white shadow-2xl shadow-black/10 px-8 py-6 rounded-2xl font-black gap-3 transition-all hover:scale-[1.02] active:scale-95 h-auto group border-none"
           >
             <Plus size={18} strokeWidth={4} />
-            Add New Curriculum
+            Add New Course
           </Button>
         </motion.div>
       </div>

@@ -24,17 +24,22 @@ const mkLesson = (): Lesson => ({ id: Date.now() + Math.random(), title: '', vid
 const mkModule = (): Module => ({ id: Date.now(), title: '', lessons: [mkLesson()], open: true });
 
 // ─── Styled helpers ───────────────────────────────────────────────────────────
-const inp = 'w-full h-11 px-4 rounded-2xl border border-gray-200 bg-gray-50 text-black font-bold placeholder-black/40 outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/5 transition-all text-sm shadow-sm';
+const inp = 'w-full h-12 px-5 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm shadow-sm';
 const sel = `${inp} cursor-pointer appearance-none`;
-const ta  = 'w-full px-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-black font-bold placeholder-black/40 outline-none focus:bg-white focus:border-black focus:ring-4 focus:ring-black/5 transition-all text-sm resize-none shadow-sm';
+const ta  = 'w-full px-5 py-4 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm resize-none shadow-sm';
 
 const Field = ({ label, req, children, span2 }: { label: string; req?: boolean; children: React.ReactNode; span2?: boolean }) => (
-  <div className={span2 ? 'col-span-2' : ''}>
-    <label className="block text-[11px] font-bold text-black uppercase tracking-wider mb-2 px-1">
-      {label}{req && <span className="text-red-600 ml-0.5">*</span>}
+  <motion.div 
+    initial={{ opacity: 0, y: 10 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    className={span2 ? 'col-span-2' : ''}
+  >
+    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-[0.15em] mb-2 px-1">
+      {label}{req && <span className="text-red-500 ml-1">*</span>}
     </label>
     {children}
-  </div>
+  </motion.div>
 );
 
 const SectionHead = ({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) => (
@@ -53,7 +58,7 @@ const InstructorAddCourse: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([mkModule()]);
   const [form, setForm] = useState({
     instructorName: '', titleEn: '', titleBn: '', courseType: '',
-    courseCode: '', category: '', duration: '',
+    downloadUrl: '', courseCode: '', category: '', duration: '',
     sellerFee: '', regularFee: '', offerFee: '', earningValue: '',
     detailsEn: '', detailsBn: '',
   });
@@ -114,121 +119,94 @@ const InstructorAddCourse: React.FC = () => {
 
           {/* ── Top Bar ── */}
           <motion.div
-            initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', damping: 20 }}
-            className="flex items-center justify-between mb-12"
+            initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+            className="mb-10 flex items-center justify-between"
           >
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
               <motion.button 
                 whileHover={{ scale: 1.1, x: -5 }} whileTap={{ scale: 0.9 }}
                 onClick={handleBack} 
-                className="w-14 h-14 rounded-3xl bg-white border border-gray-100 flex items-center justify-center text-black shadow-lg shadow-gray-200/50 transition-all"
+                className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-gray-500 shadow-sm hover:text-black transition-colors"
               >
-                <ArrowLeft size={24} strokeWidth={3} />
+                <ArrowLeft size={20} strokeWidth={3} />
               </motion.button>
-              <div>
-                <div className="flex items-center gap-2 text-black/60 text-[11px] font-bold uppercase tracking-[0.2em] mb-2">
-                  <span>Academy</span><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /><span>Architecture</span>
-                </div>
-                <h1 className="text-4xl font-bold text-black tracking-tighter flex items-center gap-4">
-                  Add New Curriculum
-                  <Badge className="bg-black text-white border-none font-bold text-[10px] tracking-widest uppercase py-1.5 px-3 rounded-xl shadow-lg shadow-black/20">LIVE EDITOR</Badge>
-                </h1>
-              </div>
+              <h1 className="text-2xl font-bold text-black tracking-tight">Course Add</h1>
             </div>
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" onClick={handleBack} className="rounded-2xl text-black font-bold px-8 text-xs uppercase tracking-widest hover:bg-gray-100 h-14">
-                Discard
-              </Button>
-              <Button 
-                onClick={handleSave} 
-                disabled={saving} 
-                className="rounded-2xl bg-black hover:bg-emerald-600 text-white font-bold px-12 h-14 gap-3 shadow-2xl shadow-black/20 transition-all hover:scale-[1.05] active:scale-95 disabled:opacity-60"
-              >
-                {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} strokeWidth={3} />}
-                {saving ? 'SYNCING…' : 'DEPLOY CURRICULUM'}
-              </Button>
-            </div>
+            <Badge className="bg-orange-100 text-orange-600 border-none font-bold text-[10px] tracking-widest uppercase py-1.5 px-3 rounded-lg">MODERN EDITOR</Badge>
           </motion.div>
 
           {/* ── Main Content Card ── */}
           <motion.div
-            initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1, type: 'spring', stiffness: 100 }}
-            className="rounded-[3rem] border border-gray-100 bg-white p-12 space-y-16 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)]"
+            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+            className="rounded-xl border border-gray-100 bg-white p-8 space-y-12 shadow-sm"
           >
 
-            {/* ── Section: Basic Info ── */}
-            <section>
-              <SectionHead>Structural Data</SectionHead>
-              <div className="grid grid-cols-2 gap-8">
-                <Field label="Instructor Identification"><Input className={inp} placeholder="Full name of curator" value={form.instructorName} onChange={set('instructorName')} /></Field>
-                <Field label="System Title (English)" req><Input className={inp} placeholder="e.g. Master of Neural Networks" value={form.titleEn} onChange={set('titleEn')} /></Field>
-                <Field label="Native Title (Local)"><Input className={inp} placeholder="বাংলায় কোর্সের নাম" value={form.titleBn} onChange={set('titleBn')} /></Field>
-                <Field label="Schema Type" req>
-                  <div className="relative group">
-                    <select className={sel} value={form.courseType} onChange={set('courseType')}>
-                      <option value="">Choose Logic Structure</option>
-                      {COURSE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-black pointer-events-none group-focus-within:rotate-180 transition-transform" size={18} strokeWidth={3} />
-                  </div>
-                </Field>
-                <Field label="Unique Registry Code"><Input className={inp} placeholder="e.g. GL-SY-001" value={form.courseCode} onChange={set('courseCode')} /></Field>
-                <Field label="Target Taxonomy" req>
-                  <div className="relative group">
-                    <select className={sel} value={form.category} onChange={set('category')}>
-                      <option value="">Define Domain</option>
-                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <ChevronDown className="absolute right-5 top-1/2 -translate-y-1/2 text-black pointer-events-none group-focus-within:rotate-180 transition-transform" size={18} strokeWidth={3} />
-                  </div>
-                </Field>
-                <Field label="Temporal Allocation"><Input className={inp} placeholder="e.g. 40 Continuous Hours" value={form.duration} onChange={set('duration')} /></Field>
-              </div>
-            </section>
-
-            {/* ── Section: Pricing ── */}
-            <section>
-              <SectionHead>Financial Parameters</SectionHead>
-              <div className="grid grid-cols-4 gap-8 bg-gray-50/80 p-8 rounded-[2rem] border border-gray-100 shadow-inner">
-                {([['sellerFee','Vendor Unit'],['regularFee','Retail Value'],['offerFee','Special Offer'],['earningValue','Net Surplus']] as const).map(([k,l]) => (
-                  <Field key={k} label={l}>
-                    <div className="relative group">
-                      <span className="absolute left-5 top-1/2 -translate-y-1/2 text-black font-bold text-sm transition-transform group-focus-within:scale-125">৳</span>
-                      <Input className={`${inp} pl-10 border-gray-200/50`} type="number" placeholder="0.00" value={(form as any)[k]} onChange={set(k as any)} />
-                    </div>
-                  </Field>
-                ))}
-              </div>
-            </section>
-
-            {/* ── Section: Media ── */}
-            <section>
-              <SectionHead>Assets & Context</SectionHead>
-              <div className="space-y-8">
-                <Field label="Primary Visual Indicator">
-                  <motion.label 
-                    whileHover={{ scale: 1.01, borderColor: 'rgba(0,0,0,0.2)' }} whileTap={{ scale: 0.99 }}
-                    className="flex items-center gap-5 h-16 px-8 rounded-[1.5rem] border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-white cursor-pointer transition-all group"
-                  >
-                    <div className="w-10 h-10 rounded-2xl bg-black flex items-center justify-center text-white shadow-xl shadow-black/20 group-hover:bg-emerald-600 transition-colors">
-                      <Upload size={20} strokeWidth={3} />
-                    </div>
-                    <span className="text-xs font-bold text-black/60 group-hover:text-black transition-colors uppercase tracking-[0.2em]">
-                      {img ? img.name : 'Select High-Resolution Asset…'}
-                    </span>
-                    <input type="file" accept="image/*" className="hidden" onChange={e => setImg(e.target.files?.[0] || null)} />
-                  </motion.label>
-                </Field>
-                <div className="grid grid-cols-2 gap-8">
-                  <Field label="Descriptive Core (EN)">
-                    <textarea rows={7} className={ta} placeholder="Detailed curriculum synthesis in English…" value={form.detailsEn} onChange={set('detailsEn')} />
-                  </Field>
-                  <Field label="Descriptive Core (BN)">
-                    <textarea rows={7} className={ta} placeholder="বাংলায় কোর্সের মূলভাব ব্যাখ্যা করুন…" value={form.detailsBn} onChange={set('detailsBn')} />
-                  </Field>
+            {/* ── Section: Fields ── */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+              <Field label="Instructor Name">
+                <div className="relative group">
+                  <select className={sel} value={form.instructorName} onChange={set('instructorName')}>
+                    <option value="">Select Instructor</option>
+                    <option value="John Doe">John Doe</option>
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
                 </div>
+              </Field>
+              <Field label="Course Title (English)"><Input className={inp} placeholder="Enter English Title" value={form.titleEn} onChange={set('titleEn')} /></Field>
+              
+              <Field label="Course Title (Bangla)"><Input className={inp} placeholder="বাংলায় টাইটেল দিন" value={form.titleBn} onChange={set('titleBn')} /></Field>
+              <Field label="Course Type">
+                <div className="relative group">
+                  <select className={sel} value={form.courseType} onChange={set('courseType')}>
+                    <option value="">Select a Course Type</option>
+                    {COURSE_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                </div>
+              </Field>
+
+              <Field label="Video URL"><Input className={inp} placeholder="Enter Video URL" value={form.downloadUrl} onChange={set('downloadUrl')} /></Field>
+              <Field label="Course Code"><Input className={inp} placeholder="Enter Code" value={form.courseCode} onChange={set('courseCode')} /></Field>
+              
+              <Field label="Category">
+                <div className="relative group">
+                  <select className={sel} value={form.category} onChange={set('category')}>
+                    <option value="">Select a Category</option>
+                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+                </div>
+              </Field>
+              <Field label="Course Duration"><Input className={inp} placeholder="Enter Duration" value={form.duration} onChange={set('duration')} /></Field>
+
+              <Field label="Seller Fee"><Input className={inp} type="number" placeholder="0" value={form.sellerFee} onChange={set('sellerFee')} /></Field>
+              <Field label="Regular Fee"><Input className={inp} type="number" placeholder="0" value={form.regularFee} onChange={set('regularFee')} /></Field>
+
+              <Field label="Offer Fee"><Input className={inp} type="number" placeholder="0" value={form.offerFee} onChange={set('offerFee')} /></Field>
+              <Field label="Earning Value"><Input className={inp} type="number" placeholder="0" value={form.earningValue} onChange={set('earningValue')} /></Field>
+            </div>
+
+            {/* ── Section: Media & Details ── */}
+            <div className="space-y-8 pt-4 border-t border-gray-50">
+              <Field label="Featured Image">
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors text-xs font-medium text-gray-600">
+                    Choose File
+                    <input type="file" accept="image/*" className="hidden" onChange={e => setImg(e.target.files?.[0] || null)} />
+                  </label>
+                  <span className="text-xs text-gray-400">{img ? img.name : 'No file chosen'}</span>
+                </div>
+              </Field>
+
+              <div className="space-y-6">
+                <Field label="Course Details (English)">
+                  <textarea rows={4} className={ta} placeholder="Enter Course Details in English" value={form.detailsEn} onChange={set('detailsEn')} />
+                </Field>
+                <Field label="Course Details (Bangla)">
+                  <textarea rows={4} className={ta} placeholder="বাংলায় কোর্সের বিবরণ দিন" value={form.detailsBn} onChange={set('detailsBn')} />
+                </Field>
               </div>
-            </section>
+            </div>
 
             {/* ── Section: Curriculum (only for Module type) ── */}
             <AnimatePresence>
@@ -244,14 +222,15 @@ const InstructorAddCourse: React.FC = () => {
                     action={
                       <Button 
                         onClick={addMod} 
-                        variant="outline" 
-                        className="h-12 rounded-2xl text-[11px] font-bold gap-3 border-2 border-black text-black hover:bg-black hover:text-white uppercase tracking-widest transition-all shadow-xl shadow-black/5"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="h-10 rounded-xl text-xs font-bold gap-2 bg-black text-white hover:bg-orange-600 transition-all shadow-lg shadow-black/10"
                       >
-                        <Plus size={16} strokeWidth={4} /> Append Logical Module
+                        <Plus size={16} strokeWidth={3} /> Add Module
                       </Button>
                     }
                   >
-                    Structural Hierarchy
+                    Course Curriculum (Modules & Lessons)
                   </SectionHead>
 
                   <LayoutGroup>
@@ -273,7 +252,7 @@ const InstructorAddCourse: React.FC = () => {
                             </Badge>
                             <input
                               className="flex-1 bg-transparent text-black font-bold text-lg placeholder-black/40 outline-none"
-                              placeholder={`Define module objective…`}
+                              placeholder={`Module Title`}
                               value={mod.title}
                               onChange={e => setModTitle(mod.id, e.target.value)}
                             />
@@ -320,7 +299,7 @@ const InstructorAddCourse: React.FC = () => {
                                         </div>
                                         <input
                                           className="flex-1 bg-transparent text-black font-bold text-base placeholder-black/40 outline-none border-b-2 border-gray-100 pb-2 focus:border-black transition-colors"
-                                          placeholder={`Unit designation…`}
+                                          placeholder={`Lesson Title`}
                                           value={les.title}
                                           onChange={e => setLesField(mod.id, les.id, 'title', e.target.value)}
                                         />
@@ -328,7 +307,7 @@ const InstructorAddCourse: React.FC = () => {
                                           <Clock size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-black/60 group-focus-within/les:text-black transition-colors" strokeWidth={3} />
                                           <input
                                             className="w-44 bg-transparent text-black font-bold text-[11px] uppercase tracking-widest placeholder-black/40 outline-none border-b-2 border-gray-100 pb-2 pl-6 text-right focus:border-black transition-colors"
-                                            placeholder="Runtime"
+                                            placeholder="Duration"
                                             value={les.duration}
                                             onChange={e => setLesField(mod.id, les.id, 'duration', e.target.value)}
                                           />
@@ -352,13 +331,13 @@ const InstructorAddCourse: React.FC = () => {
                                           >
                                             <div className="flex items-center gap-3 w-28 shrink-0">
                                               <div className="w-2 h-2 rounded-full bg-black group-focus-within:bg-emerald-500 transition-colors" />
-                                              <span className="text-[10px] font-bold text-black/30 uppercase tracking-[0.2em]">Stream {vIdx + 1}</span>
+                                              <span className="text-[10px] font-bold text-black/30 uppercase tracking-[0.2em]">Video {vIdx + 1}</span>
                                             </div>
                                             <div className="flex-1 relative group/vid">
                                               <Link2 size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60 group-focus-within/vid:text-black transition-colors" strokeWidth={3} />
                                               <input
                                                 className="w-full h-12 pl-12 pr-5 rounded-2xl border border-gray-100 bg-white text-black font-bold text-xs placeholder-black/40 outline-none focus:border-black focus:ring-4 focus:ring-black/5 transition-all shadow-sm"
-                                                placeholder="Endpoint URL (Cloud, CDN, S3)..."
+                                                placeholder="Video URL"
                                                 value={vid.url}
                                                 onChange={e => setVideoUrl(mod.id, les.id, vid.id, e.target.value)}
                                               />
@@ -379,7 +358,7 @@ const InstructorAddCourse: React.FC = () => {
                                           onClick={() => addVideo(mod.id, les.id)}
                                           className="flex items-center gap-2 text-[11px] font-bold text-black/60 hover:text-black uppercase tracking-widest mt-4 transition-all"
                                         >
-                                          <Plus size={14} strokeWidth={4} /> Supplement Digital Asset
+                                          <Plus size={14} strokeWidth={4} /> Add Video
                                         </motion.button>
                                       </div>
                                     </motion.div>
@@ -390,7 +369,7 @@ const InstructorAddCourse: React.FC = () => {
                                     onClick={() => addLesson(mod.id)}
                                     className="w-full py-6 rounded-[2rem] border-4 border-dashed border-gray-100 text-black/60 hover:text-black hover:border-black/20 text-[12px] font-bold tracking-[0.3em] uppercase transition-all flex items-center justify-center gap-4"
                                   >
-                                    <Plus size={20} strokeWidth={4} /> Append Lesson Unit
+                                    <Plus size={20} strokeWidth={4} /> Add Lesson
                                   </motion.button>
                                 </div>
                               </motion.div>
@@ -407,22 +386,18 @@ const InstructorAddCourse: React.FC = () => {
           </motion.div>
 
           {/* ── Bottom Save Bar ── */}
-          <motion.div
-            initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-            className="flex items-center justify-end gap-6 mt-12 pb-20"
-          >
-            <Button variant="ghost" onClick={handleBack} className="rounded-2xl text-black/60 hover:text-black font-bold px-12 text-xs uppercase tracking-[0.2em] h-16">
-              Discard Draft
-            </Button>
+          <div className="flex items-center justify-end mt-16 pb-20">
             <Button 
               onClick={handleSave} 
               disabled={saving} 
-              className="rounded-[2rem] bg-black hover:bg-emerald-600 text-white font-bold px-20 h-20 gap-4 shadow-[0_24px_48px_-12px_rgba(0,0,0,0.3)] transition-all hover:scale-[1.05] active:scale-95 disabled:opacity-60 text-base uppercase tracking-widest"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold px-12 h-14 gap-3 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.4)] transition-all disabled:opacity-60 text-sm uppercase tracking-wider"
             >
-              {saving ? <Loader2 size={24} className="animate-spin" /> : <Save size={24} strokeWidth={3} />}
-              {saving ? 'SYNCING…' : 'DEPLOY CURRICULUM'}
+              {saving ? <Loader2 size={20} className="animate-spin" /> : <Save size={20} strokeWidth={3} />}
+              {saving ? 'Saving...' : 'Save Course'}
             </Button>
-          </motion.div>
+          </div>
 
         </div>
       </div>

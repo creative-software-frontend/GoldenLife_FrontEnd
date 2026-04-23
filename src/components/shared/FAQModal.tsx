@@ -21,7 +21,7 @@ const categoryList = [
 ];
 
 const FAQModal = () => {
-    const { isFAQModalOpen, setIsFAQModalOpen, setIsTicketModalOpen, setIsHotlineModalOpen } = useModalStore();
+    const { isFAQModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -66,7 +66,7 @@ const FAQModal = () => {
                             <h2 className="text-xl font-bold text-gray-800">সাধারণ জিজ্ঞাসা (FAQ)</h2>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button 
+                            <button
                                 onClick={async () => {
                                     await refetch();
                                     toast.success('FAQs updated successfully');
@@ -75,7 +75,7 @@ const FAQModal = () => {
                             >
                                 <RotateCcw size={20} />
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setIsFAQModalOpen(false)}
                                 className="p-2 rounded-full hover:bg-gray-100 text-gray-400 transition-colors"
                             >
@@ -124,8 +124,8 @@ const FAQModal = () => {
                             ) : faqs?.length ? (
                                 <Accordion type="single" collapsible className="space-y-3">
                                     {faqs.map((faq) => (
-                                        <AccordionItem 
-                                            key={faq.id} 
+                                        <AccordionItem
+                                            key={faq.id}
                                             value={`item-${faq.id}`}
                                             className="bg-white border-none rounded-2xl px-4 overflow-hidden shadow-sm"
                                         >
@@ -152,7 +152,7 @@ const FAQModal = () => {
                     <div className="p-6 bg-white border-t border-gray-100 flex items-center justify-between">
                         <span className="text-gray-500 font-medium">আরও সাহায্য দরকার?</span>
                         <div className="flex items-center gap-2">
-                            <button 
+                            <button
                                 onClick={() => {
                                     setIsFAQModalOpen(false);
                                     setIsTicketModalOpen(true);
@@ -161,13 +161,7 @@ const FAQModal = () => {
                             >
                                 Support Ticket
                             </button>
-                            <button 
-                                onClick={() => {
-                                    setIsFAQModalOpen(false);
-                                    setIsHotlineModalOpen(true);
-                                }}
-                                className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-green-600/20 transition-all active:scale-95 leading-none"
-                            >
+                            <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-2xl font-bold shadow-lg shadow-green-600/20 transition-all active:scale-95 leading-none">
                                 Support
                             </button>
                         </div>
