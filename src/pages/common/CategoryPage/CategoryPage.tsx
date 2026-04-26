@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Loader2, Timer, ChevronRight, SearchX } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { ProductCard } from '../ProductCard/ProductCard';
+import { useCartStore } from '@/store/cartStore';
+import { VendorMismatchModal } from '@/components/shared/VendorMismatchModal';
 
 const CategoryPage = () => {
     const { id } = useParams();
@@ -82,47 +84,63 @@ const CategoryPage = () => {
         if (id) fetchCategoryProducts();
     }, [id, baseURL]);
 
-    // 3. CART LOGIC WITH SANITIZATION
-    const handleAddToCart = (product: any) => {
-        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-        const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
+    const { cartItems, addItem, clearCart } = useCartStore();
+    const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
+    const [pendingProduct, setPendingProduct] = useState<any>(null);
 
-        // Safely handle name based on language
+    // 3. CART LOGIC
+    const handleAddToCart = (product: any) => {
+        const currentVendorId = product.vendor_id || product.vendor?.id || "empty_vendor";
+
+        // Vendor Check using Zustand state
+        if (cartItems.length > 0) {
+            const firstCartItemVendorId = cartItems[0].vendor_id || "empty_store";
+            if (String(firstCartItemVendorId) !== String(currentVendorId)) {
+                setPendingProduct(product);
+                setIsVendorModalOpen(true);
+                return;
+            }
+        }
+
         const name = i18n.language === 'bn'
             ? (product.product_title_bangla || product.product_title_english)
             : product.product_title_english;
 
-        // --- 1. Clean and parse BOTH prices ---
-        const rawRegularPrice = product.regular_price || product.price || 0;
-        const regularPrice = parseFloat(String(rawRegularPrice).replace(/[^0-9.-]+/g, "")) || 0;
+        addItem({
+            id: Number(product.id),
+            name,
+            product_title_english: product.product_title_english,
+            image: product.product_image,
+            quantity: 1,
+            offer_price: Number(product.offer_price) || 0, // Member Price
+            regular_price: Number(product.regular_price) || 0, // Customer Price
+            vendor_id: currentVendorId,
+            type: 'product'
+        });
+    };
 
-        const rawOfferPrice = product.offer_price || 0;
-        const offerPrice = parseFloat(String(rawOfferPrice).replace(/[^0-9.-]+/g, "")) || 0;
+    const handleConfirmVendorSwitch = () => {
+        if (!pendingProduct) return;
+        const name = i18n.language === 'bn' 
+            ? (pendingProduct.product_title_bangla || pendingProduct.product_title_english) 
+            : pendingProduct.product_title_english;
+        const currentVendorId = pendingProduct.vendor_id || pendingProduct.vendor?.id;
+        
+        clearCart();
+        addItem({
+            id: Number(pendingProduct.id),
+            name,
+            product_title_english: pendingProduct.product_title_english,
+            image: pendingProduct.product_image,
+            quantity: 1,
+            offer_price: Number(pendingProduct.offer_price) || 0,
+            regular_price: Number(pendingProduct.regular_price) || 0,
+            vendor_id: currentVendorId,
+            type: 'product'
+        });
 
-        // --- 2. Format Image URL ---
-        let imageUrl = product.product_image || product.image || "/placeholder.svg";
-        if (imageUrl.startsWith("/") && imageUrl !== "/placeholder.svg") {
-            imageUrl = `${baseURL}${imageUrl}`;
-        }
-
-        if (existingIndex !== -1) {
-            existingCart[existingIndex].quantity += 1;
-        } else {
-            // --- 3. Save all required data to the cart ---
-            existingCart.push({
-                id: product.id,
-                name: name,
-                product_title_english: product.product_title_english, // Allows Cart to handle language swaps
-                regular_price: regularPrice,  // Store the original price
-                offer_price: offerPrice,      // Store the discount price
-                price: regularPrice,          // Safety fallback
-                image: imageUrl,
-                quantity: 1
-            });
-        }
-
-        localStorage.setItem("cart", JSON.stringify(existingCart));
-        window.dispatchEvent(new Event("cartUpdated"));
+        setIsVendorModalOpen(false);
+        setPendingProduct(null);
     };
 
 
@@ -189,6 +207,12 @@ const CategoryPage = () => {
                     )}
                 </div>
             </div>
+
+            <VendorMismatchModal
+                isOpen={isVendorModalOpen}
+                onClose={() => { setIsVendorModalOpen(false); setPendingProduct(null); }}
+                onConfirm={handleConfirmVendorSwitch}
+            />
         </div>
     );
 };

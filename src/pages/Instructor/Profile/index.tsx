@@ -5,7 +5,7 @@ import { InstructorInfo } from './components/InstructorInfo';
 import { InstructorForm } from './components/InstructorForm';
 import { InstructorStatsCard } from './components/InstructorStatsCard';
 import { toast } from 'react-toastify';
-import { Loader2, AlertCircle, UserX, ShieldCheck, Settings, LogOut, Key } from 'lucide-react';
+import { Loader2, AlertCircle, ShieldCheck, Settings, LogOut, Key, Plus, FileText, Headphones, Phone, HelpCircle, Ticket, GraduationCap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function InstructorProfile() {
@@ -87,7 +87,7 @@ export default function InstructorProfile() {
   return (
     <div className="min-h-screen bg-slate-50/50 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        
+
         {/* Header with Stats Integrated Design */}
         <InstructorHeader
           name={instructor.name}
@@ -133,7 +133,7 @@ export default function InstructorProfile() {
                 />
               </div>
             ) : (
-              <InstructorInfo user={user} instructor={instructor} onDeleteField={deleteField} />
+              <InstructorInfo user={user} instructor={instructor} />
             )}
           </div>
 
@@ -145,7 +145,7 @@ export default function InstructorProfile() {
               </h3>
 
               <div className="space-y-4">
-                <button 
+                <button
                   onClick={() => navigate('/instructor/dashboard/change-password')}
                   className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-indigo-50 rounded-2xl group transition-all"
                 >
@@ -157,20 +157,10 @@ export default function InstructorProfile() {
                   </div>
                   <ShieldCheck size={18} className="text-emerald-500" />
                 </button>
-                
-                <button 
-                  className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-orange-50 rounded-2xl group transition-all"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-white rounded-xl shadow-sm text-orange-500">
-                      <GraduationCap size={18} />
-                    </div>
-                    <span className="font-bold text-slate-700">Teaching Preferences</span>
-                  </div>
-                </button>
               </div>
 
-              <div className="mt-8 pt-8 border-t-2 border-slate-50">
+              {/* Verification Status */}
+              <div className="mt-8 pt-8 border-t-2 border-slate-50 mb-8">
                 <div className="flex items-center justify-between px-2">
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Verification Status</span>
@@ -182,7 +172,47 @@ export default function InstructorProfile() {
                 </div>
               </div>
 
-              <button 
+              {/* Quick Actions */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-2">
+                  <Plus className="text-indigo-600" size={20} /> Quick Actions
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <QuickActionButton
+                    icon={Plus}
+                    label="Create Course"
+                    onClick={() => navigate('/instructor/dashboard/courses/add')}
+                    variant="primary"
+                  />
+                  <QuickActionButton
+                    icon={FileText}
+                    label="Report"
+                    onClick={() => toast.info('Report feature coming soon!')}
+                  />
+                  <QuickActionButton
+                    icon={Headphones}
+                    label="Support AI"
+                    onClick={() => toast.info('AI Support coming soon!')}
+                  />
+                  <QuickActionButton
+                    icon={Phone}
+                    label="Hotline"
+                    onClick={() => toast.info('Hotline coming soon!')}
+                  />
+                  <QuickActionButton
+                    icon={HelpCircle}
+                    label="FAQ"
+                    onClick={() => toast.info('FAQ feature coming soon!')}
+                  />
+                  <QuickActionButton
+                    icon={Ticket}
+                    label="Ticket"
+                    onClick={() => toast.info('Ticket system coming soon!')}
+                  />
+                </div>
+              </div>
+
+              <button
                 onClick={() => navigate('/instructor/login')}
                 className="w-full mt-8 py-4 flex items-center justify-center gap-3 bg-red-50 hover:bg-red-100 text-red-600 font-black rounded-2xl transition-all active:scale-95 group"
               >
@@ -197,7 +227,19 @@ export default function InstructorProfile() {
   );
 }
 
-// Icon for teaching preferences
-const GraduationCap = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+// Quick Action Button Component
+const QuickActionButton = ({ icon: Icon, label, onClick, variant = 'outline' }: any) => (
+  <button
+    onClick={onClick}
+    className={`flex flex-col items-center justify-center p-4 rounded-3xl transition-all active:scale-95 gap-2 border-2 ${
+      variant === 'primary' 
+        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700' 
+        : 'bg-white border-slate-50 text-slate-600 hover:border-indigo-100 hover:bg-indigo-50/30'
+    }`}
+  >
+    <div className={`p-2 rounded-xl ${variant === 'primary' ? 'bg-white/20' : 'bg-slate-50 text-indigo-600'}`}>
+      <Icon size={20} />
+    </div>
+    <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
+  </button>
 );

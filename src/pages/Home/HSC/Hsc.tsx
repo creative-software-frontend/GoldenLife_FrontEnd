@@ -85,14 +85,14 @@ const CourseCarousel: React.FC<{ courses: Lesson[], title: string }> = ({ course
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-                
+
                 {/* UPDATED BUTTONS:
                    1. 'hidden md:flex': Hides on mobile, shows on tablet/desktop.
                    2. Adjusted left/right positioning to fit better.
                 */}
                 <CarouselPrevious className="hidden md:flex absolute -left-4 lg:-left-12 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border-0 bg-white shadow-lg hover:bg-gray-100" />
                 <CarouselNext className="hidden md:flex absolute -right-4 lg:-right-12 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border-0 bg-white shadow-lg hover:bg-gray-100" />
-            
+
             </Carousel>
         </div>
     )

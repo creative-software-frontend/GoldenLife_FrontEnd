@@ -6,6 +6,7 @@ import useModalStore from '@/store/modalStore';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import { useCartStore } from '@/store/cartStore';
 import { useAppStore } from '@/store/useAppStore';
 
 interface Props {
@@ -37,14 +38,13 @@ const CheckoutSummaryView = ({
         fetchNavbarData
     } = useAppStore();
 
+    const { cartItems, removeItem, clearCart } = useCartStore();
+
     const navigate = useNavigate();
 
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [error, setError] = useState(false);
     const [isPlacingOrder, setIsPlacingOrder] = useState(false);
-
-    // --- CART ITEMS STATE ---
-    const [cartItems, setCartItems] = useState<any[]>([]);
 
     // Convert string balance from store to number for calculations
     const walletBalance = parseFloat(storeWalletBalance) || 0;
@@ -55,13 +55,6 @@ const CheckoutSummaryView = ({
     useEffect(() => {
         // Ensure store has wallet data
         fetchWallet();
-
-        try {
-            const items = JSON.parse(localStorage.getItem('cart') || '[]');
-            setCartItems(items);
-        } catch (err) {
-            console.error("Error loading cart", err);
-        }
     }, [fetchWallet]);
 
     useEffect(() => {
@@ -77,8 +70,8 @@ const CheckoutSummaryView = ({
             const qty = Number(item.quantity) || 1;
             const offerPrice = Number(item.offer_price) || 0;
             const regularPrice = Number(item.regular_price) || Number(item.price) || 0;
-            const activePrice = (offerPrice > 0 && offerPrice < regularPrice) ? offerPrice : regularPrice;
-            const origPrice = regularPrice > 0 ? regularPrice : activePrice;
+            const activePrice = offerPrice; // Member Price is the one paid
+            const origPrice = regularPrice; // Customer Price
 
             acc.currentSubTotal += activePrice * qty;
             acc.originalTotal += origPrice * qty;
@@ -97,12 +90,9 @@ const CheckoutSummaryView = ({
 
     // --- HANDLERS ---
     const handleRemoveItem = (idToRemove: string | number) => {
-        const updatedCart = cartItems.filter(item => item.id !== idToRemove);
-        setCartItems(updatedCart);
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
-        window.dispatchEvent(new Event("cartUpdated"));
+        removeItem(Number(idToRemove));
 
-        if (updatedCart.length === 0) {
+        if (cartItems.length <= 1) { // Will be 0 after removal
             toast.error("Cart is empty.");
             onClose();
         } else {
@@ -176,9 +166,7 @@ const CheckoutSummaryView = ({
                 toast.success(response.data?.message || "Order placed successfully!");
 
                 const orderNo = response.data?.order?.order_no;
-
-                localStorage.removeItem("cart");
-                window.dispatchEvent(new Event("cartUpdated"));
+                clearCart();
 
                 // GLOBAL STORE REFRESH: Refresh wallet and navbar components automatically
                 await Promise.all([

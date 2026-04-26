@@ -18,6 +18,7 @@ import Trending from "@/pages/Home/TrendingCategory/Trending";
 // import Overview from "@/pages/Dashboard/Overview/Overview";
 import SearchResults from "@/pages/Home/Search/SearchResults";
 import AllCourses from "@/pages/Home/AllCourses/AllCourses";
+import StudentCourseDetails from "@/pages/Home/StudentCourseDetails/StudentCourseDetails";
 import CourseViewPage from "@/pages/Home/CourseViewPage/CourseViewPage";
 import CourseLayout from "@/layout/CourseLayout/CourseLayout";
 import Hsc from "@/pages/Home/HSC/Hsc";
@@ -67,7 +68,12 @@ import InstructorHome from "@/pages/InstructorHome/InstructorHome";
 import InstructorProfile from "@/pages/Instructor/Profile/index";
 import InstructorCourseList from "@/pages/Instructor/Courses/InstrutorCourseList";
 import InstructorAddCourse from "@/pages/Instructor/Courses/InstructorAddCourse";
+import InstructorEditCourse from "@/pages/Instructor/Courses/InstructorEditCourse";
+import InstructorCourseDetails from "@/pages/Instructor/Courses/InstructorCourseDetails";
 import InstructorEnrollList from "@/pages/Instructor/Enrollments/InstructorEnrollList";
+import InstructorAddMoney from "@/pages/Instructor/Wallet/InstructorAddMoney";
+import InstructorWithdrawMoney from "@/pages/Instructor/Wallet/InstructorWithdrawMoney";
+import InstructorTransactionsMoney from "@/pages/Instructor/Wallet/InstructorTransactionsMoney";
 
 
 // Vendor Profile
@@ -117,6 +123,7 @@ export const routes = createBrowserRouter([
     // PUBLIC ROUTES (No Layout - Full Screen Pages)
     {
         element: <AuthLayout />,
+        errorElement: <ErrorPage />,
         children: [
             {
                 path: '/login',
@@ -139,6 +146,7 @@ export const routes = createBrowserRouter([
     {
         path: '/vendor/login',
         element: <VendorLogin />,
+        errorElement: <ErrorPage />,
     },
     {
         path: '/vendor/login-otp',
@@ -206,6 +214,7 @@ export const routes = createBrowserRouter([
             {
                 path: '/dashboard',
                 element: <UserLayout />,
+                errorElement: <ErrorPage />,
                 children: [
                     {
                         path: '',
@@ -503,12 +512,22 @@ export const routes = createBrowserRouter([
                                 path: 'courses',
                                 children: [
                                     { index: true, element: <InstructorCourseList /> },
-                                    { path: 'add', element: <InstructorAddCourse /> }
+                                    { path: 'add', element: <InstructorAddCourse /> },
+                                    { path: 'update/:id', element: <InstructorEditCourse /> },
+                                    { path: 'view/:id', element: <InstructorCourseDetails /> }
                                 ]
                             },
                             {
                                 path: 'enrollments',
                                 element: <InstructorEnrollList />
+                            },
+                            {
+                                path: 'wallet',
+                                children: [
+                                    { path: 'add', element: <InstructorAddMoney /> },
+                                    { path: 'withdraw', element: <InstructorWithdrawMoney /> },
+                                    { path: 'transactions', element: <InstructorTransactionsMoney /> }
+                                ]
                             }
                         ]
                     }
@@ -641,6 +660,10 @@ export const routes = createBrowserRouter([
     {
         path: '/allcourses',  // Separate route for Help page
         element: <AllCourses />,
+    },
+    {
+        path: '/course/:id',
+        element: <StudentCourseDetails />,
     },
 
     {

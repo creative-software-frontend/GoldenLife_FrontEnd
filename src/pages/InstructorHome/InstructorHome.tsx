@@ -314,6 +314,7 @@ const InstructorHome: React.FC = () => {
                             <QuickActionButton
                                 icon={Plus}
                                 label="Create Course"
+                                onClick={() => navigate('/instructor/dashboard/courses/add')}
                                 variant="primary"
                             />
                             <QuickActionButton

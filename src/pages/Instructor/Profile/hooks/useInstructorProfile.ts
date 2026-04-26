@@ -71,7 +71,7 @@ export function useInstructorProfile() {
       } else {
         throw new Error('Invalid profile data received');
       }
-      
+
       setError(null);
     } catch (err: any) {
       console.error('❌ [useInstructorProfile] Failed to fetch:', err);

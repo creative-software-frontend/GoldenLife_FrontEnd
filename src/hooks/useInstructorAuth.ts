@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
@@ -287,7 +287,7 @@ export const useInstructorDashboardQuery = () => {
     queryFn: async () => {
       const token = getToken();
       const response = await axios.get<{ status: boolean; data: InstructorDashboardData }>(
-        `${baseURL}/api/vendor/WebDashboard`,
+        `${baseURL}/api/instructor/dashboard`,
         { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }
       );
       if (!response.data.status) throw new Error('Failed to load dashboard data.');
@@ -348,5 +348,202 @@ export const useResetPasswordMutation = () =>
     },
     onError: (err: any) => {
       throw new Error(extractError(err));
+    },
+  });
+
+// ─── Course Helpers ───────────────────────────────────────────────────────────
+
+/** Read instructor token from sessionStorage */
+const getInstructorToken = (): string | null => {
+  try {
+    const raw = sessionStorage.getItem('instructor_session');
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed.expiry && new Date().getTime() > parsed.expiry) return null;
+    return parsed.token || null;
+  } catch {
+    return null;
+  }
+};
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface CourseData {
+  id: number;
+  course_title_english: string;
+  course_title_bangla: string;
+  course_type: string;
+  category: string;
+  course_code: string;
+  course_duration: string;
+  seller_fee: string | number;
+  regular_fee: string | number;
+  offer_fee: string | number;
+  earning_value: string | number;
+  course_details_english: string;
+  course_details_bangla: string;
+  video_url?: string;
+  image?: string;
+  modules?: Array<{
+    id: number;
+    module_title: string;
+    lessons: Array<{
+      id: number;
+      lesson_title: string;
+      videos: Array<{
+        id: number;
+        video_url: string;
+        duration?: string | null;
+      }>;
+    }>;
+  }>;
+}
+
+// ─── Fetch single course ──────────────────────────────────────────────────────
+
+/**
+ * Fetch a single course by ID
+ * GET /api/instructor/courses/show?id=:id
+ */
+export const useInstructorCourseQuery = (id: string | undefined) =>
+  useQuery<CourseData>({
+    queryKey: ['instructorCourse', id],
+    enabled: !!id,
+    staleTime: 60 * 1000,
+    queryFn: async () => {
+      const token = getInstructorToken();
+      try {
+        console.log(`Fetching course ${id} from: ${baseURL}/api/instructor/courses/show`);
+        const response = await axios.get(
+          `${baseURL}/api/instructor/courses/show`,
+          {
+            params: { id },
+            headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+          }
+        );
+        console.log('Course fetch response:', response.data);
+        const payload = response.data?.data ?? response.data;
+        if (!payload) throw new Error('Course not found.');
+        return payload as CourseData;
+      } catch (err: any) {
+        console.error('Course fetch error:', err.response || err);
+        throw err;
+      }
+    },
+  });
+
+// ─── Create course ────────────────────────────────────────────────────────────
+
+export const useCreateCourseMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, FormData>({
+    mutationFn: async (fd) => {
+      const token = getInstructorToken();
+      await axios.post(`${baseURL}/api/courses/store`, fd, {
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
+    },
+    onError: (err: any) => { throw new Error(extractError(err)); },
+  });
+};
+
+// ─── Update course ────────────────────────────────────────────────────────────
+
+/**
+ * Update an existing course
+ * POST /api/instructor/courses/update?id=:id  (multipart/form-data)
+ */
+export const useUpdateCourseMutation = (id: string | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, FormData>({
+    mutationFn: async (fd) => {
+      const token = getInstructorToken();
+      await axios.post(`${baseURL}/api/courses/update`, fd, {
+        params: { id },
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
+    },
+    onError: (err: any) => { throw new Error(extractError(err)); },
+  });
+};
+
+// ─── Fetch instructor courses list ────────────────────────────────────────────
+
+/**
+ * Fetch all courses belonging to the logged-in instructor
+ * GET /api/instructor/courses
+ */
+export const useInstructorCoursesQuery = () =>
+  useQuery<CourseData[]>({
+    queryKey: ['instructorCourses'],
+    staleTime: 60 * 1000,
+    queryFn: async () => {
+      const token = getInstructorToken();
+      const response = await axios.get(
+        `${baseURL}/api/instructor/courses`,
+        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }
+      );
+      // API shape: { status, count, data: [...] }
+      const payload = response.data?.data ?? response.data;
+      if (!Array.isArray(payload)) throw new Error('Unexpected response format.');
+      return payload as CourseData[];
+    },
+  });
+
+// ─── Fetch Single Course Details ──────────────────────────────────────────────
+
+/**
+ * Fetch full course details (including modules/quizzes)
+ * GET /api/course/details?id=:id
+ */
+export const useInstructorCourseDetailsQuery = (id: string | undefined) =>
+  useQuery<CourseData>({
+    queryKey: ['instructorCourseDetails', id],
+    enabled: !!id,
+    queryFn: async () => {
+      const token = getInstructorToken();
+      const response = await axios.get(`${baseURL}/api/course/details`, {
+        params: { id },
+        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+      });
+      return (response.data?.data ?? response.data) as CourseData;
+    },
+  });
+
+// ─── Categories ───────────────────────────────────────────────────────────────
+
+export interface Category {
+  id: number;
+  category_name: string;
+  category_slug: string;
+  category_discription: string;
+  category_image: string;
+  category_icon: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Fetch all active course categories
+ * GET /api/courses/category/index
+ */
+export const useCourseCategoriesQuery = () =>
+  useQuery<Category[]>({
+    queryKey: ['courseCategories'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    queryFn: async () => {
+      const response = await axios.get(`${baseURL}/api/courses/category/index`, {
+        headers: { Accept: 'application/json' },
+      });
+      const payload = response.data?.data ?? response.data;
+      if (!Array.isArray(payload)) throw new Error('Unexpected response format.');
+      return payload as Category[];
     },
   });

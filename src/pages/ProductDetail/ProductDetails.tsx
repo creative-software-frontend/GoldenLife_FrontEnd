@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import useModalStore from '@/store/modalStore';
+import { useCartStore } from '@/store/cartStore';
 import { VendorMismatchModal } from "@/components/shared/VendorMismatchModal";
 import { log } from "util";
 
@@ -126,39 +127,36 @@ export default function ProductDetails() {
     }, [id]);
 
     // --- HANDLERS ---
+    const { cartItems, addItem, clearCart } = useCartStore();
+
     // --- HANDLERS ---
     const addToCart = () => {
         if (!product) return;
 
-        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
         const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id || "empty_vendor";
 
-        // Vendor Check
-        if (existingCart.length > 0) {
-            const firstCartItemVendorId = existingCart[0].vendor_id || existingCart[0].vendor?.id || "empty_store";
+        // Vendor Check using Zustand state
+        if (cartItems.length > 0) {
+            const firstCartItemVendorId = cartItems[0].vendor_id || "empty_store";
             if (String(firstCartItemVendorId) !== String(currentVendorId)) {
                 setIsVendorModalOpen(true);
                 return;
             }
         }
 
-        const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
         const name = i18n.language === 'bn' ? (product.product_title_bangla || product.product_title_english) : product.product_title_english;
 
-        if (existingIndex !== -1) {
-            existingCart[existingIndex].quantity += quantity;
-        } else {
-            existingCart.push({
-                ...product,
-                name,
-                image: product.product_image?.startsWith('http') ? product.product_image : `${mainImgBase}${product.product_image}`,
-                quantity: quantity,
-                vendor_id: currentVendorId
-            });
-        }
-
-        localStorage.setItem("cart", JSON.stringify(existingCart));
-        window.dispatchEvent(new Event("cartUpdated"));
+        addItem({
+            id: Number(product.id),
+            name,
+            product_title_english: product.product_title_english,
+            image: product.product_image?.startsWith('http') ? product.product_image : `${mainImgBase}${product.product_image}`,
+            quantity: quantity,
+            offer_price: Number(product.offer_price) || Number(product.seller_price) || 0, // Member Price
+            regular_price: Number(product.regular_price) || 0, // Customer Price
+            vendor_id: currentVendorId,
+            type: 'product'
+        });
     };
 
     const handleConfirmVendorSwitch = () => {
@@ -167,17 +165,19 @@ export default function ProductDetails() {
         const name = i18n.language === 'bn' ? (product.product_title_bangla || product.product_title_english) : product.product_title_english;
         const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id;
 
-        const cartItem = {
-            ...product,
+        clearCart();
+        addItem({
+            id: Number(product.id),
             name,
+            product_title_english: product.product_title_english,
             image: product.product_image?.startsWith('http') ? product.product_image : `${mainImgBase}${product.product_image}`,
             quantity: quantity,
-            vendor_id: currentVendorId
-        };
+            offer_price: Number(product.offer_price) || Number(product.seller_price) || 0,
+            regular_price: Number(product.regular_price) || 0,
+            vendor_id: currentVendorId,
+            type: 'product'
+        });
 
-        const newCart = [cartItem];
-        localStorage.setItem("cart", JSON.stringify(newCart));
-        window.dispatchEvent(new Event("cartUpdated"));
         setIsVendorModalOpen(false);
     };
 

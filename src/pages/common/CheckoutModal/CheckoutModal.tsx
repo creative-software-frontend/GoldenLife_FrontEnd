@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import useModalStore from '@/store/modalStore';
 import { useTranslation } from "react-i18next";
 
+import { useCartStore } from "@/store/cartStore";
+
 export default function CheckoutModal() {
   const { t } = useTranslation('global');
   const { isCheckoutModalOpen, changeCheckoutModal } = useModalStore();
-  const [cartItems, setCartItems] = useState<any[]>([]);
+  const { cartItems } = useCartStore();
   const [paymentMethod, setPaymentMethod] = useState("wallet");
 
   // Bangladeshi Currency Formatter [Lakh/Crore System]
@@ -20,14 +22,7 @@ export default function CheckoutModal() {
     }).format(amount);
   };
 
-  useEffect(() => {
-    if (isCheckoutModalOpen) {
-      const stored = localStorage.getItem('cart');
-      if (stored) setCartItems(JSON.parse(stored));
-    }
-  }, [isCheckoutModalOpen]);
-
-  const subTotal = cartItems.reduce((acc, item) => acc + (Number(item.price) * Number(item.quantity)), 0);
+  const subTotal = cartItems.reduce((acc, item) => acc + (Number(item.offer_price) * Number(item.quantity)), 0);
   const deliveryFee = 150.00;
   const total = subTotal + deliveryFee;
 

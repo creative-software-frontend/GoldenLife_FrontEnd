@@ -9,11 +9,14 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/store/useAppStore";
 import { ProductCard } from "@/pages/common/ProductCard/ProductCard";
+import { useCartStore } from "@/store/cartStore";
 import { VendorMismatchModal } from "@/components/shared/VendorMismatchModal";
 
 export default function FreshSell() {
     const { t, i18n } = useTranslation('global');
     const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 30, seconds: 0 });
+
+    const { cartItems, addItem, clearCart, toggleCart } = useCartStore();
 
     // --- STORE ---
     const {
@@ -81,12 +84,11 @@ export default function FreshSell() {
     }, [products, search, stock, sortBy]);
 
     const handleAddToCart = (product: any) => {
-        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
         const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id || "empty_vendor";
 
-        // Vendor Check
-        if (existingCart.length > 0) {
-            const firstCartItemVendorId = existingCart[0].vendor_id || existingCart[0].vendor?.id || "empty_store";
+        // Vendor Check using Zustand state
+        if (cartItems.length > 0) {
+            const firstCartItemVendorId = cartItems[0].vendor_id || "empty_store";
             if (String(firstCartItemVendorId) !== String(currentVendorId)) {
                 setPendingProduct(product);
                 setIsVendorModalOpen(true);
@@ -94,25 +96,39 @@ export default function FreshSell() {
             }
         }
 
-        const existingIndex = existingCart.findIndex((item: any) => item.id === product.id);
         const name = i18n.language === 'bn' ? (product.titleBn || product.titleEn) : product.titleEn;
 
-        if (existingIndex !== -1) {
-            existingCart[existingIndex].quantity += 1;
-        } else {
-            existingCart.push({ ...product, name, image: product.product_image, quantity: 1, vendor_id: currentVendorId });
-        }
-        localStorage.setItem("cart", JSON.stringify(existingCart));
-        window.dispatchEvent(new Event("cartUpdated"));
+        addItem({
+            id: Number(product.id),
+            name,
+            product_title_english: product.titleEn,
+            image: product.product_image,
+            quantity: 1,
+            offer_price: Number(product.offer_price) || 0, // Member Price
+            regular_price: Number(product.regular_price) || 0, // Customer Price
+            vendor_id: currentVendorId,
+            type: 'product'
+        });
     };
 
     const handleConfirmVendorSwitch = () => {
         if (!pendingProduct) return;
         const name = i18n.language === 'bn' ? (pendingProduct.titleBn || pendingProduct.titleEn) : pendingProduct.titleEn;
         const currentVendorId = pendingProduct.vendor_id || pendingProduct.vendor?.id;
-        const newCart = [{ ...pendingProduct, name, image: pendingProduct.product_image, quantity: 1, vendor_id: currentVendorId }];
-        localStorage.setItem("cart", JSON.stringify(newCart));
-        window.dispatchEvent(new Event("cartUpdated"));
+        
+        clearCart();
+        addItem({
+            id: Number(pendingProduct.id),
+            name,
+            product_title_english: pendingProduct.titleEn,
+            image: pendingProduct.product_image,
+            quantity: 1,
+            offer_price: Number(pendingProduct.offer_price) || 0,
+            regular_price: Number(pendingProduct.regular_price) || 0,
+            vendor_id: currentVendorId,
+            type: 'product'
+        });
+
         setIsVendorModalOpen(false);
         setPendingProduct(null);
     };

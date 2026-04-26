@@ -23,9 +23,12 @@ export interface Address {
     is_default?: boolean | number | string;
 }
 
+import { useCartStore } from '@/store/cartStore';
+
 const CheckoutModal = () => {
     const navigate = useNavigate();
     const { isCheckoutModalOpen, changeCheckoutModal } = useModalStore();
+    const { cartItems } = useCartStore();
 
     // Config
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
@@ -36,7 +39,6 @@ const CheckoutModal = () => {
 
     const [view, setView] = useState<ViewState>('CHECKOUT');
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Wallet');
-    const [cartData, setCartData] = useState({ subTotal: 0, totalItems: 0 });
 
     // --- State ---
     const [addresses, setAddresses] = useState<Address[]>([]);
@@ -44,16 +46,11 @@ const CheckoutModal = () => {
     const [deliveryFee, setDeliveryFee] = useState<number>(0);
     const [loadingAddresses, setLoadingAddresses] = useState(false);
 
-    // 1. Helper: Load Cart
-    const loadCart = useCallback(() => {
-        const storedCart = localStorage.getItem('cart');
-        if (storedCart) {
-            const parsed = JSON.parse(storedCart);
-            const subTotal = parsed.reduce((acc: number, item: any) => acc + ((Number(item.price) || 0) * (Number(item.quantity) || 0)), 0);
-            const totalItems = parsed.reduce((acc: number, item: any) => acc + (Number(item.quantity) || 0), 0);
-            setCartData({ subTotal, totalItems });
-        }
-    }, []);
+    // Dynamic Cart Data
+    const cartData = {
+        subTotal: cartItems.reduce((acc, item) => acc + (Number(item.offer_price) || 0) * (Number(item.quantity) || 1), 0),
+        totalItems: cartItems.reduce((acc, item) => acc + (Number(item.quantity) || 1), 0)
+    };
 
     // 2. API: Select Address & Fetch Fee
     const handleSelectAddress = async (addr: Address, switchView: boolean = true) => {
@@ -128,10 +125,9 @@ const CheckoutModal = () => {
     // 4. Load Data on Open
     useEffect(() => {
         if (isCheckoutModalOpen) {
-            loadCart();
             fetchAddresses();
         }
-    }, [isCheckoutModalOpen, loadCart, fetchAddresses]);
+    }, [isCheckoutModalOpen, fetchAddresses]);
 
     // 5. Handle New Address Saved
     const handleSaveNewAddress = async (newAddr: Address) => {

@@ -1,25 +1,23 @@
 'use client';
 
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-// import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import useModalStore from '@/store/modalStore';
+import { useCartStore } from '@/store/cartStore';
 import { useTranslation } from 'react-i18next';
 
 export default function TrendingCategory() {
     const sliderRef = useRef<Slider>(null);
-    const [cart, setCart] = useState<any[]>([]);
-    const { toggleClicked } = useModalStore();
+    const { addItem, toggleCart } = useCartStore();
     const { t } = useTranslation("global");
 
     const products = [
         {
             id: 1,
-            name: t('products.product1'), // Translate the product name
+            name: t('products.product1'),
             price: '£60.00',
             discount: '-10%',
             oldPrice: '£86.00',
@@ -61,35 +59,22 @@ export default function TrendingCategory() {
         },
     ];
 
-    useEffect(() => {
-        const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        setCart(storedCart);
-    }, []);
-
     const parsePrice = (price: string): number => {
         return Number(price.replace(/[^\d.]/g, ''));
     };
 
     const addToCart = (product: any) => {
-        const sanitizedProduct = {
-            ...product,
-            price: parsePrice(product.price),
-            oldPrice: product.oldPrice ? parsePrice(product.oldPrice) : undefined,
+        addItem({
+            id: product.id,
+            name: product.name,
+            product_title_english: product.name,
+            image: product.image,
             quantity: 1,
-        };
-
-        const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const existingProductIndex = storedCart.findIndex((item: any) => item.id === product.id);
-
-        if (existingProductIndex > -1) {
-            storedCart[existingProductIndex].quantity += 1;
-        } else {
-            storedCart.push(sanitizedProduct);
-        }
-
-        setCart(storedCart);
-        localStorage.setItem('cart', JSON.stringify(storedCart));
-        toggleClicked();
+            offer_price: parsePrice(product.price), // Member Price
+            regular_price: product.oldPrice ? parsePrice(product.oldPrice) : parsePrice(product.price), // Customer Price
+            vendor_id: (product as any).vendor_id || "empty_vendor",
+            type: 'product'
+        });
     };
 
     const settings = {

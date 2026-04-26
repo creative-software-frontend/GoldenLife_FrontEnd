@@ -10,6 +10,8 @@ import {
 import ImageUploadModal from '@/components/shared/ImageUploadModal';
 import useModalStore from '@/store/modalStore';
 
+import { useInstructorWallet } from '@/hooks/useInstructorWallet';
+
 const MenuFoldLeftIcon = ({ size = 24, className = "" }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
         <line x1="4" y1="7" x2="20" y2="7" />
@@ -34,13 +36,13 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
     const navigate = useNavigate();
+    const { balance, isBalanceLoading } = useInstructorWallet();
 
     const profileRef = useRef<HTMLDivElement>(null);
     const walletRefDesktop = useRef<HTMLDivElement>(null);
     const walletRefMobile = useRef<HTMLDivElement>(null);
 
     // Static Dummy Data
-    const walletBalance = "0.00";
     const displayName = "Instructor Name";
     const profilePercentage = 60;
     const isProfileComplete = false;
@@ -98,7 +100,11 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                     <div className="flex flex-col pr-1 text-left">
                         <span className="font-black text-muted-foreground uppercase leading-none tracking-tight text-[11px]">My Balance</span>
                         <div className="mt-1 h-4 flex items-center">
-                            <span className="font-black text-foreground tracking-tight leading-none text-[16px]">৳{walletBalance}</span>
+                            {isBalanceLoading ? (
+                                <div className="h-4 w-12 bg-muted animate-pulse rounded" />
+                            ) : (
+                                <span className="font-black text-foreground tracking-tight leading-none text-[16px]">৳{balance}</span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -107,15 +113,15 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
 
             <div className={`absolute mt-2 bg-background rounded-2xl shadow-xl border border-border transition-all duration-200 overflow-hidden ${isWalletMenuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'} ${isMobile ? 'top-full left-0 w-full' : 'top-full right-0 w-60'}`}>
                 <div className="p-2 flex flex-col gap-1">
-                    <Link onClick={() => setIsWalletMenuOpen(false)} to="#" className={`flex items-center gap-3 px-3 hover:bg-muted rounded-xl font-bold text-foreground transition-colors py-2.5 ${isMobile ? 'text-sm' : 'text-[13px]'}`}>
+                    <Link onClick={() => setIsWalletMenuOpen(false)} to="/instructor/dashboard/wallet/add" className={`flex items-center gap-3 px-3 hover:bg-muted rounded-xl font-bold text-foreground transition-colors py-2.5 ${isMobile ? 'text-sm' : 'text-[13px]'}`}>
                         <PlusCircle className="h-4 w-4 text-emerald-500" /> Add Money
                     </Link>
 
-                    <Link onClick={() => setIsWalletMenuOpen(false)} to="#" className={`flex items-center gap-3 px-3 hover:bg-muted rounded-xl font-bold text-foreground transition-colors py-2.5 ${isMobile ? 'text-sm' : 'text-[13px]'}`}>
+                    <Link onClick={() => setIsWalletMenuOpen(false)} to="/instructor/dashboard/wallet/withdraw" className={`flex items-center gap-3 px-3 hover:bg-muted rounded-xl font-bold text-foreground transition-colors py-2.5 ${isMobile ? 'text-sm' : 'text-[13px]'}`}>
                         <Landmark className="h-4 w-4 text-orange-500" /> Withdraw Money
                     </Link>
 
-                    <Link onClick={() => setIsWalletMenuOpen(false)} to="#" className={`flex items-center gap-3 px-3 hover:bg-muted rounded-xl font-bold text-foreground transition-colors py-2.5 ${isMobile ? 'text-sm' : 'text-[13px]'}`}>
+                    <Link onClick={() => setIsWalletMenuOpen(false)} to="/instructor/dashboard/wallet/transactions" className={`flex items-center gap-3 px-3 hover:bg-muted rounded-xl font-bold text-foreground transition-colors py-2.5 ${isMobile ? 'text-sm' : 'text-[13px]'}`}>
                         <History className="h-4 w-4 text-indigo-500" /> All Transactions
                     </Link>
                 </div>
@@ -193,11 +199,11 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                             className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-border cursor-pointer group flex-shrink-0 hover:bg-muted/50 rounded-xl pr-3 py-2 transition-all"
                         >
                             <div className="relative flex-shrink-0">
-                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700">
-                                        <span className="text-white font-bold text-xs sm:text-sm">
-                                            I
-                                        </span>
-                                    </div>
+                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700">
+                                    <span className="text-white font-bold text-xs sm:text-sm">
+                                        I
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="text-right hidden sm:block max-w-[120px] xl:max-w-none">
@@ -245,15 +251,7 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                                         <span>My Profile</span>
                                     </Link>
 
-                                    <button
-                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors w-full text-left"
-                                        onClick={() => {
-                                            setIsProfileMenuOpen(false);
-                                        }}
-                                    >
-                                        <Settings className="h-4 w-4 text-indigo-700" />
-                                        <span>Settings</span>
-                                    </button>
+
 
                                     <div className="my-2 border-t border-border" />
 
