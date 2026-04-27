@@ -48,7 +48,7 @@ const RecentOrdersStack = ({ orders }: { orders: any[] }) => {
                         <p className="font-medium text-sm text-foreground">{order.order_no}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{order.status}</p>
                     </div>
-                    <p className="font-semibold text-sm text-foreground">{formatBDT(order.total, { compact: true })}</p>
+                    <p className="font-semibold text-sm text-foreground">{formatBDT(order.total, { compact: true, showDecimals: false })}</p>
                 </div>
             ))}
             <button
@@ -127,8 +127,8 @@ const SalesChart = ({ chartData, timeframe }: { chartData: any, timeframe: strin
             <div className="flex gap-2 sm:gap-4 flex-1">
                 {/* Y-Axis Labeling */}
                 <div className="flex flex-col justify-between text-[9px] text-muted-foreground pb-12 pt-1 w-10 sm:w-12 border-r border-border/50 pr-2 select-none">
-                    <span className="font-bold text-right">{formatBDT(displayMax, { compact: true })}</span>
-                    <span className="font-bold text-right text-primary/40">{formatBDT(displayMax / 2, { compact: true })}</span>
+                    <span className="font-bold text-right">{formatBDT(displayMax, { compact: true, showDecimals: false })}</span>
+                    <span className="font-bold text-right text-primary/40">{formatBDT(displayMax / 2, { compact: true, showDecimals: false })}</span>
                     <span className="font-bold text-right">0</span>
                 </div>
 
@@ -205,7 +205,7 @@ const SalesChart = ({ chartData, timeframe }: { chartData: any, timeframe: strin
                         >
                             <div className="flex flex-col gap-1 min-w-[100px]">
                                 <span className="text-white/40 text-[9px] uppercase tracking-[0.2em]">{points[hoveredIdx].label}</span>
-                                <span className="text-primary text-sm tracking-tight">{formatBDT(points[hoveredIdx].val)}</span>
+                                <span className="text-primary text-sm tracking-tight">{formatBDT(points[hoveredIdx].val, { compact: true, showDecimals: false })}</span>
                             </div>
                             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-slate-900 border-r border-b border-white/20 rotate-45" />
                         </div>
@@ -249,14 +249,14 @@ const SalesChart = ({ chartData, timeframe }: { chartData: any, timeframe: strin
                         <div className="w-5 h-1 bg-primary/40 rounded-full" />
                         <span className="text-muted-foreground">Highest Sale</span>
                     </div>
-                    <span className="text-primary text-xs tracking-tighter">{formatBDT(data.highest || highestVal)}</span>
+                    <span className="text-primary text-xs tracking-tighter">{formatBDT(data.highest || highestVal, { compact: true, showDecimals: false })}</span>
                 </div>
                 <div className="flex items-center justify-between sm:justify-start gap-3 w-full sm:w-auto">
                     <div className="flex items-center gap-3">
                         <div className="w-5 h-1 bg-slate-500/40 rounded-full" />
                         <span className="text-muted-foreground">Lowest Sale</span>
                     </div>
-                    <span className="text-foreground text-xs tracking-tighter">{formatBDT(data.lowest || lowestVal)}</span>
+                    <span className="text-foreground text-xs tracking-tighter">{formatBDT(data.lowest || lowestVal, { compact: true, showDecimals: false })}</span>
                 </div>
             </div>
         </div>
@@ -374,7 +374,7 @@ const VendorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Orders</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats?.total_parcel.amount.toFixed(2) || "0.00"} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats?.total_parcel.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -394,7 +394,7 @@ const VendorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Orders</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats?.delivered.amount.toFixed(2) || "0.00"} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats?.delivered.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -414,7 +414,7 @@ const VendorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Orders</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats?.pending.amount.toFixed(2) || "0.00"} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats?.pending.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -436,7 +436,7 @@ const VendorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Orders</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats?.cancel.amount.toFixed(2) || "0.00"} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats?.cancel.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -456,7 +456,7 @@ const VendorHome: React.FC = () => {
                             <div className="flex justify-between items-start">
                                 <div>
                                     <p className="text-muted-foreground text-sm font-medium">Total Revenue</p>
-                                    <p className="text-3xl font-bold text-foreground mt-2">{formatBDT(dashboardData?.total_revenue || 0)}</p>
+                                    <p className="text-3xl font-bold text-foreground mt-2">{formatBDT(dashboardData?.total_revenue || 0, { compact: true, showDecimals: false })}</p>
                                     <p className="text-green-600 text-sm font-semibold mt-1 flex items-center gap-1">
                                         <TrendingUp className="w-4 h-4" />
                                         Verified Revenue

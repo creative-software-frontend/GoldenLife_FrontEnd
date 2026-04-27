@@ -322,16 +322,7 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
                                         <span>My Profile</span>
                                     </Link>
 
-                                    <button
-                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors w-full text-left"
-                                        onClick={() => {
-                                            setIsProfileMenuOpen(false);
-                                            // Navigate to settings when available
-                                        }}
-                                    >
-                                        <Settings className="h-4 w-4 text-primary-dark" />
-                                        <span>Settings</span>
-                                    </button>
+
 
                                     <div className="my-2 border-t border-border" />
 

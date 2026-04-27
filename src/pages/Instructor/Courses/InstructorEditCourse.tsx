@@ -24,10 +24,7 @@ interface Lesson { id: number; title: string; videos: VideoItem[]; duration: str
 interface Module { id: number; title: string; lessons: Lesson[]; open: boolean; }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const COURSE_TYPES = ['Modulebook', 'Product', 'Live Class', 'Ebook'];
-
-const mkLesson = (): Lesson => ({ id: Date.now() + Math.random(), title: '', videos: [{ id: Date.now(), url: '' }], duration: '' });
-const mkModule = (): Module => ({ id: Date.now(), title: '', lessons: [mkLesson()], open: true });
+const COURSE_TYPES = ['Course (Video)', 'Live Class', 'Ebook'];
 
 // ─── Styled helpers ───────────────────────────────────────────────────────────
 const inp = 'w-full h-12 px-5 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm shadow-sm';
@@ -57,7 +54,6 @@ const InstructorEditCourse: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const [img, setImg] = useState<File | null>(null);
-  const [modules, setModules] = useState<Module[]>([mkModule()]);
   const [form, setForm] = useState({
     titleEn: '', titleBn: '', courseType: '', videoUrl: '',
     courseCode: '', category: '', duration: '',
@@ -88,12 +84,6 @@ const InstructorEditCourse: React.FC = () => {
   const { data: course, isLoading, isError, error } = useInstructorCourseDetailsQuery(id);
   const { data: categories, isLoading: isCatsLoading } = useCourseCategoriesQuery();
   const updateMutation = useUpdateCourseMutation(id);
-
-  const isModule   = form.courseType === 'Modulebook';
-  const isLiveClass = form.courseType === 'Live Class';
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<any>) => setForm(p => ({ ...p, [k]: e.target.value }));
-  const handleBack = () => navigate('/instructor/dashboard/courses');
-
   // ── Populate form once course data arrives ──────────────────────────────────
   useEffect(() => {
     if (!course) return;
@@ -112,46 +102,10 @@ const InstructorEditCourse: React.FC = () => {
       detailsEn:   course.course_details_english || '',
       detailsBn:   course.course_details_bangla  || '',
     });
-
-    if (course.modules?.length) {
-      setModules(course.modules.map((m, mi) => ({
-        id: m.id || (Date.now() + mi),
-        title: m.module_title || '',
-        open: true,
-        lessons: (m.lessons || []).map((l, li) => ({
-          id: l.id || (Date.now() + mi * 100 + li),
-          title: l.lesson_title || '',
-          duration: l.duration || '',
-          videos: (l.videos || []).length > 0 
-            ? l.videos.map((v, vi) => ({
-                id: v.id || (Date.now() + mi * 1000 + li * 100 + vi),
-                url: v.video_url || '',
-              }))
-            : [{ id: Date.now(), url: '' }],
-        })),
-      })));
-    }
   }, [course]);
 
-  // ── Module helpers ──────────────────────────────────────────────────────────
-  const addMod      = () => setModules(p => [...p, mkModule()]);
-  const delMod      = (mid: number) => setModules(p => p.filter(m => m.id !== mid));
-  const togMod      = (mid: number) => setModules(p => p.map(m => m.id === mid ? { ...m, open: !m.open } : m));
-  const setModTitle = (mid: number, v: string) => setModules(p => p.map(m => m.id === mid ? { ...m, title: v } : m));
-
-  // ── Lesson helpers ──────────────────────────────────────────────────────────
-  const addLesson   = (mId: number) => setModules(p => p.map(m => m.id === mId ? { ...m, lessons: [...m.lessons, mkLesson()] } : m));
-  const delLesson   = (mId: number, lId: number) => setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.filter(l => l.id !== lId) } : m));
-  const setLesField = (mId: number, lId: number, k: 'title' | 'duration', v: string) =>
-    setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.map(l => l.id === lId ? { ...l, [k]: v } : l) } : m));
-
-  // ── Video helpers ───────────────────────────────────────────────────────────
-  const addVideo  = (mId: number, lId: number) =>
-    setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.map(l => l.id === lId ? { ...l, videos: [...l.videos, { id: Date.now(), url: '' }] } : l) } : m));
-  const delVideo  = (mId: number, lId: number, vId: number) =>
-    setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.map(l => l.id === lId ? { ...l, videos: l.videos.filter(v => v.id !== vId) } : l) } : m));
-  const setVidUrl = (mId: number, lId: number, vId: number, url: string) =>
-    setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.map(l => l.id === lId ? { ...l, videos: l.videos.map(v => v.id === vId ? { ...v, url } : v) } : l) } : m));
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<any>) => setForm(p => ({ ...p, [k]: e.target.value }));
+  const handleBack = () => navigate('/instructor/dashboard/courses');
 
   // ── Submit ──────────────────────────────────────────────────────────────────
   const handleSave = () => {
@@ -173,24 +127,26 @@ const InstructorEditCourse: React.FC = () => {
     fd.append('earning_value',         form.earningValue);
     fd.append('course_details_english', form.detailsEn);
     fd.append('course_details_bangla',  form.detailsBn);
-    if (!isLiveClass) fd.append('video_url', form.videoUrl);
-
-    if (isModule) {
-      modules.forEach((mod, mi) => {
-        fd.append(`modules[${mi}][title]`, mod.title);
-        mod.lessons.forEach((les, li) => {
-          fd.append(`modules[${mi}][lessons][${li}][title]`, les.title);
-          les.videos.forEach((vid, vi) => {
-            fd.append(`modules[${mi}][lessons][${li}][videos][${vi}]`, vid.url);
-          });
-        });
-      });
-    }
+    
+    // Always send URL for these types
+    fd.append('video_url', form.videoUrl);
 
     updateMutation.mutate(fd, {
       onSuccess: () => { toast.success('Course updated successfully!'); handleBack(); },
       onError:   (err) => toast.error(err.message || 'Something went wrong'),
     });
+  };
+
+  // ── Helpers for dynamic URL field ──
+  const getUrlLabel = () => {
+    if (form.courseType === 'Live Class') return "Live Class URL";
+    if (form.courseType === 'Ebook') return "Ebook URL";
+    return "Course video URL";
+  };
+  const getUrlPlaceholder = () => {
+    if (form.courseType === 'Live Class') return "Enter Live Class URL";
+    if (form.courseType === 'Ebook') return "Enter Ebook URL";
+    return "Enter Course video URL";
   };
 
   // ── Loading / Error states ──────────────────────────────────────────────────
@@ -261,6 +217,17 @@ const InstructorEditCourse: React.FC = () => {
                 </div>
               </Field>
 
+              {form.courseType && (
+                <Field label={getUrlLabel()} req>
+                  <Input 
+                    className={inp} 
+                    placeholder={getUrlPlaceholder()} 
+                    value={form.videoUrl} 
+                    onChange={set('videoUrl')} 
+                  />
+                </Field>
+              )}
+
               <Field label="Category" req>
                 <div className="relative">
                   <select 
@@ -284,12 +251,6 @@ const InstructorEditCourse: React.FC = () => {
                 </div>
               </Field>
 
-              {!isLiveClass && (
-                <Field label="Video URL">
-                  <Input className={inp} placeholder="Enter Video URL" value={form.videoUrl} onChange={set('videoUrl')} />
-                </Field>
-              )}
-
               <Field label="Course Code">
                 <Input className={inp} placeholder="Enter Code" value={form.courseCode} onChange={set('courseCode')} />
               </Field>
@@ -299,19 +260,31 @@ const InstructorEditCourse: React.FC = () => {
               </Field>
 
               <Field label="Seller Price (Cost)">
-                <Input className={inp} type="number" placeholder="0" value={form.sellerFee} onChange={set('sellerFee')} />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9")} type="number" placeholder="৳0" value={form.sellerFee} onChange={set('sellerFee')} />
+                </div>
               </Field>
 
               <Field label="Offer Price (Selling)">
-                <Input className={`${inp} bg-gray-100 cursor-not-allowed`} type="number" placeholder="0" value={form.regularFee} readOnly />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9", "bg-gray-100 cursor-not-allowed")} type="number" placeholder="৳0" value={form.regularFee} readOnly />
+                </div>
               </Field>
 
               <Field label="Regular Price (MRP)">
-                <Input className={`${inp} bg-gray-100 cursor-not-allowed`} type="number" placeholder="0" value={form.offerFee} readOnly />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9", "bg-gray-100 cursor-not-allowed")} type="number" placeholder="৳0" value={form.offerFee} readOnly />
+                </div>
               </Field>
 
               <Field label="Earning Value">
-                <Input className={inp} type="number" placeholder="0" value={form.earningValue} onChange={set('earningValue')} />
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9")} type="number" placeholder="৳0" value={form.earningValue} onChange={set('earningValue')} />
+                </div>
               </Field>
             </div>
 

@@ -51,7 +51,7 @@ const RecentOrdersStack = ({ orders }: { orders: any[] }) => {
                         <p className="font-medium text-sm text-foreground">{order.order_no}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">{order.status}</p>
                     </div>
-                    <p className="font-semibold text-sm text-foreground">{formatBDT(order.total, { compact: true })}</p>
+                    <p className="font-semibold text-sm text-foreground">{formatBDT(order.total, { compact: true, showDecimals: false })}</p>
                 </div>
             ))}
             {orders.length > 0 && (
@@ -163,7 +163,7 @@ const InstructorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Students</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats.total_parcel.amount.toFixed(2)} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats.total_parcel.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -183,7 +183,7 @@ const InstructorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Students</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats.delivered.amount.toFixed(2)} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats.delivered.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -203,7 +203,7 @@ const InstructorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Students</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats.pending.amount.toFixed(2)} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats.pending.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -225,7 +225,7 @@ const InstructorHome: React.FC = () => {
                                 <p className="text-xs text-muted-foreground mt-1">Students</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-lg font-semibold text-primary">{currentStats.cancel.amount.toFixed(2)} BDT</span>
+                                <span className="text-lg font-semibold text-primary">{formatBDT(currentStats.cancel.amount, { compact: true, showDecimals: false })}</span>
                                 <p className="text-xs text-muted-foreground mt-1">Amount</p>
                             </div>
                         </div>
@@ -245,7 +245,7 @@ const InstructorHome: React.FC = () => {
                             <div className="flex justify-between items-start">
                                 <div>
                                     <p className="text-muted-foreground text-sm font-medium">Total Earnings</p>
-                                    <p className="text-3xl font-bold text-foreground mt-2">{formatBDT(total_revenue)}</p>
+                                    <p className="text-3xl font-bold text-foreground mt-2">{formatBDT(total_revenue, { compact: true, showDecimals: false })}</p>
                                     <p className="text-green-600 text-sm font-semibold mt-1 flex items-center gap-1">
                                         <TrendingUp className="w-4 h-4" />
                                         Verified Revenue

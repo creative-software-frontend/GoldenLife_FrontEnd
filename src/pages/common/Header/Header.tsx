@@ -17,7 +17,11 @@ import { getAuthToken } from '@/store/utils';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    placeholder?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ placeholder }) => {
     const { isLoginModalOpen, openLoginModal, closeLoginModal, walletUpdateTrigger } = useModalStore();
 
     const navigate = useNavigate();
@@ -268,7 +272,7 @@ const Header: React.FC = () => {
                     <div className="relative w-full group">
                         <input
                             type="text"
-                            placeholder={t('header.search') || "Search for amazing products..."}
+                            placeholder={placeholder || t('header.search') || "Search for amazing products..."}
                             className="w-full pl-5 pr-28 py-3 bg-gray-50 border-2 border-transparent hover:border-gray-200 rounded-2xl focus:outline-none focus:bg-white focus:border-primary-default focus:ring-4 focus:ring-primary-default/10 text-base font-medium transition-all shadow-inner"
                             value={searchText}
                             onChange={(e) => {
@@ -516,7 +520,7 @@ const Header: React.FC = () => {
                     <div className="relative w-full">
                         <input
                             type="text"
-                            placeholder={t('header.search')}
+                            placeholder={placeholder || t('header.search')}
                             className="w-full pl-5 pr-12 py-3 bg-gray-50 border-2 border-transparent rounded-2xl text-sm font-medium shadow-inner focus:outline-none focus:bg-white focus:border-primary-default transition-all"
                             value={searchText}
                             onChange={(e) => { setSearchText(e.target.value); setShowSuggestions(true); }}

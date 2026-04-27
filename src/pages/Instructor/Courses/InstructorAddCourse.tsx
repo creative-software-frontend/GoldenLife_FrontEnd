@@ -18,11 +18,7 @@ interface VideoItem { id: number; url: string; label: string; }
 interface Lesson { id: number; title: string; videos: VideoItem[]; duration: string; }
 interface Module { id: number; title: string; lessons: Lesson[]; open: boolean; }
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-const COURSE_TYPES = ['Modulebook', 'Product', 'Live Class', 'Ebook'];
-
-const mkLesson = (): Lesson => ({ id: Date.now() + Math.random(), title: '', videos: [{ id: Date.now(), url: '', label: 'Video 1' }], duration: '' });
-const mkModule = (): Module => ({ id: Date.now(), title: '', lessons: [mkLesson()], open: true });
+const COURSE_TYPES = ['Course (Video)', 'Live Class', 'Ebook'];
 
 // ─── Styled helpers ───────────────────────────────────────────────────────────
 const inp = 'w-full h-12 px-5 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm shadow-sm';
@@ -55,7 +51,6 @@ const SectionHead = ({ children, action }: { children: React.ReactNode; action?:
 const InstructorAddCourse: React.FC = () => {
   const navigate = useNavigate();
   const [img, setImg] = useState<File | null>(null);
-  const [modules, setModules] = useState<Module[]>([mkModule()]);
   const createMutation = useCreateCourseMutation();
   const { data: categories, isLoading: isCatsLoading } = useCourseCategoriesQuery();
   const [form, setForm] = useState({
@@ -100,42 +95,10 @@ const InstructorAddCourse: React.FC = () => {
     }
   }, [form.sellerFee]);
 
-  const isModule = form.courseType === 'Modulebook';
-  const isLiveClass = form.courseType === 'Live Class';
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<any>) => setForm(p => ({ ...p, [k]: e.target.value }));
 
   /* Go back handler */
   const handleBack = () => navigate('/instructor/dashboard/courses');
-
-  /* Module helpers */
-  const addMod = () => setModules(p => [...p, mkModule()]);
-  const delMod = (id: number) => setModules(p => p.filter(m => m.id !== id));
-  const togMod = (id: number) => setModules(p => p.map(m => m.id === id ? { ...m, open: !m.open } : m));
-  const setModTitle = (id: number, v: string) => setModules(p => p.map(m => m.id === id ? { ...m, title: v } : m));
-
-  /* Lesson helpers */
-  const addLesson = (mId: number) => setModules(p => p.map(m => m.id === mId ? { ...m, lessons: [...m.lessons, mkLesson()] } : m));
-  const delLesson = (mId: number, lId: number) => setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.filter(l => l.id !== lId) } : m));
-  const setLesField = (mId: number, lId: number, k: keyof Pick<Lesson, 'title' | 'duration'>, v: string) =>
-    setModules(p => p.map(m => m.id === mId ? { ...m, lessons: m.lessons.map(l => l.id === lId ? { ...l, [k]: v } : l) } : m));
-
-  /* Video helpers */
-  const addVideo = (mId: number, lId: number) =>
-    setModules(p => p.map(m => m.id === mId ? {
-      ...m, lessons: m.lessons.map(l => l.id === lId ? {
-        ...l, videos: [...l.videos, { id: Date.now(), url: '', label: `Video ${l.videos.length + 1}` }]
-      } : l)
-    } : m));
-  const delVideo = (mId: number, lId: number, vId: number) =>
-    setModules(p => p.map(m => m.id === mId ? {
-      ...m, lessons: m.lessons.map(l => l.id === lId ? { ...l, videos: l.videos.filter(v => v.id !== vId) } : l)
-    } : m));
-  const setVideoUrl = (mId: number, lId: number, vId: number, url: string) =>
-    setModules(p => p.map(m => m.id === mId ? {
-      ...m, lessons: m.lessons.map(l => l.id === lId ? {
-        ...l, videos: l.videos.map(v => v.id === vId ? { ...v, url } : v)
-      } : l)
-    } : m));
 
   const handleSave = () => {
     if (!form.titleEn || !form.courseType || !form.category) { toast.error('Fill required fields.'); return; }
@@ -153,22 +116,26 @@ const InstructorAddCourse: React.FC = () => {
     fd.append('earning_value', form.earningValue);
     fd.append('course_details_english', form.detailsEn);
     fd.append('course_details_bangla', form.detailsBn);
-    if (!isLiveClass) fd.append('video_url', form.downloadUrl);
-    if (isModule) {
-      modules.forEach((mod, mIdx) => {
-        fd.append(`modules[${mIdx}][title]`, mod.title);
-        mod.lessons.forEach((les, lIdx) => {
-          fd.append(`modules[${mIdx}][lessons][${lIdx}][title]`, les.title);
-          les.videos.forEach((vid, vIdx) => {
-            fd.append(`modules[${mIdx}][lessons][${lIdx}][videos][${vIdx}]`, vid.url);
-          });
-        });
-      });
-    }
+    
+    // Always send URL field for these types
+    fd.append('video_url', form.downloadUrl);
+
     createMutation.mutate(fd, {
       onSuccess: () => { toast.success('Course created successfully!'); handleBack(); },
       onError: (err) => toast.error(err.message || 'Something went wrong'),
     });
+  };
+
+  // ── Helpers for dynamic URL field ──
+  const getUrlLabel = () => {
+    if (form.courseType === 'Live Class') return "Live Class URL";
+    if (form.courseType === 'Ebook') return "Ebook URL";
+    return "Course video URL";
+  };
+  const getUrlPlaceholder = () => {
+    if (form.courseType === 'Live Class') return "Enter Live Class URL";
+    if (form.courseType === 'Ebook') return "Enter Ebook URL";
+    return "Enter Course video URL";
   };
 
   return (
@@ -206,9 +173,7 @@ const InstructorAddCourse: React.FC = () => {
 
             {/* ── Section: Fields ── */}
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-              <Field label="Instructor Name">
-                <Input className={inp} placeholder="Enter Instructor Name" value={form.instructorName} onChange={set('instructorName')} />
-              </Field>
+
               <Field label="Course Title (English)"><Input className={inp} placeholder="Enter English Title" value={form.titleEn} onChange={set('titleEn')} /></Field>
 
               <Field label="Course Title (Bangla)"><Input className={inp} placeholder="বাংলায় টাইটেল দিন" value={form.titleBn} onChange={set('titleBn')} /></Field>
@@ -222,16 +187,23 @@ const InstructorAddCourse: React.FC = () => {
                 </div>
               </Field>
 
-              {!isLiveClass && (
-                <Field label="Video URL"><Input className={inp} placeholder="Enter Video URL" value={form.downloadUrl} onChange={set('downloadUrl')} /></Field>
+              {form.courseType && (
+                <Field label={getUrlLabel()}>
+                  <Input 
+                    className={inp} 
+                    placeholder={getUrlPlaceholder()} 
+                    value={form.downloadUrl} 
+                    onChange={set('downloadUrl')} 
+                  />
+                </Field>
               )}
               <Field label="Course Code"><Input className={inp} placeholder="Enter Code" value={form.courseCode} onChange={set('courseCode')} /></Field>
 
               <Field label="Category">
                 <div className="relative group">
-                  <select 
-                    className={cn(sel, isCatsLoading && "opacity-50 cursor-wait")} 
-                    value={form.category} 
+                  <select
+                    className={cn(sel, isCatsLoading && "opacity-50 cursor-wait")}
+                    value={form.category}
                     onChange={set('category')}
                     disabled={isCatsLoading}
                   >
@@ -251,11 +223,33 @@ const InstructorAddCourse: React.FC = () => {
               </Field>
               <Field label="Course Duration"><Input className={inp} placeholder="Enter Duration" value={form.duration} onChange={set('duration')} /></Field>
 
-              <Field label="Seller Price (Cost)"><Input className={inp} type="number" placeholder="0" value={form.sellerFee} onChange={set('sellerFee')} /></Field>
-              <Field label="Offer Price (Selling)"><Input className={`${inp} bg-gray-100 cursor-not-allowed`} type="number" placeholder="0" value={form.regularFee} readOnly /></Field>
+              <Field label="Seller Price (Cost)">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9")} type="number" placeholder="৳0" value={form.sellerFee} onChange={set('sellerFee')} />
+                </div>
+              </Field>
 
-              <Field label="Regular Price (MRP)"><Input className={`${inp} bg-gray-100 cursor-not-allowed`} type="number" placeholder="0" value={form.offerFee} readOnly /></Field>
-              <Field label="Earning Value"><Input className={inp} type="number" placeholder="0" value={form.earningValue} onChange={set('earningValue')} /></Field>
+              <Field label="Offer Price (Selling)">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9", "bg-gray-100 cursor-not-allowed")} type="number" placeholder="৳0" value={form.regularFee} readOnly />
+                </div>
+              </Field>
+
+              <Field label="Regular Price (MRP)">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9", "bg-gray-100 cursor-not-allowed")} type="number" placeholder="৳0" value={form.offerFee} readOnly />
+                </div>
+              </Field>
+
+              <Field label="Earning Value">
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
+                  <Input className={cn(inp, "pl-9")} type="number" placeholder="৳0" value={form.earningValue} onChange={set('earningValue')} />
+                </div>
+              </Field>
             </div>
 
             {/* ── Section: Media & Details ── */}
@@ -290,181 +284,6 @@ const InstructorAddCourse: React.FC = () => {
                 </Field>
               </div>
             </div>
-
-            {/* ── Section: Curriculum (only for Module type) ── */}
-            <AnimatePresence>
-              {isModule && (
-                <motion.section
-                  key="curriculum"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ type: 'spring', damping: 20 }}
-                >
-                  <SectionHead
-                    action={
-                      <Button
-                        onClick={addMod}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        className="h-10 rounded-xl text-xs font-bold gap-2 bg-black text-white hover:bg-orange-600 transition-all shadow-lg shadow-black/10"
-                      >
-                        <Plus size={16} strokeWidth={3} /> Add Module
-                      </Button>
-                    }
-                  >
-                    Course Curriculum (Modules & Lessons)
-                  </SectionHead>
-
-                  <LayoutGroup>
-                    <div className="space-y-8">
-                      {modules.map((mod, mIdx) => (
-                        <motion.div
-                          layout
-                          key={mod.id}
-                          initial={{ opacity: 0, y: 30 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, x: -50 }}
-                          className="rounded-[2.5rem] border border-gray-100 overflow-hidden bg-white shadow-2xl shadow-gray-200/40"
-                        >
-                          {/* Module header */}
-                          <div className="flex items-center gap-5 px-8 py-6 bg-gray-50/50 border-b border-gray-100">
-                            <GripVertical size={20} className="text-gray-300 shrink-0" />
-                            <Badge className="bg-black text-white border-none text-[11px] font-bold px-4 py-2 shrink-0 rounded-2xl tracking-tighter italic">
-                              LVL-{String(mIdx + 1).padStart(2, '0')}
-                            </Badge>
-                            <input
-                              className="flex-1 bg-transparent text-black font-bold text-lg placeholder-black/40 outline-none"
-                              placeholder={`Module Title`}
-                              value={mod.title}
-                              onChange={e => setModTitle(mod.id, e.target.value)}
-                            />
-                            <div className="flex items-center gap-3">
-                              <motion.button
-                                whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                                onClick={() => togMod(mod.id)}
-                                className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-black transition-all"
-                              >
-                                {mod.open ? <ChevronUp size={20} strokeWidth={3} /> : <ChevronDown size={20} strokeWidth={3} />}
-                              </motion.button>
-                              <motion.button
-                                whileHover={{ scale: 1.1, backgroundColor: '#fef2f2', color: '#ef4444' }} whileTap={{ scale: 0.9 }}
-                                onClick={() => delMod(mod.id)}
-                                className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-gray-400 transition-all"
-                              >
-                                <Trash2 size={18} strokeWidth={3} />
-                              </motion.button>
-                            </div>
-                          </div>
-
-                          {/* Lessons */}
-                          <AnimatePresence>
-                            {mod.open && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: 'auto', opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="overflow-hidden"
-                              >
-                                <div className="p-10 space-y-6">
-                                  {mod.lessons.map((les, lIdx) => (
-                                    <motion.div
-                                      layout
-                                      key={les.id}
-                                      initial={{ opacity: 0, x: -20 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      className="rounded-[2rem] border border-gray-100 p-8 space-y-6 bg-gray-50/20 hover:border-black/10 transition-colors group/les"
-                                    >
-                                      {/* Lesson title row */}
-                                      <div className="flex items-center gap-5">
-                                        <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-lg shadow-black/20">
-                                          {lIdx + 1}
-                                        </div>
-                                        <input
-                                          className="flex-1 bg-transparent text-black font-bold text-base placeholder-black/40 outline-none border-b-2 border-gray-100 pb-2 focus:border-black transition-colors"
-                                          placeholder={`Lesson Title`}
-                                          value={les.title}
-                                          onChange={e => setLesField(mod.id, les.id, 'title', e.target.value)}
-                                        />
-                                        <div className="relative">
-                                          <Clock size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-black/60 group-focus-within/les:text-black transition-colors" strokeWidth={3} />
-                                          <input
-                                            className="w-44 bg-transparent text-black font-bold text-[11px] uppercase tracking-widest placeholder-black/40 outline-none border-b-2 border-gray-100 pb-2 pl-6 text-right focus:border-black transition-colors"
-                                            placeholder="Duration"
-                                            value={les.duration}
-                                            onChange={e => setLesField(mod.id, les.id, 'duration', e.target.value)}
-                                          />
-                                        </div>
-                                        <motion.button
-                                          whileHover={{ scale: 1.1, color: '#ef4444' }}
-                                          onClick={() => delLesson(mod.id, les.id)}
-                                          className="w-10 h-10 rounded-xl hover:bg-red-50 text-gray-300 transition-all shrink-0 flex items-center justify-center"
-                                        >
-                                          <Trash2 size={16} strokeWidth={3} />
-                                        </motion.button>
-                                      </div>
-
-                                      {/* Videos */}
-                                      <div className="space-y-4 pl-14">
-                                        {les.videos.map((vid, vIdx) => (
-                                          <motion.div
-                                            layout
-                                            key={vid.id}
-                                            className="flex items-center gap-4"
-                                          >
-                                            <div className="flex items-center gap-3 w-28 shrink-0">
-                                              <div className="w-2 h-2 rounded-full bg-black group-focus-within:bg-emerald-500 transition-colors" />
-                                              <span className="text-[10px] font-bold text-black/30 uppercase tracking-[0.2em]">Video {vIdx + 1}</span>
-                                            </div>
-                                            <div className="flex-1 relative group/vid">
-                                              <Link2 size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60 group-focus-within/vid:text-black transition-colors" strokeWidth={3} />
-                                              <input
-                                                className="w-full h-12 pl-12 pr-5 rounded-2xl border border-gray-100 bg-white text-black font-bold text-xs placeholder-black/40 outline-none focus:border-black focus:ring-4 focus:ring-black/5 transition-all shadow-sm"
-                                                placeholder="Video URL"
-                                                value={vid.url}
-                                                onChange={e => setVideoUrl(mod.id, les.id, vid.id, e.target.value)}
-                                              />
-                                            </div>
-                                            {les.videos.length > 1 && (
-                                              <motion.button
-                                                whileHover={{ scale: 1.2, color: '#ef4444' }}
-                                                onClick={() => delVideo(mod.id, les.id, vid.id)}
-                                                className="w-10 h-10 rounded-xl text-gray-200 transition-all shrink-0 flex items-center justify-center"
-                                              >
-                                                <X size={16} strokeWidth={4} />
-                                              </motion.button>
-                                            )}
-                                          </motion.div>
-                                        ))}
-                                        <motion.button
-                                          whileHover={{ x: 5, color: '#10b981' }}
-                                          onClick={() => addVideo(mod.id, les.id)}
-                                          className="flex items-center gap-2 text-[11px] font-bold text-black/60 hover:text-black uppercase tracking-widest mt-4 transition-all"
-                                        >
-                                          <Plus size={14} strokeWidth={4} /> Add Video
-                                        </motion.button>
-                                      </div>
-                                    </motion.div>
-                                  ))}
-
-                                  <motion.button
-                                    whileHover={{ scale: 1.01, backgroundColor: '#fafafa' }} whileTap={{ scale: 0.99 }}
-                                    onClick={() => addLesson(mod.id)}
-                                    className="w-full py-6 rounded-[2rem] border-4 border-dashed border-gray-100 text-black/60 hover:text-black hover:border-black/20 text-[12px] font-bold tracking-[0.3em] uppercase transition-all flex items-center justify-center gap-4"
-                                  >
-                                    <Plus size={20} strokeWidth={4} /> Add Lesson
-                                  </motion.button>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </LayoutGroup>
-                </motion.section>
-              )}
-            </AnimatePresence>
 
           </motion.div>
 

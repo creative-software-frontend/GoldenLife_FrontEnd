@@ -53,8 +53,8 @@ const CourseCarousel: React.FC<{
                     <h3 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">
                         {title === "Popular course" ? "Courses" : title}
                     </h3>
-                    <Button 
-                        variant="ghost" 
+                    <Button
+                        variant="ghost"
                         className="text-emerald-600 font-bold hover:bg-emerald-50 gap-2 px-6 rounded-full border border-emerald-100"
                         asChild
                     >

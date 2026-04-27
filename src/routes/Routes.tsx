@@ -33,6 +33,7 @@ import DriveLayout from "@/layout/DriveLayout/DriveLayout";
 import LandingLayout from "@/layout/LandingLayout/LandingLayout";
 
 import AllCourses2 from "@/pages/Home/AllCourses2/AllCourses2";
+import CategoryCourse from "@/pages/common/CategoryCourse/CategoryCourse";
 import AddMoney from "@/pages/Dashboard/AddMoney/AddMoney";
 import History from "@/pages/Dashboard/History/History";
 import SendMoney from "@/pages/Dashboard/SendMoney/SendMoney";
@@ -556,6 +557,11 @@ export const routes = createBrowserRouter([
             {
                 path: 'ssc',
                 element: < Ssc />
+            },
+
+            {
+                path: 'category/:id',
+                element: <CategoryCourse />
             },
 
 
