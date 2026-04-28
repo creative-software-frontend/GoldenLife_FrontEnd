@@ -799,7 +799,12 @@
       "vendor_listProduct": "How do I list a product?",
       "vendor_paymentMethods": "What are the payment methods?",
       "vendor_trackOrder": "How do I track an order?",
-      "vendor_withdrawTime": "How long does a withdrawal take?"
+      "vendor_withdrawTime": "How long does a withdrawal take?",
+      "instructor_createCourse": "How do I create a new course?",
+      "instructor_viewStudents": "How do I view my enrolled students?",
+      "instructor_viewEarnings": "How can I see my earnings?",
+      "instructor_updateCourse": "How do I update course content?",
+      "instructor_requestWithdrawal": "How do I request a withdrawal?"
     }
   }
 }

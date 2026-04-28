@@ -120,6 +120,8 @@ import AISupportPage from "@/pages/Help/AISupportPage";
 
 
 
+import InstructorInfo from "@/pages/Home/InstructorInfo/InstructorInfo";
+
 export const routes = createBrowserRouter([
     // PUBLIC ROUTES (No Layout - Full Screen Pages)
     {
@@ -244,6 +246,10 @@ export const routes = createBrowserRouter([
                     {
                         path: 'vendor-info/:id',
                         element: <VendorInfo />,
+                    },
+                    {
+                        path: 'instructor-info/:id',
+                        element: <InstructorInfo />,
                     },
                     {
                         path: "category/:id",
@@ -528,6 +534,52 @@ export const routes = createBrowserRouter([
                                     { path: 'add', element: <InstructorAddMoney /> },
                                     { path: 'withdraw', element: <InstructorWithdrawMoney /> },
                                     { path: 'transactions', element: <InstructorTransactionsMoney /> }
+                                ]
+                            },
+                            {
+                                path: 'help',
+                                element: <HelpLayout />,
+                                children: [
+                                    {
+                                        index: true,
+                                        element: <HelpLanding />
+                                    },
+                                    {
+                                        path: 'faq',
+                                        element: <FAQPage />
+                                    },
+                                    {
+                                        path: 'ticket',
+                                        element: <SupportTicketPage />
+                                    },
+                                    {
+                                        path: 'hotline',
+                                        element: <HotlinePage />
+                                    },
+                                    {
+                                        path: 'ai',
+                                        element: <AISupportPage />
+                                    },
+                                    {
+                                        path: 'contact',
+                                        element: <Contact />,
+                                    },
+                                    {
+                                        path: 'our-story',
+                                        element: <Story />,
+                                    },
+                                    {
+                                        path: 'career',
+                                        element: <Career />,
+                                    },
+                                    {
+                                        path: 'privacy-policy',
+                                        element: <PrivacyPolicy />,
+                                    },
+                                    {
+                                        path: 'terms',
+                                        element: <TermsOfUse />,
+                                    }
                                 ]
                             }
                         ]

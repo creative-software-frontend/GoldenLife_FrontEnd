@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { Loader2, Timer, ChevronRight, SearchX } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 import { ProductCard } from '../ProductCard/ProductCard';
@@ -10,8 +11,10 @@ import { VendorMismatchModal } from '@/components/shared/VendorMismatchModal';
 const CategoryPage = () => {
     const { id } = useParams();
     const { t, i18n } = useTranslation('global');
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { cartItems, addItem, clearCart } = useCartStore();
+    const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
+    const [pendingProduct, setPendingProduct] = useState<any>(null);
+
     const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 30, seconds: 0 });
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
 
@@ -28,65 +31,69 @@ const CategoryPage = () => {
         return () => clearInterval(timer);
     }, []);
 
-    // 2. FETCH DATA WITH NORMALIZATION
-    useEffect(() => {
-        const fetchCategoryProducts = async () => {
-            setLoading(true);
-            try {
-                const session = sessionStorage.getItem("student_session");
-                const token = session ? JSON.parse(session).token : null;
-
-                const config = {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token && { Authorization: `Bearer ${token}` })
-                    }
-                };
-
-                const response = await axios.get(`${baseURL}/api/student/products/category?id=${id}`, config);
-
-                if (response.data?.success || response.data?.status === "success") {
-                    const rawData = response.data.data || [];
-
-                    // --- CENTRALIZED URL & PRICE CLEANUP ---
-                    const mappedData = rawData.map((item: any) => {
-                        let imgUrl = item.product_image || item.image;
-
-                        if (!imgUrl) {
-                            imgUrl = "/placeholder.svg";
-                        } else if (!imgUrl.startsWith("http")) {
-                            if (!imgUrl.includes("/")) {
-                                imgUrl = `${baseURL}/uploads/ecommarce/product_image/${imgUrl}`;
-                            } else {
-                                imgUrl = `${baseURL}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
-                            }
-                        }
-
-                        return {
-                            ...item,
-                            product_title_english: item.product_title_english || item.name_en || "Product",
-                            product_title_bangla: item.product_title_bangla || item.name_bn || "",
-                            offer_price: item.offer_price || item.price || item.seller_price || 0,
-                            regular_price: item.regular_price || item.mrp || 0,
-                            product_image: imgUrl // Absolute URL mapped correctly for ProductCard
-                        };
-                    });
-
-                    setProducts(mappedData);
-                }
-            } catch (error) {
-                console.error("Error fetching category products:", error);
-            } finally {
-                setLoading(false);
+    const getAuthConfig = () => {
+        const session = sessionStorage.getItem("student_session");
+        const token = session ? JSON.parse(session).token : null;
+        return {
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { Authorization: `Bearer ${token}` })
             }
         };
+    };
 
-        if (id) fetchCategoryProducts();
-    }, [id, baseURL]);
+    // 2. FETCH DATA WITH TANSTACK QUERY
+    const { data: products = [], isLoading: productsLoading } = useQuery({
+        queryKey: ['categoryProducts', id],
+        queryFn: async () => {
+            const response = await axios.get(`${baseURL}/api/student/products/category?id=${id}`, getAuthConfig());
+            if (response.data?.success || response.data?.status === "success") {
+                const rawData = response.data.data || [];
+                return rawData.map((item: any) => {
+                    let imgUrl = item.product_image || item.image;
+                    if (!imgUrl) {
+                        imgUrl = "/placeholder.svg";
+                    } else if (!imgUrl.startsWith("http")) {
+                        if (!imgUrl.includes("/")) {
+                            imgUrl = `${baseURL}/uploads/ecommarce/product_image/${imgUrl}`;
+                        } else {
+                            imgUrl = `${baseURL}${imgUrl.startsWith("/") ? "" : "/"}${imgUrl}`;
+                        }
+                    }
+                    return {
+                        ...item,
+                        product_title_english: item.product_title_english || item.name_en || "Product",
+                        product_title_bangla: item.product_title_bangla || item.name_bn || "",
+                        offer_price: item.offer_price || item.price || item.seller_price || 0,
+                        regular_price: item.regular_price || item.mrp || 0,
+                        product_image: imgUrl
+                    };
+                });
+            }
+            return [];
+        },
+        enabled: !!id
+    });
 
-    const { cartItems, addItem, clearCart } = useCartStore();
-    const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
-    const [pendingProduct, setPendingProduct] = useState<any>(null);
+    const { data: categoryInfo, isLoading: categoryLoading } = useQuery({
+        queryKey: ['categoryName', id],
+        queryFn: async () => {
+            const res = await axios.get(`${baseURL}/api/getProductCategory`, getAuthConfig());
+            const categories = res.data?.data?.categories || [];
+            const currentCategory = categories.find((cat: any) => String(cat.id) === String(id));
+            if (currentCategory) {
+                return {
+                    en: currentCategory.category_name || "",
+                    bn: currentCategory.category_name_bangla || currentCategory.category_name || ""
+                };
+            }
+            return { en: "", bn: "" };
+        },
+        enabled: !!id
+    });
+
+    const loading = productsLoading || categoryLoading;
+    const categoryName = categoryInfo || { en: "", bn: "" };
 
     // 3. CART LOGIC
     const handleAddToCart = (product: any) => {
@@ -188,6 +195,14 @@ const CategoryPage = () => {
                 </div>
 
                 <div className="p-6 md:p-8">
+                    <h2 className="text-2xl md:text-3xl font-extrabold text-[#0c2a4c] mb-8 uppercase tracking-tight">
+                        {i18n.language === 'bn' 
+                            ? (categoryName.bn || "ক্যাটাগরি পণ্য")
+                            : (categoryName.en || "Category Products")
+                        } 
+                        <span className="ml-2 text-[#5ca367]">({products.length})</span>
+                    </h2>
+
                     {products.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4  gap-6">
                             {products.map((product) => (

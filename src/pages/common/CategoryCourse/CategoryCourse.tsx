@@ -3,12 +3,12 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { ArrowUpRight, Star, User, Clock, ShoppingCart, Eye } from "lucide-react";
+import { Timer, ChevronRight, ArrowUpRight, Star, User, Clock, ShoppingCart, Eye } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import StudentCourseDetails from "../../Home/StudentCourseDetails/StudentCourseDetails";
 import { Button } from "@/components/ui/button";
-import { Timer, ChevronRight } from "lucide-react";
+import { useInstructorQuery } from "@/hooks/useInstructor";
 
 interface CategoryWiseCourse {
     id: number;
@@ -18,7 +18,28 @@ interface CategoryWiseCourse {
     offer_fee: string;
     course_type: string;
     course_duration: string;
+    instructor_name?: string;
+    instructor_id?: string | number;
+    instructor?: {
+        id: number | string;
+        name: string;
+    };
 }
+
+const InstructorName: React.FC<{ instructorId: string | number, fallbackName?: string }> = ({ instructorId, fallbackName }) => {
+    const { data: instructor, isLoading } = useInstructorQuery(instructorId);
+
+    if (isLoading) return <span className="animate-pulse bg-slate-100 h-3 w-20 rounded inline-block" />;
+    
+    return (
+        <Link 
+            to={`/dashboard/instructor-info/${instructorId}`}
+            className="text-[11px] font-bold text-[#3470a2] hover:text-[#0fa958] transition-colors"
+        >
+            {instructor?.name || fallbackName || 'Golden Life Instructor'}
+        </Link>
+    );
+};
 
 export default function CategoryCourse() {
     const { id } = useParams<{ id: string }>();
@@ -92,7 +113,7 @@ export default function CategoryCourse() {
                 </div>
 
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#0c2a4c] mb-8">
-                    {result?.message || "Category Courses"} ({result?.course_count || 0})
+                    {result?.data?.[0]?.category?.category_name || "Category Courses"} ({result?.course_count || 0})
                 </h2>
                 {courses.length === 0 ? (
                     <p className="text-slate-500 bg-white p-8 rounded-2xl text-center shadow-sm">No courses found for this category.</p>
@@ -139,9 +160,10 @@ export default function CategoryCourse() {
                                     {/* Instructor */}
                                     <div className="flex items-center gap-1.5 mb-3">
                                         <User className="w-3.5 h-3.5 text-slate-400" />
-                                        <span className="text-[11px] font-medium text-[#3470a2]">
-                                            Golden Life Instructor
-                                        </span>
+                                        <InstructorName 
+                                            instructorId={course.instructor_id || (course.instructor as any)?.id} 
+                                            fallbackName={course.instructor_name}
+                                        />
                                     </div>
 
                                     {/* Divider */}

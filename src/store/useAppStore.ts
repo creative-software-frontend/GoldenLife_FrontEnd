@@ -11,6 +11,7 @@ import { createChatbotSlice, ChatbotSlice } from './slices/chatbotSlice';
 
 // 1. Define the master AppState that combines all slices
 export type AppState = CategorySlice & ProfileSlice & WalletSlice & NotificationSlice & NavbarSlice & OrderSlice & ProductSlice & VendorDashboardSlice & ChatbotSlice & {
+    instructor_session: { token: string; user: any; expiry: number } | null;
     isCategoryLoading: boolean;
     isProfileLoading: boolean;
     isWalletLoading: boolean;
@@ -37,6 +38,15 @@ export const useAppStore = create<AppState>()((set, get, api) => ({
     isWalletFetched: false,
     isNotificationFetched: false,
     isDashboardFetched: false,
+
+    instructor_session: (() => {
+        try {
+            const raw = sessionStorage.getItem('instructor_session');
+            return raw ? JSON.parse(raw) : null;
+        } catch {
+            return null;
+        }
+    })(),
 
     // Inject all the specific slices
     ...createCategorySlice(set, get, api),

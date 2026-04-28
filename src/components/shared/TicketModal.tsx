@@ -34,7 +34,7 @@ const TicketModal = () => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [activeMobileTab, setActiveMobileTab] = useState('details'); // 'details' or 'chat'
 
-    const currentUserId = useAppStore(state => state.studentProfile?.id || state.vendorProfile?.user?.id || 0);
+    const currentUserId = useAppStore(state => state.studentProfile?.id || state.vendorProfile?.user?.id || state.instructor_session?.user?.id || 0);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

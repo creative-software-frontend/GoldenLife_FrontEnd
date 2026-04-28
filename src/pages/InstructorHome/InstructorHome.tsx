@@ -15,7 +15,8 @@ import {
     HelpCircle,
     Ticket as TicketIcon,
     RefreshCw,
-    Loader2
+    Loader2,
+    Bot
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { formatBDT } from '@/utils/currencyFormatter';
@@ -323,7 +324,7 @@ const InstructorHome: React.FC = () => {
                                 variant="outline"
                             />
                             <QuickActionButton
-                                icon={Headphones}
+                                icon={Bot}
                                 label="Support AI"
                                 onClick={() => setIsAIChatOpen(true)}
                                 variant="outline"

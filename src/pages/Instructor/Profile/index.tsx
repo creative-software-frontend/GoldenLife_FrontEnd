@@ -5,11 +5,13 @@ import { InstructorInfo } from './components/InstructorInfo';
 import { InstructorForm } from './components/InstructorForm';
 import { InstructorStatsCard } from './components/InstructorStatsCard';
 import { toast } from 'react-toastify';
-import { Loader2, AlertCircle, ShieldCheck, Settings, LogOut, Key, Plus, FileText, Headphones, Phone, HelpCircle, Ticket, GraduationCap } from 'lucide-react';
+import { Loader2, AlertCircle, ShieldCheck, Settings, LogOut, Key, Plus, FileText, Headphones, Phone, HelpCircle, Ticket, GraduationCap, Bot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import useModalStore from '@/store/modalStore';
 
 export default function InstructorProfile() {
   const navigate = useNavigate();
+  const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
   const { data, isLoading, error, updateProfile, deleteField } = useInstructorProfile();
   const [isEditMode, setIsEditMode] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -190,24 +192,24 @@ export default function InstructorProfile() {
                     onClick={() => toast.info('Report feature coming soon!')}
                   />
                   <QuickActionButton
-                    icon={Headphones}
+                    icon={Bot}
                     label="Support AI"
-                    onClick={() => toast.info('AI Support coming soon!')}
+                    onClick={() => setIsAIChatOpen(true)}
                   />
                   <QuickActionButton
                     icon={Phone}
                     label="Hotline"
-                    onClick={() => toast.info('Hotline coming soon!')}
+                    onClick={() => setIsHotlineModalOpen(true)}
                   />
                   <QuickActionButton
                     icon={HelpCircle}
                     label="FAQ"
-                    onClick={() => toast.info('FAQ feature coming soon!')}
+                    onClick={() => setIsFAQModalOpen(true)}
                   />
                   <QuickActionButton
                     icon={Ticket}
                     label="Ticket"
-                    onClick={() => toast.info('Ticket system coming soon!')}
+                    onClick={() => setIsTicketModalOpen(true)}
                   />
                 </div>
               </div>

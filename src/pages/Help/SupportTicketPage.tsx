@@ -104,12 +104,12 @@ const SupportTicketPage: React.FC = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 min-h-screen flex flex-col gap-6">
-            
+
             {/* Header + Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     {(viewMode !== 'list' || selectedTicket) && (
-                        <button 
+                        <button
                             onClick={handleBack}
                             className="p-3 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 shadow-sm transition-all"
                         >
@@ -122,8 +122,8 @@ const SupportTicketPage: React.FC = () => {
                         </div>
                         <div>
                             <h1 className="text-2xl md:text-3xl font-bold text-slate-900 leading-tight">
-                                {viewMode === 'list' ? 'Support Tickets' : 
-                                 viewMode === 'create' ? 'New Ticket' : 'Ticket Discussion'}
+                                {viewMode === 'list' ? 'Support Tickets' :
+                                    viewMode === 'create' ? 'New Ticket' : 'Ticket Discussion'}
                             </h1>
                             {viewMode === 'chat' && selectedTicket && (
                                 <p className="text-slate-400 text-sm font-medium">#{selectedTicket.id} - {selectedTicket.subject}</p>
@@ -148,7 +148,7 @@ const SupportTicketPage: React.FC = () => {
                 <AnimatePresence mode="wait">
                     {/* --- LIST VIEW --- */}
                     {viewMode === 'list' && (
-                        <motion.div 
+                        <motion.div
                             key="list"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -175,7 +175,7 @@ const SupportTicketPage: React.FC = () => {
                                                 </tr>
                                             ))
                                         ) : tickets?.map((ticket) => (
-                                            <tr 
+                                            <tr
                                                 key={ticket.id}
                                                 onClick={() => { setSelectedTicket(ticket); setViewMode('chat'); }}
                                                 className="hover:bg-slate-50/50 cursor-pointer transition-colors group"
@@ -220,7 +220,7 @@ const SupportTicketPage: React.FC = () => {
                                         <div key={i} className="bg-white p-6 rounded-3xl h-40 animate-pulse border border-slate-100 shadow-sm" />
                                     ))
                                 ) : tickets?.map((ticket) => (
-                                    <div 
+                                    <div
                                         key={ticket.id}
                                         onClick={() => { setSelectedTicket(ticket); setViewMode('chat'); }}
                                         className="bg-white p-6 rounded-[32px] border border-slate-100 shadow-sm hover:shadow-md transition-all active:scale-[0.98] group"
@@ -260,7 +260,7 @@ const SupportTicketPage: React.FC = () => {
 
                     {/* --- CREATE VIEW --- */}
                     {viewMode === 'create' && (
-                        <motion.div 
+                        <motion.div
                             key="create"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
@@ -271,7 +271,7 @@ const SupportTicketPage: React.FC = () => {
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div className="space-y-4">
                                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Issue Category</label>
-                                        <select 
+                                        <select
                                             name="department"
                                             required
                                             className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all font-bold appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSIjOWE5YWExIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik02IDlsNiA2IDYtNiIvPjwvc3ZnPg==')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1rem]"
@@ -283,7 +283,7 @@ const SupportTicketPage: React.FC = () => {
                                     </div>
                                     <div className="space-y-4">
                                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Priority Level</label>
-                                        <select 
+                                        <select
                                             name="priority"
                                             required
                                             className="w-full px-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all font-bold appearance-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgc3Ryb2tlPSIjOWE5YWExIiBzdHJva2Utd2lkdGg9IjIiPjxwYXRoIGQ9Ik02IDlsNiA2IDYtNiIvPjwvc3ZnPg==')] bg-no-repeat bg-[right_1.5rem_center] bg-[length:1rem]"
@@ -297,7 +297,7 @@ const SupportTicketPage: React.FC = () => {
 
                                 <div className="space-y-4">
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Subject</label>
-                                    <input 
+                                    <input
                                         name="subject"
                                         required
                                         placeholder="Short summary of the problem"
@@ -307,7 +307,7 @@ const SupportTicketPage: React.FC = () => {
 
                                 <div className="space-y-4">
                                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-2">Describe Your Issue</label>
-                                    <textarea 
+                                    <textarea
                                         name="description"
                                         required
                                         rows={5}
@@ -325,7 +325,7 @@ const SupportTicketPage: React.FC = () => {
                                                     <ImageIcon size={32} />
                                                 </div>
                                                 <span className="text-sm font-bold text-slate-600 truncate max-w-[300px]">{selectedImage.name}</span>
-                                                <button 
+                                                <button
                                                     type="button"
                                                     onClick={(e) => { e.preventDefault(); setSelectedImage(null); }}
                                                     className="absolute top-4 right-4 p-2 bg-white rounded-xl shadow-lg hover:text-red-500 transition-colors"
@@ -342,10 +342,10 @@ const SupportTicketPage: React.FC = () => {
                                                 <p className="text-xs text-slate-400 mt-1 uppercase font-black tracking-widest">Image, PDF, max 5MB</p>
                                             </div>
                                         )}
-                                        <input 
-                                            type="file" 
+                                        <input
+                                            type="file"
                                             name="image"
-                                            className="hidden" 
+                                            className="hidden"
                                             accept="image/*"
                                             onChange={(e) => setSelectedImage(e.target.files?.[0] || null)}
                                         />
@@ -353,14 +353,14 @@ const SupportTicketPage: React.FC = () => {
                                 </div>
 
                                 <div className="flex gap-4 pt-4">
-                                    <button 
+                                    <button
                                         type="button"
                                         onClick={handleBack}
                                         className="flex-1 py-4.5 bg-slate-50 text-slate-600 rounded-2xl font-black uppercase tracking-widest hover:bg-slate-100 transition-all"
                                     >
                                         Discard
                                     </button>
-                                    <button 
+                                    <button
                                         type="submit"
                                         disabled={createMutation.isPending}
                                         className="flex-[2] py-4.5 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
@@ -375,7 +375,7 @@ const SupportTicketPage: React.FC = () => {
 
                     {/* --- CHAT VIEW (TWO-PANE LAYOUT) --- */}
                     {viewMode === 'chat' && (
-                        <motion.div 
+                        <motion.div
                             key="chat"
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -404,8 +404,8 @@ const SupportTicketPage: React.FC = () => {
                                         </p>
                                         {selectedTicket?.image && (
                                             <div className="mt-4 rounded-2xl overflow-hidden border border-slate-200">
-                                                <img 
-                                                    src={selectedTicket.image.startsWith('http') ? selectedTicket.image : `${import.meta.env.VITE_API_BASE_URL}/storage/${selectedTicket.image}`} 
+                                                <img
+                                                    src={selectedTicket.image.startsWith('http') ? selectedTicket.image : `${import.meta.env.VITE_API_BASE_URL}/storage/${selectedTicket.image}`}
                                                     alt="Attached screenshot"
                                                     className="w-full h-auto object-cover hover:scale-[1.02] transition-transform duration-500 cursor-zoom-in"
                                                 />
@@ -482,7 +482,7 @@ const SupportTicketPage: React.FC = () => {
                                 {/* Persistent Input Area */}
                                 <div className="p-6 bg-white border-t border-slate-50 flex items-center gap-4">
                                     <div className="flex-1 relative">
-                                        <input 
+                                        <input
                                             type="text"
                                             value={message}
                                             onChange={(e) => setMessage(e.target.value)}
@@ -490,7 +490,7 @@ const SupportTicketPage: React.FC = () => {
                                             placeholder="Type your message here..."
                                             className="w-full pl-6 pr-20 py-4.5 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:ring-4 focus:ring-blue-100 outline-none transition-all font-bold text-slate-700"
                                         />
-                                        <button 
+                                        <button
                                             onClick={handleSendMessage}
                                             disabled={sendMutation.isPending || !message.trim()}
                                             className="absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all shadow-lg active:scale-95 disabled:opacity-50"
@@ -504,9 +504,10 @@ const SupportTicketPage: React.FC = () => {
                     )}
                 </AnimatePresence>
             </div>
-            
+
             {/* Custom Styles for Scrollbar */}
-            <style dangerouslySetInnerHTML={{ __html: `
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 .custom-scrollbar::-webkit-scrollbar { width: 5px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }

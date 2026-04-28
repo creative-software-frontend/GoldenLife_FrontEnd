@@ -785,7 +785,12 @@
       "vendor_listProduct": "পণ্য কীভাবে লিস্ট করব?",
       "vendor_paymentMethods": "পেমেন্ট পদ্ধতি কী কী আছে?",
       "vendor_trackOrder": "অর্ডার ট্র্যাক করব কিভাবে?",
-      "vendor_withdrawTime": "উইথড্র করতে কতদিন লাগে?"
+      "vendor_withdrawTime": "উইথড্র করতে কতদিন লাগে?",
+      "instructor_createCourse": "কিভাবে নতুন কোর্স তৈরি করব?",
+      "instructor_viewStudents": "ভর্তি হওয়া ছাত্রছাত্রীদের তালিকা কিভাবে দেখব?",
+      "instructor_viewEarnings": "আমার উপার্জন কিভাবে দেখব?",
+      "instructor_updateCourse": "কোর্সের বিষয়বস্তু কিভাবে আপডেট করব?",
+      "instructor_requestWithdrawal": "উইথড্রাল রিকোয়েস্ট কিভাবে পাঠাব?"
     }
   }
 }

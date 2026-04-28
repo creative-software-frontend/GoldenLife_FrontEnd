@@ -11,7 +11,9 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel"
 import { useTranslation } from "react-i18next"
-import Autoplay from "embla-carousel-autoplay" // 1. Import Autoplay
+import Autoplay from "embla-carousel-autoplay"
+import { Link } from "react-router-dom"
+import { useInstructorQuery } from "@/hooks/useInstructor"
 
 interface Lesson {
     id: number | string
@@ -20,6 +22,11 @@ interface Lesson {
     course_type: string
     image: string
     instructor_name?: string
+    instructor?: {
+        id: number | string
+        instructor_id?: string | number
+        name: string
+    }
     rating?: number
     studentsEnrolled?: number
     course_duration?: string
@@ -28,6 +35,21 @@ interface Lesson {
     badge?: string
     color?: string
 }
+
+const InstructorName: React.FC<{ instructorId: string | number, fallbackName?: string }> = ({ instructorId, fallbackName }) => {
+    const { data: instructor, isLoading } = useInstructorQuery(instructorId);
+
+    if (isLoading) return <span className="animate-pulse bg-slate-100 h-3 w-20 rounded inline-block" />;
+    
+    return (
+        <Link 
+            to={`/dashboard/instructor-info/${instructorId}`}
+            className="line-clamp-1 font-bold text-slate-700 hover:text-emerald-600 transition-colors"
+        >
+            {instructor?.name || fallbackName || 'Golden Life Instructor'}
+        </Link>
+    );
+};
 
 const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
 
@@ -140,7 +162,10 @@ const CourseCarousel: React.FC<{
                                                 <div className="mt-auto pt-2 flex flex-col gap-2.5">
                                                     <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
                                                         <User className="w-3.5 h-3.5 text-slate-400" />
-                                                        <span className="line-clamp-1">{lesson.instructor_name || 'Golden Life Instructor'}</span>
+                                                        <InstructorName 
+                                                            instructorId={lesson.instructor_id || (lesson.instructor as any)?.instructor_id || (lesson.instructor as any)?.id} 
+                                                            fallbackName={lesson.instructor_name || (lesson.instructor as any)?.name}
+                                                        />
                                                     </div>
 
                                                     <div className="flex items-center justify-between text-[11px] font-medium text-slate-500 border-t border-slate-100 pt-3 mt-1">

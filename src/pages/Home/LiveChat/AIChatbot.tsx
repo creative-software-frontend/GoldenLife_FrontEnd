@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Bot, Send, X, ChevronRight, Bell, RotateCcw, DollarSign, Users, Wallet, BookOpen, LifeBuoy, MessageSquare } from 'lucide-react';
+import { 
+  Bot, Send, X, ChevronRight, Bell, RotateCcw, DollarSign, Users, Wallet, BookOpen, LifeBuoy, MessageSquare, Clock 
+} from 'lucide-react';
 import { useAppStore } from '../../../store/useAppStore';
 import { getVendorAvatarUrl, getVendorDisplayName } from '@/hooks/useVendorProfile';
 
@@ -38,11 +40,26 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose, mode = 'student'
   const isVendorSession = !!sessionStorage.getItem('vendor_session');
   const isStudentSession = !!sessionStorage.getItem('student_session');
 
+  const instructorSession = (() => {
+    try {
+      const raw = sessionStorage.getItem('instructor_session');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  })();
+  const instructorUser = instructorSession?.user;
+
   // Resolve profile image and display name for current panel
   const profileImageUrl: string | null = (() => {
     if (mode === 'vendor' && vendorProfile) {
       const vendorUrl = getVendorAvatarUrl(vendorProfile as any);
       return vendorUrl || null;
+    }
+    if (mode === 'instructor' && instructorUser?.image) {
+      return instructorUser.image.startsWith('http')
+        ? instructorUser.image
+        : `${baseURL}/uploads/instructor/image/${instructorUser.image}`;
     }
     if (mode === 'student' && studentProfile?.image) {
       // Use the same path convention as UserLayout
@@ -56,6 +73,9 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose, mode = 'student'
   const displayName: string = (() => {
     if (mode === 'vendor' && vendorProfile) {
       return getVendorDisplayName(vendorProfile as any);
+    }
+    if (mode === 'instructor' && instructorUser) {
+      return instructorUser.name;
     }
     return studentProfile?.name || '';
   })();
@@ -99,15 +119,23 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose, mode = 'student'
     { id: 'supportTicket',  icon: <LifeBuoy size={18} /> },
   ];
 
-  const vendorQuestions = [
-    { id: 'vendor_startReseller',  icon: <MessageSquare size={18} /> },
-    { id: 'vendor_listProduct',    icon: <MessageSquare size={18} /> },
-    { id: 'vendor_paymentMethods', icon: <MessageSquare size={18} /> },
-    { id: 'vendor_trackOrder',     icon: <MessageSquare size={18} /> },
-    { id: 'vendor_withdrawTime',   icon: <MessageSquare size={18} /> },
+  const instructorQuestions = [
+    { id: 'instructor_createCourse',     icon: <BookOpen size={18} /> },
+    { id: 'instructor_viewStudents',     icon: <Users size={18} /> },
+    { id: 'instructor_viewEarnings',     icon: <DollarSign size={18} /> },
+    { id: 'instructor_updateCourse',     icon: <MessageSquare size={18} /> },
+    { id: 'instructor_requestWithdrawal', icon: <Wallet size={18} /> },
   ];
 
-  const initialQuestions = mode === 'vendor' || mode === 'instructor' ? vendorQuestions : studentQuestions;
+  const vendorQuestions = [
+    { id: 'vendor_startReseller',   icon: <Users size={18} /> },
+    { id: 'vendor_listProduct',     icon: <BookOpen size={18} /> },
+    { id: 'vendor_paymentMethods',  icon: <Wallet size={18} /> },
+    { id: 'vendor_trackOrder',      icon: <Bell size={18} /> },
+    { id: 'vendor_withdrawTime',    icon: <Clock size={18} /> },
+  ];
+
+  const initialQuestions = mode === 'instructor' ? instructorQuestions : mode === 'vendor' ? vendorQuestions : studentQuestions;
 
   return (
     <AnimatePresence>

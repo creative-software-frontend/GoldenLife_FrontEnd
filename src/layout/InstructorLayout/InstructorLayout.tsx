@@ -4,6 +4,9 @@ import InstructorSidebar from './InstructorSidebar';
 import InstructorNavbar from './InstructorNavbar';
 import InstructorFooter from './InstructorFooter';
 import LiveChat from '@/pages/Home/LiveChat/Livechat';
+import HotlineModal from '@/components/shared/HotlineModal';
+import FAQModal from '@/components/shared/FAQModal';
+import TicketModal from '@/components/shared/TicketModal';
 
 const InstructorLayout: React.FC = () => {
     // 1. Master State: Controls the Sidebar for the whole app
@@ -30,6 +33,9 @@ const InstructorLayout: React.FC = () => {
                 </main>
 
                 <InstructorFooter />
+                <HotlineModal />
+                <FAQModal />
+                <TicketModal />
             </div>
         </div>
     );
