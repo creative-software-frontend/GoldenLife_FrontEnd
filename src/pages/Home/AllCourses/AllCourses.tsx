@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, Clock, Users, X, Play, ShoppingCart, Loader2 } from 'lucide-react'
+import { useQueryClient } from "@tanstack/react-query"
 import {
   Carousel,
   CarouselContent,
@@ -30,6 +31,7 @@ const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_imag
 
 export default function AllCourses() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { addItem, toggleCart } = useCartStore();
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = React.useState(false)
@@ -49,6 +51,18 @@ export default function AllCourses() {
   }
 
   const addToCart = (lesson: any) => {
+    // Try to get instructor name from cache if possible
+    const instructorId = lesson.instructor_id || lesson.instructor?.id;
+    
+    // Normalize ID to try both string and number in cache
+    let instructorData: any = null;
+    if (instructorId) {
+      instructorData = queryClient.getQueryData(['instructor', String(instructorId)]) || 
+                       queryClient.getQueryData(['instructor', Number(instructorId)]);
+    }
+
+    const instructorName = instructorData?.name || lesson.instructor_name || lesson.instructor?.name || `Instructor #${instructorId}`;
+
     addItem({
         id: Number(lesson.id),
         name: lesson.course_title_english,
@@ -57,7 +71,9 @@ export default function AllCourses() {
         quantity: 1,
         offer_price: Number(lesson.regular_fee) || 0, // Member Price
         regular_price: Number(lesson.offer_fee) || 0, // Customer Price
-        type: 'course'
+        type: 'course',
+        seller_name: instructorName,
+        seller_id: instructorId
     });
   };
 

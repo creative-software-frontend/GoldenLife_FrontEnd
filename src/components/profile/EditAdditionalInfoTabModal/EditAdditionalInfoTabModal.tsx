@@ -95,7 +95,7 @@ export default function EditAdditionalInfoTabModal({
         { ...formData, student_id: data.student_id },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            ''X - Auth - Token'': `Bearer ${token}`,
             'Accept': 'application/json'
           }
         }

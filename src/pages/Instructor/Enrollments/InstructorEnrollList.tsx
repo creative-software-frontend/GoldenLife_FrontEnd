@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useInstructorNavbarQuery } from '@/hooks/useInstructorNavbar';
 
 // Dummy Data for Enrollments
 const DUMMY_ENROLLMENTS = [
@@ -118,6 +119,9 @@ const InstructorEnrollList: React.FC = () => {
   const [paymentFilter, setPaymentFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
+  // ── Real API data ──────────────────────────────────────────────────────────
+  const { data: navbarData, isLoading: isNavbarLoading } = useInstructorNavbarQuery();
+
   const filteredEnrollments = useMemo(() => {
     return DUMMY_ENROLLMENTS.filter(enroll => {
       const matchesSearch = 
@@ -176,10 +180,12 @@ const InstructorEnrollList: React.FC = () => {
 
         <Card className="border-none shadow-sm bg-white rounded-[2.5rem] overflow-hidden group ring-1 ring-gray-100">
            <CardContent className="p-8 space-y-2 border-l-8 border-emerald-500">
-              <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Settled Value</p>
-              <h2 className="text-4xl font-black tracking-tighter text-emerald-600">৳2,18,500</h2>
+              <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Current Balance</p>
+              <h2 className="text-4xl font-black tracking-tighter text-emerald-600">
+                {isNavbarLoading ? '...' : `৳${navbarData?.balance || '0.00'}`}
+              </h2>
               <div className="flex items-center gap-2 text-gray-500 text-[11px] font-black pt-2 uppercase">
-                 <DollarSign size={14} className="text-emerald-500" /> Available Credit
+                 <DollarSign size={14} className="text-emerald-500" /> Real-time Settlement
               </div>
            </CardContent>
         </Card>

@@ -18,7 +18,7 @@ export const createNavbarSlice: StateCreator<AppState, [], [], NavbarSlice> = (s
         if (!token) return;
 
         if (!silent) {
-            set({ 
+            set({
                 isNavbarLoading: true,
                 isWalletLoading: true,
                 isProfileLoading: true,
@@ -28,7 +28,7 @@ export const createNavbarSlice: StateCreator<AppState, [], [], NavbarSlice> = (s
 
         try {
             const response = await axios.get(`${baseURL}/api/navbar`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             const data = response.data;
@@ -43,7 +43,7 @@ export const createNavbarSlice: StateCreator<AppState, [], [], NavbarSlice> = (s
                     const sorted = [...data.notifications].sort((a, b) =>
                         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
                     );
-                    set({ 
+                    set({
                         notifications: sorted,
                         unreadCount: data.count ?? 0
                     });
@@ -85,7 +85,7 @@ export const createNavbarSlice: StateCreator<AppState, [], [], NavbarSlice> = (s
             console.error("Navbar Fetch Error:", error);
         } finally {
             if (!silent) {
-                set({ 
+                set({
                     isNavbarLoading: false,
                     isWalletLoading: false,
                     isProfileLoading: false,

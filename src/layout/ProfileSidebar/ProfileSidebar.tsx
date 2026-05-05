@@ -50,8 +50,8 @@ export default function ProfileSidebar() {
             if (!token) return;
 
             try {
-                const dashboardRes = await axios.get(`${baseURL}/api/student/dashboard`, { 
-                    headers: { Authorization: `Bearer ${token}` } 
+                const dashboardRes = await axios.get(`${baseURL}/api/student/dashboard`, {
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
                 });
 
                 if (dashboardRes.data?.success) {

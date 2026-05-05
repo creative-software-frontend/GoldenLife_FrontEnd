@@ -43,7 +43,7 @@ export function useVendorProfile() {
       }
 
       const response = await axios.get(`${baseURL}/api/vendor/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
       });
 
       const profileData = response.data?.data || response.data;

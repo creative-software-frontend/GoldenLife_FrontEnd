@@ -104,6 +104,7 @@ export interface VendorProfile {
 export interface ProfileSlice {
     studentProfile: Student | null;
     vendorProfile: VendorProfile | null;
+    instructorProfile: any | null;
     personalInfo: PersonalInfo | null;
     documentInfo: DocumentInfo | null;
     nomineeInfo: NomineeInfo | null;
@@ -115,6 +116,7 @@ export interface ProfileSlice {
 export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = (set, get) => ({
     studentProfile: null,
     vendorProfile: null,
+    instructorProfile: null,
     personalInfo: null,
     documentInfo: null,
     nomineeInfo: null,
@@ -136,19 +138,28 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
         try {
             // Determine API endpoint based on current path or token type
             const isVendor = window.location.pathname.includes('/vendor');
-            const url = isVendor
-                ? `${baseURL}/api/vendor/profile`
-                : `${baseURL}/api/student/profile`;
+            const isInstructor = window.location.pathname.includes('/instructor');
+            let url = `${baseURL}/api/student/profile`;
+            if (isInstructor) {
+                url = `${baseURL}/api/instructor/profile`;
+            } else if (isVendor) {
+                url = `${baseURL}/api/vendor/profile`;
+            }
 
             console.log(`📡 profileSlice: Fetching from ${url}`);
 
             const response = await axios.get(url, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             const resData = response.data;
-            if (resData?.status === "success" || resData?.vendor) {
-                if (isVendor) {
+            if (resData?.status === "success" || resData?.vendor || resData?.instructor) {
+                if (isInstructor) {
+                    set({
+                        instructorProfile: resData,
+                        isProfileFetched: true
+                    });
+                } else if (isVendor) {
                     set({
                         vendorProfile: {
                             user: resData.user,
@@ -192,6 +203,7 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
         set({
             studentProfile: null,
             vendorProfile: null,
+            instructorProfile: null,
             personalInfo: null,
             documentInfo: null,
             nomineeInfo: null,
@@ -201,6 +213,7 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
             transactions: []
         });
         sessionStorage.removeItem("vendor_session");
+        sessionStorage.removeItem("instructor_session");
         navigate("/login");
         window.location.reload();
     }

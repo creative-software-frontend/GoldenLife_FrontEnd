@@ -101,7 +101,7 @@ export default function EditDocumentInfoTabModal({
         formDataToSend,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            ''X - Auth - Token'': `Bearer ${token}`,
             'Accept': 'application/json',
           }
         }

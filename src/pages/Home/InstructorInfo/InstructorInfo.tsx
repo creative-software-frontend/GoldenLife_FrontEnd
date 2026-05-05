@@ -84,7 +84,9 @@ export default function InstructorInfo() {
             quantity: 1,
             offer_price: Number(course.regular_fee) || 0,
             regular_price: Number(course.offer_fee) || 0,
-            type: 'course'
+            type: 'course',
+            seller_name: instructor.name || `Instructor #${instructor.id}`,
+            seller_id: instructor.id
         });
     };
 

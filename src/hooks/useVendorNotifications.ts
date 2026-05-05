@@ -39,11 +39,11 @@ export const useVendorNotifications = (baseURL: string, token: string | null) =>
       console.log('🔵 Token present:', !!token);
 
       const response = await fetch(`${baseURL}/api/notifications`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
       });
 
       console.log('🔵 Response status:', response.status);
-      
+
       if (!response.ok) {
         console.error('🔴 Notification fetch failed with status:', response.status);
         return;
@@ -51,7 +51,7 @@ export const useVendorNotifications = (baseURL: string, token: string | null) =>
 
       const data: NotificationsResponse = await response.json();
       console.log('🔵 Response data:', data);
-      
+
       if (data.status) {
         const sorted = [...(data.notifications || [])].sort((a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -86,16 +86,16 @@ export const useVendorNotifications = (baseURL: string, token: string | null) =>
       try {
         console.log('🔵 Polling unread count from:', `${baseURL}/api/notifications/unread`);
         const response = await fetch(`${baseURL}/api/notifications/unread`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 'X-Auth-Token': `Bearer ${token}` },
         });
-        
+
         console.log('🔵 Unread count response status:', response.status);
-        
+
         if (!response.ok) return;
 
         const data = await response.json();
         console.log('🔵 Unread count data:', data);
-        
+
         if (data.status) {
           const realCount = data.unread_count ?? data.count ?? 0;
           setUnreadCount(realCount);
@@ -140,15 +140,15 @@ export const useVendorNotifications = (baseURL: string, token: string | null) =>
       console.log('🔵 Marking as read:', id);
       const response = await fetch(`${baseURL}/api/notifications/read?id=${encodeURIComponent(id)}`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
       });
 
       console.log('🔵 Mark as read response status:', response.status);
-      
+
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const result = await response.json();
       console.log('🔵 Mark as read result:', result);
-      
+
       if (!result.status) throw new Error('Backend failed');
 
       // Immediate sync after marking read
@@ -170,15 +170,15 @@ export const useVendorNotifications = (baseURL: string, token: string | null) =>
       console.log('🔵 Marking all as read');
       const response = await fetch(`${baseURL}/api/notifications/read-all`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
       });
 
       console.log('🔵 Mark all as read response status:', response.status);
-      
+
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const result = await response.json();
       console.log('🔵 Mark all as read result:', result);
-      
+
       if (!result.status) throw new Error('Backend failed');
 
       // Immediate sync after marking all read

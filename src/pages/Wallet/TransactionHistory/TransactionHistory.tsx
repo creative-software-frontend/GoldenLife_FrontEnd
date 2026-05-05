@@ -38,7 +38,7 @@ export default function TransactionHistory() {
             if (!token) throw new Error("No auth token found");
 
             const { data } = await axios.get(`${baseURL}/api/student/transactions`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (data?.status === "success") {

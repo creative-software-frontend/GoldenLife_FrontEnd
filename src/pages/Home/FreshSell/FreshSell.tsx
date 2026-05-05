@@ -86,16 +86,6 @@ export default function FreshSell() {
     const handleAddToCart = (product: any) => {
         const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id || "empty_vendor";
 
-        // Vendor Check using Zustand state
-        if (cartItems.length > 0) {
-            const firstCartItemVendorId = cartItems[0].vendor_id || "empty_store";
-            if (String(firstCartItemVendorId) !== String(currentVendorId)) {
-                setPendingProduct(product);
-                setIsVendorModalOpen(true);
-                return;
-            }
-        }
-
         const name = i18n.language === 'bn' ? (product.titleBn || product.titleEn) : product.titleEn;
 
         addItem({
@@ -107,30 +97,10 @@ export default function FreshSell() {
             offer_price: Number(product.offer_price) || 0, // Member Price
             regular_price: Number(product.regular_price) || 0, // Customer Price
             vendor_id: currentVendorId,
-            type: 'product'
+            type: 'product',
+            seller_name: product.vendor?.businee_name || 'Partner',
+            seller_id: currentVendorId
         });
-    };
-
-    const handleConfirmVendorSwitch = () => {
-        if (!pendingProduct) return;
-        const name = i18n.language === 'bn' ? (pendingProduct.titleBn || pendingProduct.titleEn) : pendingProduct.titleEn;
-        const currentVendorId = pendingProduct.vendor_id || pendingProduct.vendor?.id;
-        
-        clearCart();
-        addItem({
-            id: Number(pendingProduct.id),
-            name,
-            product_title_english: pendingProduct.titleEn,
-            image: pendingProduct.product_image,
-            quantity: 1,
-            offer_price: Number(pendingProduct.offer_price) || 0,
-            regular_price: Number(pendingProduct.regular_price) || 0,
-            vendor_id: currentVendorId,
-            type: 'product'
-        });
-
-        setIsVendorModalOpen(false);
-        setPendingProduct(null);
     };
 
     if (loading) {
@@ -347,11 +317,6 @@ export default function FreshSell() {
                 </div>
             </div>
 
-            <VendorMismatchModal
-                isOpen={isVendorModalOpen}
-                onClose={() => { setIsVendorModalOpen(false); setPendingProduct(null); }}
-                onConfirm={handleConfirmVendorSwitch}
-            />
 
         </section>
     );

@@ -30,7 +30,7 @@ export const createProductSlice: StateCreator<AppState, [], [], ProductSlice> = 
                 : `${baseURL}/api/products`;
 
             const response = await axios.get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             let rawData = response.data?.products || response.data?.data?.products || response.data?.data || [];
@@ -51,15 +51,15 @@ export const createProductSlice: StateCreator<AppState, [], [], ProductSlice> = 
             }));
 
             if (keyword) {
-                set({ 
+                set({
                     allProducts: mappedData,
-                    isProductFetched: true 
+                    isProductFetched: true
                 });
             } else {
-                set({ 
+                set({
                     allProducts: mappedData,
                     featuredProducts: mappedData.slice(0, 10),
-                    isProductFetched: true 
+                    isProductFetched: true
                 });
             }
         } catch (error) {

@@ -9,8 +9,10 @@ import {
 } from 'lucide-react';
 import ImageUploadModal from '@/components/shared/ImageUploadModal';
 import useModalStore from '@/store/modalStore';
+import { useAppStore } from '@/store/useAppStore';
 
 import { useInstructorWallet } from '@/hooks/useInstructorWallet';
+import InstructorNotificationBell from './InstructorNotificationBell';
 
 const MenuFoldLeftIcon = ({ size = 24, className = "" }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -37,13 +39,30 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
     const navigate = useNavigate();
     const { balance, isBalanceLoading } = useInstructorWallet();
-
-    const profileRef = useRef<HTMLDivElement>(null);
+    const { instructorProfile, fetchProfile } = useAppStore();
     const walletRefDesktop = useRef<HTMLDivElement>(null);
     const walletRefMobile = useRef<HTMLDivElement>(null);
+    const profileRef = useRef<HTMLDivElement>(null);
 
-    // Static Dummy Data
-    const displayName = "Instructor Name";
+    useEffect(() => {
+        fetchProfile();
+    }, [fetchProfile]);
+
+    const instructorInfo = instructorProfile?.instructor || {};
+    const userInfo = instructorProfile?.user || {};
+
+    const displayName = instructorInfo?.name || "Instructor";
+    const instructorId = instructorInfo?.instructor_id || "INST-2026";
+
+    // Add cache buster for avatar to ensure it updates visually after being changed
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    let avatarUrl = null;
+    if (instructorInfo?.image) {
+        avatarUrl = instructorInfo.image.startsWith('http')
+            ? instructorInfo.image
+            : `${baseURL}/uploads/instructor/image/${instructorInfo.image}?t=${Date.now()}`;
+    }
+
     const profilePercentage = 60;
     const isProfileComplete = false;
     const isLoading = false;
@@ -74,7 +93,7 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
 
             if (token) {
                 await axios.post(`${baseURL}/api/vendor/logout`, {}, {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
                 });
             }
         } catch (err) {
@@ -193,17 +212,25 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                         <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">Dhaka</span>
                     </div>
 
+                    <InstructorNotificationBell />
+
                     <div className="relative" ref={profileRef}>
                         <div
                             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                             className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-border cursor-pointer group flex-shrink-0 hover:bg-muted/50 rounded-xl pr-3 py-2 transition-all"
                         >
                             <div className="relative flex-shrink-0">
-                                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700">
-                                    <span className="text-white font-bold text-xs sm:text-sm">
-                                        I
-                                    </span>
-                                </div>
+                                {avatarUrl ? (
+                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-indigo-200">
+                                        <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700">
+                                        <span className="text-white font-bold text-xs sm:text-sm">
+                                            {displayName.charAt(0).toUpperCase()}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="text-right hidden sm:block max-w-[120px] xl:max-w-none">
@@ -221,8 +248,8 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                         {isProfileMenuOpen && (
                             <div className="absolute right-0 mt-2 w-56 bg-background border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                                 <div className="px-4 py-3 bg-muted/50 border-b border-border">
-                                    <p className="text-sm font-bold text-foreground">{displayName}</p>
-                                    <p className="text-xs text-muted-foreground truncate">ID: INST-2026</p>
+                                    <p className="text-sm font-bold text-foreground truncate">{displayName}</p>
+                                    <p className="text-xs text-muted-foreground truncate">ID: {instructorId}</p>
 
                                     <div className="mt-2 flex items-center gap-2">
                                         <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">

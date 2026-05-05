@@ -59,6 +59,8 @@ interface ModalStore {
     toggleBuyNow: () => void;
 
     // Methods for Checkout Modal
+    checkoutSellerId: string | number | null;
+    setCheckoutSellerId: (id: string | number | null) => void;
     openCheckoutModal: () => void;
     closeCheckoutModal: () => void;
     toggleCheckoutModal: () => void;
@@ -136,6 +138,8 @@ const useModalStore = create<ModalStore>((set) => ({
     toggleBuyNow: () => set((state) => ({ isCheckoutBookModalOpen: !state.isCheckoutBookModalOpen })),
 
     // Checkout Modal Controls
+    checkoutSellerId: null,
+    setCheckoutSellerId: (id) => set({ checkoutSellerId: id }),
     openCheckoutModal: () => set({ isCheckoutModalOpen: true }),
     closeCheckoutModal: () => set({ isCheckoutModalOpen: false }),
     toggleCheckoutModal: () => set((state) => ({ isCheckoutModalOpen: !state.isCheckoutModalOpen })),

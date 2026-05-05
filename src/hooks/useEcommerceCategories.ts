@@ -50,7 +50,7 @@ export const useEcommerceCategories = (): UseCategoriesReturn => {
         'https://admin.goldenlifeltd.com/api/vendor/ecommerce/categories',
         {
           headers: token ? {
-            'Authorization': `Bearer ${token}`,
+            ''X - Auth - Token'': `Bearer ${token}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           } : {},

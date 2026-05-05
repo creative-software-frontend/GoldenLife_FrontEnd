@@ -22,27 +22,28 @@ export const createCategorySlice: StateCreator<AppState, [], [], CategorySlice> 
             const res = await axios.get(`${baseURL}/api/getProductCategory`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    ...(token && { Authorization: `Bearer ${token}` })
-                }
-            });
-
-            const rawData = res.data?.data?.categories || res.data?.data || [];
-            const mapped = rawData.map((item: any) => ({
-                id: item.id,
-                name_en: item.category_name_english || item.category_name || "Category",
-                name_bn: item.category_name_bangla || item.category_name || "Category",
-                icon: `${baseURL}/uploads/ecommarce/category_image/${item.category_image}`,
-                slug: item.category_slug
-            }));
-
-            set({
-                categories: mapped,
-                isCategoryLoading: false,
-                isCategoryFetched: true
-            });
-        } catch (error) {
-            console.error("Categories Fetch Error:", error);
-            set({ isCategoryLoading: false });
+                    ...(token && { X- Auth - Token: `Bearer ${token}`
+            })
         }
+            });
+
+const rawData = res.data?.data?.categories || res.data?.data || [];
+const mapped = rawData.map((item: any) => ({
+    id: item.id,
+    name_en: item.category_name_english || item.category_name || "Category",
+    name_bn: item.category_name_bangla || item.category_name || "Category",
+    icon: `${baseURL}/uploads/ecommarce/category_image/${item.category_image}`,
+    slug: item.category_slug
+}));
+
+set({
+    categories: mapped,
+    isCategoryLoading: false,
+    isCategoryFetched: true
+});
+        } catch (error) {
+    console.error("Categories Fetch Error:", error);
+    set({ isCategoryLoading: false });
+}
     },
 });

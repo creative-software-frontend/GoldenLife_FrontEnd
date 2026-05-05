@@ -57,7 +57,7 @@ const InstructorAddCourse: React.FC = () => {
     instructorName: '', titleEn: '', titleBn: '', courseType: '',
     downloadUrl: '', courseCode: '', category: '', duration: '',
     sellerFee: '', regularFee: '', offerFee: '', earningValue: '',
-    detailsEn: '', detailsBn: '',
+    detailsEn: '', detailsBn: '', validity: '',
   });
 
   // ── Populate Instructor Name from Session ──────────────────────────────────
@@ -114,6 +114,7 @@ const InstructorAddCourse: React.FC = () => {
     fd.append('regular_fee', form.regularFee);
     fd.append('offer_fee', form.offerFee);
     fd.append('earning_value', form.earningValue);
+    fd.append('validity', form.validity);
     fd.append('course_details_english', form.detailsEn);
     fd.append('course_details_bangla', form.detailsBn);
     
@@ -249,6 +250,10 @@ const InstructorAddCourse: React.FC = () => {
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-lg pointer-events-none">৳</span>
                   <Input className={cn(inp, "pl-9")} type="number" placeholder="৳0" value={form.earningValue} onChange={set('earningValue')} />
                 </div>
+              </Field>
+
+              <Field label="Validity">
+                <Input className={inp} placeholder="e.g. 90days" value={form.validity} onChange={set('validity')} />
               </Field>
             </div>
 

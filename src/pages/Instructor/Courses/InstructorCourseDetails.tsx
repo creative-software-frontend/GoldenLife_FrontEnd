@@ -1,14 +1,14 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ArrowLeft, 
-  Clock, 
-  Tag, 
-  Layers, 
-  Video, 
-  BookOpen, 
-  ChevronRight, 
+import {
+  ArrowLeft,
+  Clock,
+  Tag,
+  Layers,
+  Video,
+  BookOpen,
+  ChevronRight,
   CheckCircle2,
   AlertCircle,
   HelpCircle,
@@ -33,18 +33,18 @@ const InstructorCourseDetails: React.FC = () => {
   const isActive = String(course.status) === '1';
 
   return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }} 
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className="min-h-screen bg-[#F8FAFC] pb-20"
     >
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => navigate(-1)}
               className="rounded-xl hover:bg-gray-100 transition-all"
             >
@@ -59,7 +59,7 @@ const InstructorCourseDetails: React.FC = () => {
             <Badge className={`font-black border-none px-4 py-2 rounded-xl text-[10px] tracking-widest uppercase ${isActive ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
               {isActive ? 'Active' : 'Inactive'}
             </Badge>
-            <Button 
+            <Button
               onClick={() => navigate(`/instructor/dashboard/courses/update/${course.id}`)}
               className="bg-black text-white hover:bg-orange-600 transition-all rounded-xl font-bold text-xs px-6 h-10"
             >
@@ -70,15 +70,15 @@ const InstructorCourseDetails: React.FC = () => {
       </header>
 
       <main className="max-w-7xl mx-auto px-6 py-10 space-y-10">
-        
+
         {/* ── Hero Section ── */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
             <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-2xl shadow-gray-200/50 bg-white relative group">
               {course.image ? (
-                <img 
-                  src={course.image.startsWith('http') ? course.image : `${baseImageURL}${course.image}`} 
-                  alt={course.course_title_english} 
+                <img
+                  src={course.image.startsWith('http') ? course.image : `${baseImageURL}${course.image}`}
+                  alt={course.course_title_english}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               ) : (
@@ -148,11 +148,11 @@ const InstructorCourseDetails: React.FC = () => {
 
             {/* ── Earning Indicator ── */}
             <div className="bg-emerald-500 rounded-2xl p-6 text-white shadow-lg shadow-emerald-500/20 relative overflow-hidden">
-               <div className="relative z-10">
-                 <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">Profit Value</p>
-                 <p className="text-2xl font-black">{course.earning_value}%</p>
-               </div>
-               <DollarSign className="absolute -right-4 -bottom-4 w-24 h-24 opacity-10 rotate-12" />
+              <div className="relative z-10">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">Profit Value</p>
+                <p className="text-2xl font-black">{course.earning_value}%</p>
+              </div>
+              <DollarSign className="absolute -right-4 -bottom-4 w-24 h-24 opacity-10 rotate-12" />
             </div>
           </div>
         </section>
@@ -160,7 +160,7 @@ const InstructorCourseDetails: React.FC = () => {
         {/* ── Content Tabs ── */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-12">
-            
+
             {/* ── Details ── */}
             <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 shadow-sm space-y-10">
               <div className="space-y-6">
@@ -209,10 +209,10 @@ const InstructorCourseDetails: React.FC = () => {
                 <HelpCircle size={20} className="text-orange-500" />
                 <h3 className="text-sm font-black text-gray-900 uppercase tracking-widest">Assessment</h3>
               </div>
-              
+
               <div className="space-y-4">
                 {(course as any).quizzes && (course as any).quizzes.length > 0 ? (
-                   (course as any).quizzes.map((quiz: any, qIdx: number) => (
+                  (course as any).quizzes.map((quiz: any, qIdx: number) => (
                     <div key={qIdx} className="p-4 rounded-2xl bg-gray-50 border border-gray-100 flex items-center justify-between group hover:bg-black hover:text-white transition-all cursor-default">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-xs font-black shadow-sm text-gray-400 group-hover:text-black">
@@ -222,7 +222,7 @@ const InstructorCourseDetails: React.FC = () => {
                       </div>
                       <Badge className="bg-white text-gray-400 group-hover:bg-orange-500 group-hover:text-white text-[9px] px-2">Quiz</Badge>
                     </div>
-                   ))
+                  ))
                 ) : (
                   <div className="text-center py-8">
                     <AlertCircle className="mx-auto text-gray-200 mb-2" size={24} />
@@ -245,7 +245,7 @@ const ModuleAccordion: React.FC<{ module: any; index: number }> = ({ module, ind
 
   return (
     <div className="rounded-2xl border border-gray-100 overflow-hidden bg-white transition-all">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
       >
@@ -260,12 +260,12 @@ const ModuleAccordion: React.FC<{ module: any; index: number }> = ({ module, ind
         </div>
         <ChevronRight className={`text-gray-300 transition-transform ${isOpen ? 'rotate-90' : ''}`} size={20} />
       </button>
-      
+
       <AnimatePresence>
         {isOpen && (
-          <motion.div 
-            initial={{ height: 0 }} 
-            animate={{ height: 'auto' }} 
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: 'auto' }}
             exit={{ height: 0 }}
             className="overflow-hidden bg-gray-50/30"
           >

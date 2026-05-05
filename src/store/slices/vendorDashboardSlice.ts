@@ -80,7 +80,7 @@ export const createVendorDashboardSlice: StateCreator<AppState, [], [], VendorDa
 
         try {
             const response = await axios.get(`${baseURL}/api/vendor/WebDashboard`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (response.data?.status || response.data?.data) {

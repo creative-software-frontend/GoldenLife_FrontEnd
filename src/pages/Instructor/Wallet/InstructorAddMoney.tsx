@@ -173,10 +173,11 @@ export default function InstructorAddMoney() {
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">Sender Number</label>
                                     <input
-                                        type="text"
+                                        type="tel"
                                         value={accountNumber}
-                                        onChange={(e) => setAccountNumber(e.target.value)}
+                                        onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
                                         placeholder="01XXXXXXXXX"
+                                        maxLength={11}
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
                                         required
                                     />

@@ -29,7 +29,7 @@ export default function WalletPurchase() {
             if (!token) return;
 
             const { data } = await axios.get(`${baseURL}/api/student/transactions`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (data?.status === "success" && data.transactions) {

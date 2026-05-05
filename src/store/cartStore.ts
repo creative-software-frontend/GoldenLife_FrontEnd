@@ -12,6 +12,8 @@ export interface CartItem {
     original_regular_price?: number;
     vendor_id?: number | string;
     type?: string;
+    seller_name?: string;
+    seller_id?: string | number;
 }
 
 interface CartState {
@@ -95,7 +97,9 @@ export const useCartStore = create<CartState>()(
                                     ...item,
                                     regular_price: Number(item.regular_price) || 0,
                                     offer_price: Number(item.offer_price) || 0,
-                                    quantity: Number(item.quantity) || 1
+                                    quantity: Number(item.quantity) || 1,
+                                    seller_name: item.seller_name || '',
+                                    seller_id: item.seller_id || ''
                                 }));
                             }
                         } catch (e) {

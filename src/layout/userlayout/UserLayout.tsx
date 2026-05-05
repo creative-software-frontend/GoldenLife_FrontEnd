@@ -210,7 +210,11 @@ export default function UserLayout() {
                 setIsSearching(true);
                 try {
                     const token = getAuthToken();
-                    const config = { headers: { ...(token && { Authorization: `Bearer ${token}` }) } };
+                    const config = {
+                        headers: {
+                            ...(token && { 'X-Auth-Token': `Bearer ${token}` })
+                        }
+                    };
 
                     const response = await axios.get(`${baseURL}/api/products/search?keyword=${searchText}`, config);
                     const results = response.data?.data || response.data?.products || [];

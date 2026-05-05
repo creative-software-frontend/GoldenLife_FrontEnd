@@ -48,7 +48,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useInstructorCoursesQuery } from '@/hooks/useInstructorAuth';
+import { useInstructorCoursesQuery, useCourseCategoriesQuery } from '@/hooks/useInstructorAuth';
 
 const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
 
@@ -68,9 +68,11 @@ const InstrutorCourseList: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [courseTypeFilter, setCourseTypeFilter] = useState('All');
 
   // ── Real API data ──────────────────────────────────────────────────────────
-  const { data: courses = [], isLoading, isError, error, refetch } = useInstructorCoursesQuery();
+  const { data: courses = [], isLoading, isError, error, refetch } = useInstructorCoursesQuery(courseTypeFilter);
+  const { data: apiCategories = [], isLoading: isCatsLoading } = useCourseCategoriesQuery();
 
   // Derive unique categories from the fetched data
   const categories = useMemo(() => [...new Set(courses.map(c => c.category).filter(Boolean))], [courses]);
@@ -85,7 +87,12 @@ const InstrutorCourseList: React.FC = () => {
         statusFilter === 'all' ||
         (statusFilter === 'active' && isActive) ||
         (statusFilter === 'inactive' && !isActive);
-      const matchesCategory = categoryFilter === 'all' || course.category === categoryFilter;
+
+      // If categoryFilter is 'all', match anything. 
+      // Otherwise, check if course.category matches categoryFilter. 
+      // Note: course.category from /api/instructor/courses is usually the ID (string or number).
+      const matchesCategory = categoryFilter === 'all' || String(course.category) === String(categoryFilter);
+
       return matchesSearch && matchesStatus && matchesCategory;
     });
   }, [courses, searchQuery, statusFilter, categoryFilter]);
@@ -94,9 +101,22 @@ const InstrutorCourseList: React.FC = () => {
   const statusColor = (s?: string | number) => (String(s) === '1' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white');
   const courseImage = (img?: string) => {
     if (!img) return null;
-    if (img.startsWith('http')) return img;
-    const path = img.startsWith('/') ? img.substring(1) : img;
-    return `${baseImageURL}${path}`;
+    const cleanImg = img.trim();
+    if (cleanImg.startsWith('http')) return cleanImg;
+
+    const path = cleanImg.startsWith('/') ? cleanImg.substring(1) : cleanImg;
+    const baseURL = 'https://admin.goldenlifeltd.com';
+
+    // If it already has the full internal path
+    if (path.startsWith('uploads/')) return `${baseURL}/${path}`;
+
+    // If it has one of the known subfolders but not 'uploads/'
+    if (path.startsWith('course_image/') || path.startsWith('image/')) {
+      return `${baseURL}/uploads/course/${path}`;
+    }
+
+    // If it's just a filename, default to course_image
+    return `${baseURL}/uploads/course/course_image/${path}`;
   };
   // ── Loading State ──────────────────────────────────────────────────────────
   if (isLoading) {
@@ -191,22 +211,36 @@ const InstrutorCourseList: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
-          {categories.length > 0 && (
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-14 w-[180px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 focus:ring-4 focus:ring-emerald-500/5">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent className="rounded-2xl border-none shadow-2xl">
-                <SelectItem value="all" className="font-bold">All Categories</SelectItem>
-                {categories.map(cat => (
-                  <SelectItem key={cat} value={cat} className="font-bold text-emerald-600">{cat}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
+          {/* Category Filter */}
+          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <SelectTrigger className="h-14 w-full sm:w-[200px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 focus:ring-4 focus:ring-emerald-500/5">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-none shadow-2xl">
+              <SelectItem value="all" className="font-bold">All Categories</SelectItem>
+              {apiCategories?.map(cat => (
+                <SelectItem key={cat.id} value={String(cat.id)} className="font-bold">
+                  {cat.category_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Type Filter */}
+          <Select value={courseTypeFilter} onValueChange={setCourseTypeFilter}>
+            <SelectTrigger className="h-14 w-full sm:w-[180px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 focus:ring-4 focus:ring-emerald-500/5">
+              <SelectValue placeholder="Course Type" />
+            </SelectTrigger>
+            <SelectContent className="rounded-2xl border-none shadow-2xl">
+              <SelectItem value="All" className="font-bold">All Types</SelectItem>
+              <SelectItem value="Course (Video)" className="font-bold">Course (Video)</SelectItem>
+              <SelectItem value="Live Class" className="font-bold">Live Class</SelectItem>
+              <SelectItem value="Ebook" className="font-bold">Ebook</SelectItem>
+            </SelectContent>
+          </Select>
 
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-14 w-[160px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 focus:ring-4 focus:ring-emerald-500/5">
+            <SelectTrigger className="h-14 w-full sm:w-[160px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 focus:ring-4 focus:ring-emerald-500/5">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-none shadow-2xl">
@@ -255,7 +289,19 @@ const InstrutorCourseList: React.FC = () => {
                           <div className="flex items-center gap-6 overflow-hidden">
                             <div className="w-20 h-14 rounded-2xl overflow-hidden bg-gray-50 shrink-0 border border-gray-100 group-hover:scale-105 transition-transform duration-500">
                               {img
-                                ? <img src={img} alt={course.course_title_english} className="w-full h-full object-cover" />
+                                ? <img
+                                  src={img}
+                                  alt={course.course_title_english}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    if (target.src.includes('course_image')) {
+                                      target.src = target.src.replace('course_image', 'image');
+                                    } else if (target.src.includes('/image/')) {
+                                      target.src = target.src.replace('/image/', '/course_image/');
+                                    }
+                                  }}
+                                />
                                 : <div className="w-full h-full bg-emerald-500/5 flex items-center justify-center text-emerald-500 font-black text-[9px] tracking-tighter">GL</div>
                               }
                             </div>
@@ -290,7 +336,7 @@ const InstrutorCourseList: React.FC = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="rounded-2xl border-none shadow-2xl p-2 min-w-[190px]">
                               <DropdownMenuLabel className="font-black text-[9px] uppercase text-gray-400 px-3 py-2 tracking-widest">Management</DropdownMenuLabel>
-                              <DropdownMenuItem 
+                              <DropdownMenuItem
                                 className="rounded-xl font-black gap-3 py-3 px-3 cursor-pointer group text-sm"
                                 onClick={() => navigate(`/instructor/dashboard/courses/view/${course.id}`)}
                               >
@@ -326,7 +372,19 @@ const InstrutorCourseList: React.FC = () => {
                   <Card className="group border-none shadow-sm hover:shadow-2xl transition-all duration-700 rounded-[2.5rem] overflow-hidden bg-white ring-1 ring-gray-100 flex flex-col h-full transform-gpu">
                     <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden">
                       {img
-                        ? <img src={img} alt={course.course_title_english} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                        ? <img
+                          src={img}
+                          alt={course.course_title_english}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            if (target.src.includes('course_image')) {
+                              target.src = target.src.replace('course_image', 'image');
+                            } else if (target.src.includes('/image/')) {
+                              target.src = target.src.replace('/image/', '/course_image/');
+                            }
+                          }}
+                        />
                         : <div className="w-full h-full bg-emerald-500/[0.03] flex items-center justify-center text-emerald-500 font-black text-3xl tracking-tighter opacity-70 group-hover:scale-105 transition-transform duration-1000 select-none">GL</div>
                       }
                       <div className="absolute top-5 right-5 z-20">
@@ -382,7 +440,7 @@ const InstrutorCourseList: React.FC = () => {
                         </div>
                         <Button
                           variant="secondary"
-                          onClick={() => navigate(`/instructor/dashboard/courses/edit/${course.id}`)}
+                          onClick={() => navigate(`/instructor/dashboard/courses/update/${course.id}`)}
                           className="bg-gray-100 hover:bg-gray-900 hover:text-white text-gray-900 font-black px-5 h-10 rounded-xl transition-all group/btn shadow-sm active:scale-95 leading-none"
                         >
                           Edit

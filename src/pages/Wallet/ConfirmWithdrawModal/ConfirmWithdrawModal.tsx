@@ -13,10 +13,11 @@ interface ConfirmWithdrawModalProps {
     paymentMethod: string;
     chargePercentage?: number;
     currentBalance: number;
+    onSubmitOverride?: (pin: string) => Promise<{success: boolean; message: string}>;
 }
 
 export default function ConfirmWithdrawModal({ 
-    isOpen, onClose, onSuccess, onError, amount, accountNumber, paymentMethod, chargePercentage = 0, currentBalance
+    isOpen, onClose, onSuccess, onError, amount, accountNumber, paymentMethod, chargePercentage = 0, currentBalance, onSubmitOverride
 }: ConfirmWithdrawModalProps) {
     const { withdrawFunds } = useAppStore();
     
@@ -47,7 +48,12 @@ export default function ConfirmWithdrawModal({
             formData.append('pin_code', pinCode); 
             
 
-            const result = await withdrawFunds(formData);
+            let result;
+            if (onSubmitOverride) {
+                result = await onSubmitOverride(pinCode);
+            } else {
+                result = await withdrawFunds(formData);
+            }
 
             if (result.success) {
                 toast.success(result.message);

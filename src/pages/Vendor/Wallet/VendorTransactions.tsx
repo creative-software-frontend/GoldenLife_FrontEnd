@@ -39,7 +39,7 @@ export default function VendorTransactions() {
         try {
             const token = getAuthToken();
             const { data } = await axios.get(`${baseURL}/api/vendor/transactions/history`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
             if (data?.status === "success" || data?.transactions) {
                 setTransactions(Array.isArray(data.transactions) ? data.transactions : []);

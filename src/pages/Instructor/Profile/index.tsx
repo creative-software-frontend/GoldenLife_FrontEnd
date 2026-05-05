@@ -8,10 +8,12 @@ import { toast } from 'react-toastify';
 import { Loader2, AlertCircle, ShieldCheck, Settings, LogOut, Key, Plus, FileText, Headphones, Phone, HelpCircle, Ticket, GraduationCap, Bot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useModalStore from '@/store/modalStore';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function InstructorProfile() {
   const navigate = useNavigate();
   const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
+  const { fetchProfile } = useAppStore();
   const { data, isLoading, error, updateProfile, deleteField } = useInstructorProfile();
   const [isEditMode, setIsEditMode] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -80,6 +82,7 @@ export default function InstructorProfile() {
         toast.success('Profile modernized successfully! ✨');
         setIsEditMode(false);
         handleImageRemove();
+        fetchProfile(true); // Update global Zustand store so Navbar syncs automatically
       }
     } catch (err: any) {
       toast.error(err.message || 'Update failed');

@@ -50,18 +50,18 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
 
         try {
             const isVendor = !!sessionStorage.getItem('vendor_session');
-            const url = isVendor 
-                ? `${baseURL}/api/vendor/wallet` 
+            const url = isVendor
+                ? `${baseURL}/api/vendor/wallet`
                 : `${baseURL}/api/wallet-balance`;
 
             const response = await axios.get(url, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             // Handle vendor response structure vs student
             const data = response.data?.data || response.data;
             const fetchedBalance = data?.balance || data || "0.00";
-            
+
             set({
                 walletBalance: Number(fetchedBalance).toFixed(2),
                 isWalletFetched: true
@@ -84,12 +84,12 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
 
         try {
             const isVendor = !!sessionStorage.getItem('vendor_session');
-            const url = isVendor 
-                ? `${baseURL}/api/vendor/transactions/history` 
+            const url = isVendor
+                ? `${baseURL}/api/vendor/transactions/history`
                 : `${baseURL}/api/student/transactions`;
 
             const response = await axios.get(url, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (response.data?.status === "success" || response.data?.transactions || response.data?.data) {
@@ -113,56 +113,56 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
         try {
             const { data } = await axios.post(`${baseURL}/api/transactions`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    X- Auth - Token: `Bearer ${token}`,
                     // Don't set Content-Type for FormData
                 }
             });
 
-            if (data?.status === 'success' || data?.status === true || data?.success === true) {
-                // Update local state silently
-                const { fetchNavbarData, fetchHistory } = get();
-                await Promise.all([
-                    fetchNavbarData(true),
-                    fetchHistory(true)
-                ]);
-                return { success: true, message: data.message || "Withdrawal successful!" };
-            } else {
-                return { success: false, message: data.message || "Transaction failed." };
-            }
+if (data?.status === 'success' || data?.status === true || data?.success === true) {
+    // Update local state silently
+    const { fetchNavbarData, fetchHistory } = get();
+    await Promise.all([
+        fetchNavbarData(true),
+        fetchHistory(true)
+    ]);
+    return { success: true, message: data.message || "Withdrawal successful!" };
+} else {
+    return { success: false, message: data.message || "Transaction failed." };
+}
         } catch (error: any) {
-            console.error("Withdraw Error:", error);
-            return {
-                success: false,
-                message: error.response?.data?.message || "Error processing withdrawal."
-            };
-        }
+    console.error("Withdraw Error:", error);
+    return {
+        success: false,
+        message: error.response?.data?.message || "Error processing withdrawal."
+    };
+}
     },
 
-    setPin: async (pinCode: string) => {
-        const token = getAuthToken();
-        if (!token) return { success: false, message: "Authentication required" };
+setPin: async (pinCode: string) => {
+    const token = getAuthToken();
+    if (!token) return { success: false, message: "Authentication required" };
 
-        try {
-            const formData = new FormData();
-            formData.append('pin_code', pinCode);
+    try {
+        const formData = new FormData();
+        formData.append('pin_code', pinCode);
 
-            const { data } = await axios.post(`${baseURL}/api/set-pin`, formData, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+        const { data } = await axios.post(`${baseURL}/api/set-pin`, formData, {
+            headers: { 'X-Auth-Token': `Bearer ${token}` }
+        });
 
-            if (data?.status === 'success' || data?.status === true) {
-                return { success: true, message: data.message || "4-digit PIN set successfully!" };
-            } else {
-                return { success: false, message: data.message || "Failed to set PIN." };
-            }
-        } catch (error: any) {
-            console.error("Set Pin Error:", error);
-            return {
-                success: false,
-                message: error.response?.data?.message || "Error setting PIN."
-            };
+        if (data?.status === 'success' || data?.status === true) {
+            return { success: true, message: data.message || "4-digit PIN set successfully!" };
+        } else {
+            return { success: false, message: data.message || "Failed to set PIN." };
         }
-    },
+    } catch (error: any) {
+        console.error("Set Pin Error:", error);
+        return {
+            success: false,
+            message: error.response?.data?.message || "Error setting PIN."
+        };
+    }
+},
 
     searchReceiver: async (key: string) => {
         const token = getAuthToken();
@@ -171,70 +171,74 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
             formData.append('key', key);
 
             const { data } = await axios.post(`${baseURL}/api/search-receiver`, formData, {
-                headers: { ...(token && { Authorization: `Bearer ${token}` }) }
+                headers: { ...(token && { X- Auth - Token: `Bearer ${token}`
+            })
+        }
             });
 
-            if (data?.status === 'success' || data?.status === true) {
-                return { success: true, data: data.data };
-            } else {
-                return { success: false, message: data.message || "User not found." };
-            }
+if (data?.status === 'success' || data?.status === true) {
+    return { success: true, data: data.data };
+} else {
+    return { success: false, message: data.message || "User not found." };
+}
         } catch (error: any) {
-            console.error("Search Receiver Error:", error);
-            return {
-                success: false,
-                message: error.response?.data?.message || "Unable to verify user."
-            };
-        }
+    console.error("Search Receiver Error:", error);
+    return {
+        success: false,
+        message: error.response?.data?.message || "Unable to verify user."
+    };
+}
     },
 
-    sendFunds: async (formData: FormData) => {
-        const token = getAuthToken();
-        if (!token) return { success: false, message: "Authentication required" };
+sendFunds: async (formData: FormData) => {
+    const token = getAuthToken();
+    if (!token) return { success: false, message: "Authentication required" };
 
-        try {
-            const { data } = await axios.post(`${baseURL}/api/send-money`, formData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (data?.status === 'success' || data?.success) {
-                const { fetchWallet, fetchHistory } = get();
-                await Promise.all([fetchWallet(true), fetchHistory(true)]);
-                return { success: true, message: data.message };
+    try {
+        const { data } = await axios.post(`${baseURL}/api/send-money`, formData, {
+            headers: {
+                ''X - Auth - Token'': `Bearer ${token}`
             }
+        });
 
-            return { success: false, message: data.message || "Transfer failed." };
-
-        } catch (error: any) {
-            // If Laravel returns validation errors, they are inside error.response.data
-            const backendMessage = error.response?.data?.errors?.receiver_type?.[0]
-                || error.response?.data?.message
-                || "Server Error";
-
-            return { success: false, message: backendMessage };
+        if (data?.status === 'success' || data?.success) {
+            const { fetchWallet, fetchHistory } = get();
+            await Promise.all([fetchWallet(true), fetchHistory(true)]);
+            return { success: true, message: data.message };
         }
-    },
+
+        return { success: false, message: data.message || "Transfer failed." };
+
+    } catch (error: any) {
+        // If Laravel returns validation errors, they are inside error.response.data
+        const backendMessage = error.response?.data?.errors?.receiver_type?.[0]
+            || error.response?.data?.message
+            || "Server Error";
+
+        return { success: false, message: backendMessage };
+    }
+},
 
     fetchCharges: async () => {
         const token = getAuthToken();
         try {
             const [sendRes, withdrawRes] = await Promise.all([
                 axios.get(`${baseURL}/api/sendMoney_charge`, {
-                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                    headers: token ? { X- Auth - Token : `Bearer ${token}`
+                } : {}
                 }),
-                axios.get(`${baseURL}/api/withdraw_charge`, {
-                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+        axios.get(`${baseURL}/api/withdraw_charge`, {
+            headers: token ? { X- Auth - Token : `Bearer ${token}`
+        } : {}
                 })
             ]);
 
-            set({
-                sendMoneyCharge: sendRes.data?.data || "0.00",
-                withdrawCharge: withdrawRes.data?.data || "0.00"
-            });
+set({
+    sendMoneyCharge: sendRes.data?.data || "0.00",
+    withdrawCharge: withdrawRes.data?.data || "0.00"
+});
         } catch (error) {
-            console.error("Fetch Charges Error:", error);
-        }
+    console.error("Fetch Charges Error:", error);
+}
     }
 });

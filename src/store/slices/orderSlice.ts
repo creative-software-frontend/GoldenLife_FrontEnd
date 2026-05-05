@@ -94,17 +94,17 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
         try {
             const url = `${baseURL}/api/student/orders`;
             console.log(`📡 orderSlice: Fetching orders from ${url}`);
-            
+
             const response = await axios.get(url, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
-            
+
             const rawOrders = Array.isArray(response.data.orders) ? response.data.orders : [];
             console.log(`✅ orderSlice: Fetched ${rawOrders.length} orders`);
-            
-            set({ 
-                orders: rawOrders, 
-                isOrdersFetched: true 
+
+            set({
+                orders: rawOrders,
+                isOrdersFetched: true
             });
         } catch (error: any) {
             console.error("❌ orderSlice Fetch Error:", error.response?.data || error.message);
@@ -121,7 +121,7 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
 
         try {
             const response = await axios.get(`${baseURL}/api/order-details?order_no=${orderNo}`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (response.data?.status === "success" && response.data.order) {

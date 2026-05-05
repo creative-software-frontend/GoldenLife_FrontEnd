@@ -26,7 +26,7 @@ const InstructorSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) =>
 
             if (token) {
                 await axios.post(`${baseURL}/api/vendor/logout`, {}, {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
                 });
             }
         } catch (err) {

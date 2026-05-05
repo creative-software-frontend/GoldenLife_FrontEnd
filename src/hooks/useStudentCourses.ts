@@ -58,7 +58,7 @@ export const useStudentCoursesQuery = () => {
             };
 
             if (token) {
-                headers.Authorization = `Bearer ${token}`;
+                headers.X - Auth - Token = `Bearer ${token}`;
             }
 
             const response = await axios.get<StudentCoursesResponse>(`${baseURL}/api/student/courses`, {
@@ -79,7 +79,7 @@ export const useStudentCourseDetailsQuery = (id: string | undefined) => {
             };
 
             if (token) {
-                headers.Authorization = `Bearer ${token}`;
+                headers.X - Auth - Token = `Bearer ${token}`;
             }
 
             const response = await axios.get<StudentCourseDetailsResponse>(`${baseURL}/api/student/course?id=${id}`, {

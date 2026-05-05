@@ -20,7 +20,7 @@ export default function ProfileSettings() {
             try {
                 const token = JSON.parse(session).token;
                 const response = await axios.get(`${baseURL}/api/student/referral-link`, {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
                 });
                 if (response.data?.success) {
                     setReferralLink(response.data.data.referral_link);
@@ -149,8 +149,8 @@ export default function ProfileSettings() {
                                         whileTap={{ scale: 0.98 }}
                                         onClick={handleCopy}
                                         className={`w-full flex items-center justify-center gap-3 py-4 rounded-2xl font-black text-sm transition-all shadow-xl ${copied
-                                                ? 'bg-emerald-500 text-white shadow-emerald-200'
-                                                : 'bg-slate-900 text-white shadow-slate-200 hover:bg-slate-800'
+                                            ? 'bg-emerald-500 text-white shadow-emerald-200'
+                                            : 'bg-slate-900 text-white shadow-slate-200 hover:bg-slate-800'
                                             }`}
                                     >
                                         {copied ? <CheckCircle2 size={20} /> : <Copy size={20} />}

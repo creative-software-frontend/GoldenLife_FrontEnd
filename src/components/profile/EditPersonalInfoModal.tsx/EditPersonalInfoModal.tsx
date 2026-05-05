@@ -107,7 +107,7 @@ export default function EditPersonalInfoModal({
         formData,
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            ''X - Auth - Token'': `Bearer ${token}`,
             'Accept': 'application/json',
           }
         }

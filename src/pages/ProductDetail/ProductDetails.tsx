@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom"; // <-- Added useNavigate
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
     ShoppingCart, Heart, Minus, Plus, Star,
     CheckCircle, ChevronLeft, ChevronRight, Zap, Store
@@ -10,8 +10,6 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import useModalStore from '@/store/modalStore';
 import { useCartStore } from '@/store/cartStore';
-import { VendorMismatchModal } from "@/components/shared/VendorMismatchModal";
-import { log } from "util";
 
 // --- INTERFACES ---
 interface GalleryItem {
@@ -62,8 +60,7 @@ export default function ProductDetails() {
     const [activeSlideIndex, setActiveSlideIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
-    // Vendor Switch State
-    const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
+    // Vendor Switch State — removed blocking; items group by vendor in Cart
 
     // --- API & IMAGE PATHS ---
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
@@ -81,7 +78,11 @@ export default function ProductDetails() {
         const fetchProduct = async () => {
             try {
                 const token = getAuthToken();
-                const config = { headers: { 'Content-Type': 'application/json', ...(token && { Authorization: `Bearer ${token}` }) } };
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json', ...(token && { 'X-Auth-Token': `Bearer ${token}` })
+                    }
+                };
 
                 const response = await axios.get(`${baseURL}/api/products/${id}`, config);
                 const data = response.data?.data;
@@ -127,45 +128,15 @@ export default function ProductDetails() {
     }, [id]);
 
     // --- HANDLERS ---
-    const { cartItems, addItem, clearCart } = useCartStore();
+    const { addItem } = useCartStore();
 
     // --- HANDLERS ---
     const addToCart = () => {
         if (!product) return;
 
         const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id || "empty_vendor";
-
-        // Vendor Check using Zustand state
-        if (cartItems.length > 0) {
-            const firstCartItemVendorId = cartItems[0].vendor_id || "empty_store";
-            if (String(firstCartItemVendorId) !== String(currentVendorId)) {
-                setIsVendorModalOpen(true);
-                return;
-            }
-        }
-
         const name = i18n.language === 'bn' ? (product.product_title_bangla || product.product_title_english) : product.product_title_english;
 
-        addItem({
-            id: Number(product.id),
-            name,
-            product_title_english: product.product_title_english,
-            image: product.product_image?.startsWith('http') ? product.product_image : `${mainImgBase}${product.product_image}`,
-            quantity: quantity,
-            offer_price: Number(product.offer_price) || Number(product.seller_price) || 0, // Member Price
-            regular_price: Number(product.regular_price) || 0, // Customer Price
-            vendor_id: currentVendorId,
-            type: 'product'
-        });
-    };
-
-    const handleConfirmVendorSwitch = () => {
-        if (!product) return;
-
-        const name = i18n.language === 'bn' ? (product.product_title_bangla || product.product_title_english) : product.product_title_english;
-        const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id;
-
-        clearCart();
         addItem({
             id: Number(product.id),
             name,
@@ -175,10 +146,10 @@ export default function ProductDetails() {
             offer_price: Number(product.offer_price) || Number(product.seller_price) || 0,
             regular_price: Number(product.regular_price) || 0,
             vendor_id: currentVendorId,
-            type: 'product'
+            type: 'product',
+            seller_name: (product as any).vendor?.businee_name || 'Partner',
+            seller_id: currentVendorId
         });
-
-        setIsVendorModalOpen(false);
     };
 
     // <-- NEW: Handle Buy Now -->
@@ -495,11 +466,6 @@ export default function ProductDetails() {
 
             </div>
 
-            <VendorMismatchModal
-                isOpen={isVendorModalOpen}
-                onClose={() => setIsVendorModalOpen(false)}
-                onConfirm={handleConfirmVendorSwitch}
-            />
         </motion.div>
     );
 }

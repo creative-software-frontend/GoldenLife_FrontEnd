@@ -42,8 +42,8 @@ const getHeaders = () => {
     const token = getAuthToken();
     return {
         headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            X- Auth - Token: `Bearer ${token}`,
+        'Content-Type': 'application/json',
         },
     };
 };
@@ -76,13 +76,13 @@ export const useCreateTicket = () => {
             const token = getAuthToken();
             const response = await axios.post(`${baseURL}/api/ticket/store`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
+                    X- Auth - Token: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
                 },
-            });
-            return response.data;
-        },
-        onSuccess: () => {
+    });
+    return response.data;
+},
+    onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tickets'] });
         },
     });

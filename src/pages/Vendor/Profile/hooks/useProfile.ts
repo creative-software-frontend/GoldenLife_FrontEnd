@@ -71,7 +71,7 @@ export function useProfile() {
       console.log('[useProfile] API URL:', url);
 
       const response = await axios.get(url, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { 'X-Auth-Token': `Bearer ${token}` }
       });
 
       console.log('📥 [useProfile] Raw API Response:', {
@@ -142,52 +142,52 @@ export function useProfile() {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'multipart/form-data'
+            X- Auth - Token: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
           }
         }
       );
 
-      console.log('API Response:', response.data);
-      console.log('Success field:', response.data?.success);
+  console.log('API Response:', response.data);
+  console.log('Success field:', response.data?.success);
 
-      // Check multiple possible success indicators
-      const isSuccess = response.data?.success === true ||
-        response.data?.status === 'success' ||
-        response.data?.message?.toLowerCase()?.includes('success');
+  // Check multiple possible success indicators
+  const isSuccess = response.data?.success === true ||
+    response.data?.status === 'success' ||
+    response.data?.message?.toLowerCase()?.includes('success');
 
-      if (isSuccess) {
-        // Refresh data after successful update
-        await fetchProfile();
-        return true;
-      } else {
-        console.warn('API did not return success: true', response.data);
-        // For testing: pretend it worked if we get any response
-        // Remove this line when backend is properly implemented:
-        await fetchProfile();
-        return true; // Temporary: assume success if no error
-      }
-    } catch (err: any) {
-      console.error('Failed to update profile:', err);
-      console.error('Error response:', err.response?.data);
-      console.error('Error status:', err.response?.status);
+  if (isSuccess) {
+    // Refresh data after successful update
+    await fetchProfile();
+    return true;
+  } else {
+    console.warn('API did not return success: true', response.data);
+    // For testing: pretend it worked if we get any response
+    // Remove this line when backend is properly implemented:
+    await fetchProfile();
+    return true; // Temporary: assume success if no error
+  }
+} catch (err: any) {
+  console.error('Failed to update profile:', err);
+  console.error('Error response:', err.response?.data);
+  console.error('Error status:', err.response?.status);
 
-      // If it's a network error or server not found, for testing purposes
-      if (err.code === 'ERR_NETWORK' || err.response?.status === 503) {
-        console.warn('Backend not available - simulating success for UI testing');
-        await fetchProfile();
-        return true; // Simulate success for UI testing
-      }
+  // If it's a network error or server not found, for testing purposes
+  if (err.code === 'ERR_NETWORK' || err.response?.status === 503) {
+    console.warn('Backend not available - simulating success for UI testing');
+    await fetchProfile();
+    return true; // Simulate success for UI testing
+  }
 
-      throw new Error(err.response?.data?.message || err.message || 'Failed to update profile');
-    }
+  throw new Error(err.response?.data?.message || err.message || 'Failed to update profile');
+}
   };
 
-  return {
-    data,
-    isLoading,
-    error,
-    refetch: fetchProfile,
-    updateProfile
-  };
+return {
+  data,
+  isLoading,
+  error,
+  refetch: fetchProfile,
+  updateProfile
+};
 }

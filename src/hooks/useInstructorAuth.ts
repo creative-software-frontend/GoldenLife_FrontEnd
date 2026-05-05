@@ -288,12 +288,13 @@ export const useInstructorDashboardQuery = () => {
       const token = getToken();
       const response = await axios.get<{ status: boolean; data: InstructorDashboardData }>(
         `${baseURL}/api/instructor/dashboard`,
-        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }
-      );
-      if (!response.data.status) throw new Error('Failed to load dashboard data.');
-      return response.data.data;
-    },
-    staleTime: 2 * 60 * 1000, // 2 minutes
+        { headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' }
+  }
+  );
+  if (!response.data.status) throw new Error('Failed to load dashboard data.');
+  return response.data.data;
+},
+  staleTime: 2 * 60 * 1000, // 2 minutes
     refetchOnWindowFocus: true,
   });
 };
@@ -418,17 +419,17 @@ export const useInstructorCourseQuery = (id: string | undefined) =>
           `${baseURL}/api/instructor/courses/show`,
           {
             params: { id },
-            headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-          }
+            headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' },
+    }
         );
-        console.log('Course fetch response:', response.data);
-        const payload = response.data?.data ?? response.data;
-        if (!payload) throw new Error('Course not found.');
-        return payload as CourseData;
+console.log('Course fetch response:', response.data);
+const payload = response.data?.data ?? response.data;
+if (!payload) throw new Error('Course not found.');
+return payload as CourseData;
       } catch (err: any) {
-        console.error('Course fetch error:', err.response || err);
-        throw err;
-      }
+  console.error('Course fetch error:', err.response || err);
+  throw err;
+}
     },
   });
 
@@ -440,13 +441,13 @@ export const useCreateCourseMutation = () => {
     mutationFn: async (fd) => {
       const token = getInstructorToken();
       await axios.post(`${baseURL}/api/courses/store`, fd, {
-        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-      });
-    },
-    onSuccess: () => {
+        headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' },
+  });
+},
+  onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
     },
-    onError: (err: any) => { throw new Error(extractError(err)); },
+onError: (err: any) => { throw new Error(extractError(err)); },
   });
 };
 
@@ -463,36 +464,39 @@ export const useUpdateCourseMutation = (id: string | undefined) => {
       const token = getInstructorToken();
       await axios.post(`${baseURL}/api/courses/update`, fd, {
         params: { id },
-        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-      });
-    },
-    onSuccess: () => {
+        headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' },
+  });
+},
+  onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
     },
-    onError: (err: any) => { throw new Error(extractError(err)); },
+onError: (err: any) => { throw new Error(extractError(err)); },
   });
 };
 
 // ─── Fetch instructor courses list ────────────────────────────────────────────
 
 /**
- * Fetch all courses belonging to the logged-in instructor
- * GET /api/instructor/courses
+ * Fetch all courses belonging to the logged-in instructor (with optional type filtering)
+ * GET /api/instructor/courses?type=...
  */
-export const useInstructorCoursesQuery = () =>
+export const useInstructorCoursesQuery = (type?: string) =>
   useQuery<CourseData[]>({
-    queryKey: ['instructorCourses'],
+    queryKey: ['instructorCourses', type],
     staleTime: 60 * 1000,
     queryFn: async () => {
       const token = getInstructorToken();
       const response = await axios.get(
         `${baseURL}/api/instructor/courses`,
-        { headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' } }
-      );
-      // API shape: { status, count, data: [...] }
-      const payload = response.data?.data ?? response.data;
-      if (!Array.isArray(payload)) throw new Error('Unexpected response format.');
-      return payload as CourseData[];
+        {
+          params: type && type !== 'All' ? { type } : {},
+          headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' }
+  }
+  );
+// API shape: { status, count, data: [...] }
+const payload = response.data?.data ?? response.data;
+if (!Array.isArray(payload)) throw new Error('Unexpected response format.');
+return payload as CourseData[];
     },
   });
 
@@ -510,9 +514,9 @@ export const useInstructorCourseDetailsQuery = (id: string | undefined) =>
       const token = getInstructorToken();
       const response = await axios.get(`${baseURL}/api/course/details`, {
         params: { id },
-        headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
-      });
-      return (response.data?.data ?? response.data) as CourseData;
+        headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' },
+  });
+return (response.data?.data ?? response.data) as CourseData;
     },
   });
 

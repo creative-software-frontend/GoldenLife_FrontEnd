@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudentCourseDetailsQuery } from '@/hooks/useStudentCourses';
 import { Loader2, ArrowLeft, Clock, BookOpen, Star, Users, CheckCircle, ShieldCheck, PlayCircle, ShoppingCart } from 'lucide-react';
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +20,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
     const id = courseId || paramId;
     const navigate = useNavigate();
     const { data, isLoading, isError } = useStudentCourseDetailsQuery(id);
+    const queryClient = useQueryClient();
     const { t } = useTranslation("global");
     const { addItem } = useCartStore();
 
@@ -49,6 +51,18 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
     const imageUrl = course.image?.startsWith('http') ? course.image : `${baseImageURL}${course.image}`;
 
     const handleAddToCart = () => {
+        // Try to get instructor name from cache if possible
+        const instructorId = course.instructor_id || course.instructor?.id;
+        
+        // Normalize ID to try both string and number in cache
+        let instructorData: any = null;
+        if (instructorId) {
+            instructorData = queryClient.getQueryData(['instructor', String(instructorId)]) || 
+                             queryClient.getQueryData(['instructor', Number(instructorId)]);
+        }
+
+        const instructorName = instructorData?.name || course.instructor_name || course.instructor?.name || `Instructor #${instructorId}`;
+
         addItem({
             id: Number(course.id),
             name: course.course_title_english,
@@ -57,7 +71,9 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
             quantity: 1,
             offer_price: Number(course.regular_fee) || 0, // Member Price
             regular_price: Number(course.offer_fee) || 0, // Customer Price
-            type: 'course'
+            type: 'course',
+            seller_name: instructorName,
+            seller_id: instructorId
         });
     };
 

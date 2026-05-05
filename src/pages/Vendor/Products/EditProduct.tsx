@@ -54,7 +54,7 @@ export default function EditProduct() {
 
         console.log('3. Making API call to:', `${baseURL}/api/vendor/product/details`);
         const response = await axios.get(`${baseURL}/api/vendor/product/details`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { 'X-Auth-Token': `Bearer ${token}` },
           params: { product_id: Number(id) }
         });
 
@@ -177,14 +177,14 @@ export default function EditProduct() {
 
       // Define keys to exclude from the automatic FormData append (handled manually)
       const excludedKeys = ['images', 'gallery_images', 'existing_gallery_images', 'removed_gallery_images'];
-      
+
       // Ensure numeric fields are actually numbers and product_id is present
       formData.append('product_id', id.toString());
 
       Object.keys(data).forEach((key) => {
         if (!excludedKeys.includes(key)) {
           const value = data[key];
-          
+
           // Only append if value is valid
           if (value !== undefined && value !== null && value !== '') {
             // Special handling for numeric IDs to ensure they are sent as strings the backend expects

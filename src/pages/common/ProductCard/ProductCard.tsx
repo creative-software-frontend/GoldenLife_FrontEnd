@@ -87,7 +87,7 @@ export const ProductCard = ({ product, baseURL, onAddToCart, isSkeleton = false 
                         onClick={(e) => e.stopPropagation()}
                         className="text-[10px] sm:text-[11px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline mb-1 w-full truncate"
                     >
-                        Store: {product.vendor.businee_name}
+                        Store: {product.vendor?.businee_name}
                     </Link>
                 )}
 

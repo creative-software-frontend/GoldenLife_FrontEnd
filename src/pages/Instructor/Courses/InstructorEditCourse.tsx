@@ -29,7 +29,7 @@ const COURSE_TYPES = ['Course (Video)', 'Live Class', 'Ebook'];
 // ─── Styled helpers ───────────────────────────────────────────────────────────
 const inp = 'w-full h-12 px-5 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm shadow-sm';
 const sel = `${inp} cursor-pointer appearance-none`;
-const ta  = 'w-full px-5 py-4 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm resize-none shadow-sm';
+const ta = 'w-full px-5 py-4 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm resize-none shadow-sm';
 
 const Field = ({ label, req, children, span2 }: { label: string; req?: boolean; children: React.ReactNode; span2?: boolean }) => (
   <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className={span2 ? 'col-span-2' : ''}>
@@ -88,19 +88,19 @@ const InstructorEditCourse: React.FC = () => {
   useEffect(() => {
     if (!course) return;
     setForm({
-      titleEn:     course.course_title_english   || '',
-      titleBn:     course.course_title_bangla    || '',
-      courseType:  course.course_type            || '',
-      videoUrl:    course.video_url || course.download_url || '',
-      courseCode:  course.course_code            || '',
-      category:    course.category              || '',
-      duration:    course.course_duration        || '',
-      sellerFee:   String(course.seller_fee      || ''),
-      regularFee:  String(course.regular_fee     || ''),
-      offerFee:    String(course.offer_fee       || ''),
-      earningValue: String(course.earning_value  || ''),
-      detailsEn:   course.course_details_english || '',
-      detailsBn:   course.course_details_bangla  || '',
+      titleEn: course.course_title_english || '',
+      titleBn: course.course_title_bangla || '',
+      courseType: course.course_type || '',
+      videoUrl: course.video_url || course.download_url || '',
+      courseCode: course.course_code || '',
+      category: course.category || '',
+      duration: course.course_duration || '',
+      sellerFee: String(course.seller_fee || ''),
+      regularFee: String(course.regular_fee || ''),
+      offerFee: String(course.offer_fee || ''),
+      earningValue: String(course.earning_value || ''),
+      detailsEn: course.course_details_english || '',
+      detailsBn: course.course_details_bangla || '',
     });
   }, [course]);
 
@@ -115,25 +115,25 @@ const InstructorEditCourse: React.FC = () => {
     }
     const fd = new FormData();
     if (img) fd.append('image', img);
-    fd.append('course_title_english',  form.titleEn);
-    fd.append('course_title_bangla',   form.titleBn);
-    fd.append('course_type',           form.courseType);
-    fd.append('category',              form.category);
-    fd.append('course_code',           form.courseCode);
-    fd.append('course_duration',       form.duration);
-    fd.append('seller_fee',            form.sellerFee);
-    fd.append('regular_fee',           form.regularFee);
-    fd.append('offer_fee',             form.offerFee);
-    fd.append('earning_value',         form.earningValue);
+    fd.append('course_title_english', form.titleEn);
+    fd.append('course_title_bangla', form.titleBn);
+    fd.append('course_type', form.courseType);
+    fd.append('category', form.category);
+    fd.append('course_code', form.courseCode);
+    fd.append('course_duration', form.duration);
+    fd.append('seller_fee', form.sellerFee);
+    fd.append('regular_fee', form.regularFee);
+    fd.append('offer_fee', form.offerFee);
+    fd.append('earning_value', form.earningValue);
     fd.append('course_details_english', form.detailsEn);
-    fd.append('course_details_bangla',  form.detailsBn);
-    
+    fd.append('course_details_bangla', form.detailsBn);
+
     // Always send URL for these types
     fd.append('video_url', form.videoUrl);
 
     updateMutation.mutate(fd, {
       onSuccess: () => { toast.success('Course updated successfully!'); handleBack(); },
-      onError:   (err) => toast.error(err.message || 'Something went wrong'),
+      onError: (err) => toast.error(err.message || 'Something went wrong'),
     });
   };
 
@@ -219,20 +219,20 @@ const InstructorEditCourse: React.FC = () => {
 
               {form.courseType && (
                 <Field label={getUrlLabel()} req>
-                  <Input 
-                    className={inp} 
-                    placeholder={getUrlPlaceholder()} 
-                    value={form.videoUrl} 
-                    onChange={set('videoUrl')} 
+                  <Input
+                    className={inp}
+                    placeholder={getUrlPlaceholder()}
+                    value={form.videoUrl}
+                    onChange={set('videoUrl')}
                   />
                 </Field>
               )}
 
               <Field label="Category" req>
                 <div className="relative">
-                  <select 
-                    className={cn(sel, isCatsLoading && "opacity-50 cursor-wait")} 
-                    value={form.category} 
+                  <select
+                    className={cn(sel, isCatsLoading && "opacity-50 cursor-wait")}
+                    value={form.category}
                     onChange={set('category')}
                     disabled={isCatsLoading}
                   >
@@ -320,112 +320,7 @@ const InstructorEditCourse: React.FC = () => {
               </Field>
             </div>
 
-            {/* Curriculum — Modulebook only */}
-            <AnimatePresence>
-              {isModule && (
-                <motion.section key="curriculum" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: 'spring', damping: 20 }}>
-                  <SectionHead action={
-                    <Button onClick={addMod} className="h-10 rounded-xl text-xs font-bold gap-2 bg-black text-white hover:bg-orange-600 transition-all shadow-lg shadow-black/10">
-                      <Plus size={16} strokeWidth={3} /> Add Module
-                    </Button>
-                  }>
-                    Course Curriculum (Modules & Lessons)
-                  </SectionHead>
-
-                  <LayoutGroup>
-                    <div className="space-y-8">
-                      {modules.map((mod, mIdx) => (
-                        <motion.div layout key={mod.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: -50 }}
-                          className="rounded-[2.5rem] border border-gray-100 overflow-hidden bg-white shadow-2xl shadow-gray-200/40">
-
-                          {/* Module header */}
-                          <div className="flex items-center gap-5 px-8 py-6 bg-gray-50/50 border-b border-gray-100">
-                            <GripVertical size={20} className="text-gray-300 shrink-0" />
-                            <Badge className="bg-black text-white border-none text-[11px] font-bold px-4 py-2 shrink-0 rounded-2xl tracking-tighter italic">
-                              LVL-{String(mIdx + 1).padStart(2, '0')}
-                            </Badge>
-                            <input className="flex-1 bg-transparent text-black font-bold text-lg placeholder-black/40 outline-none"
-                              placeholder="Module Title" value={mod.title} onChange={e => setModTitle(mod.id, e.target.value)} />
-                            <div className="flex items-center gap-3">
-                              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => togMod(mod.id)}
-                                className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-black transition-all">
-                                {mod.open ? <ChevronUp size={20} strokeWidth={3} /> : <ChevronDown size={20} strokeWidth={3} />}
-                              </motion.button>
-                              <motion.button whileHover={{ scale: 1.1, backgroundColor: '#fef2f2', color: '#ef4444' }} whileTap={{ scale: 0.9 }}
-                                onClick={() => delMod(mod.id)}
-                                className="w-12 h-12 rounded-2xl bg-white border border-gray-100 shadow-sm flex items-center justify-center text-gray-400 transition-all">
-                                <Trash2 size={18} strokeWidth={3} />
-                              </motion.button>
-                            </div>
-                          </div>
-
-                          {/* Lessons */}
-                          <AnimatePresence>
-                            {mod.open && (
-                              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                                <div className="p-10 space-y-6">
-                                  {mod.lessons.map((les, lIdx) => (
-                                    <motion.div layout key={les.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                                      className="rounded-[2rem] border border-gray-100 p-8 space-y-6 bg-gray-50/20 hover:border-black/10 transition-colors group/les">
-                                      <div className="flex items-center gap-5">
-                                        <div className="w-10 h-10 rounded-2xl bg-black text-white flex items-center justify-center text-xs font-bold shrink-0">{lIdx + 1}</div>
-                                        <input className="flex-1 bg-transparent text-black font-bold text-base placeholder-black/40 outline-none border-b-2 border-gray-100 pb-2 focus:border-black transition-colors"
-                                          placeholder="Lesson Title" value={les.title} onChange={e => setLesField(mod.id, les.id, 'title', e.target.value)} />
-                                        <div className="relative">
-                                          <Clock size={16} className="absolute left-0 top-1/2 -translate-y-1/2 text-black/60" strokeWidth={3} />
-                                          <input className="w-44 bg-transparent text-black font-bold text-[11px] uppercase tracking-widest placeholder-black/40 outline-none border-b-2 border-gray-100 pb-2 pl-6 text-right focus:border-black transition-colors"
-                                            placeholder="Duration" value={les.duration} onChange={e => setLesField(mod.id, les.id, 'duration', e.target.value)} />
-                                        </div>
-                                        <motion.button whileHover={{ scale: 1.1, color: '#ef4444' }} onClick={() => delLesson(mod.id, les.id)}
-                                          className="w-10 h-10 rounded-xl hover:bg-red-50 text-gray-300 transition-all shrink-0 flex items-center justify-center">
-                                          <Trash2 size={16} strokeWidth={3} />
-                                        </motion.button>
-                                      </div>
-
-                                      {/* Videos */}
-                                      <div className="space-y-4 pl-14">
-                                        {les.videos.map((vid, vIdx) => (
-                                          <motion.div layout key={vid.id} className="flex items-center gap-4">
-                                            <div className="flex items-center gap-3 w-28 shrink-0">
-                                              <div className="w-2 h-2 rounded-full bg-black" />
-                                              <span className="text-[10px] font-bold text-black/30 uppercase tracking-[0.2em]">Video {vIdx + 1}</span>
-                                            </div>
-                                            <div className="flex-1 relative">
-                                              <Link2 size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-black/60" strokeWidth={3} />
-                                              <input className="w-full h-12 pl-12 pr-5 rounded-2xl border border-gray-100 bg-white text-black font-bold text-xs placeholder-black/40 outline-none focus:border-black focus:ring-4 focus:ring-black/5 transition-all shadow-sm"
-                                                placeholder="Video URL" value={vid.url} onChange={e => setVidUrl(mod.id, les.id, vid.id, e.target.value)} />
-                                            </div>
-                                            {les.videos.length > 1 && (
-                                              <motion.button whileHover={{ scale: 1.2, color: '#ef4444' }} onClick={() => delVideo(mod.id, les.id, vid.id)}
-                                                className="w-10 h-10 rounded-xl text-gray-200 transition-all shrink-0 flex items-center justify-center">
-                                                <X size={16} strokeWidth={4} />
-                                              </motion.button>
-                                            )}
-                                          </motion.div>
-                                        ))}
-                                        <motion.button whileHover={{ x: 5, color: '#10b981' }} onClick={() => addVideo(mod.id, les.id)}
-                                          className="flex items-center gap-2 text-[11px] font-bold text-black/60 hover:text-black uppercase tracking-widest mt-4 transition-all">
-                                          <Plus size={14} strokeWidth={4} /> Add Video
-                                        </motion.button>
-                                      </div>
-                                    </motion.div>
-                                  ))}
-
-                                  <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={() => addLesson(mod.id)}
-                                    className="w-full py-6 rounded-[2rem] border-4 border-dashed border-gray-100 text-black/60 hover:text-black hover:border-black/20 text-[12px] font-bold tracking-[0.3em] uppercase transition-all flex items-center justify-center gap-4">
-                                    <Plus size={20} strokeWidth={4} /> Add Lesson
-                                  </motion.button>
-                                </div>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </LayoutGroup>
-                </motion.section>
-              )}
-            </AnimatePresence>
+            {/* Curriculum section removed as it is not implemented in the API yet */}
           </motion.div>
 
           {/* Save Bar */}

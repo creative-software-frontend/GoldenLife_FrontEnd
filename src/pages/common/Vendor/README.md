@@ -186,7 +186,7 @@ Content-Type: application/json
 ### 4. Vendor Logout
 ```http
 POST /api/vendor/logout
-Authorization: Bearer {token}
+'X-Auth-Token': Bearer {token}
 Content-Type: application/json
 ```
 

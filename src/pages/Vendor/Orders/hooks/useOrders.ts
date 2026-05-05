@@ -61,7 +61,7 @@ export function useOrders() {
           const response = await axios.get<OrdersApiResponse>(
             endpoint,
             {
-              headers: { Authorization: `Bearer ${token}` },
+              headers: { 'X-Auth-Token': `Bearer ${token}` },
               params
             }
           );
@@ -130,7 +130,7 @@ export function useOrders() {
       const response = await axios.get<OrdersApiResponse>(
         `${baseURL}/api/vendor/orders/history`,
         {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { 'X-Auth-Token': `Bearer ${token}` }
         }
       );
 
@@ -250,100 +250,100 @@ export function useOrders() {
 
           const axiosConfig: any = {
             headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
+              X- Auth - Token: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
           };
 
-          // Add params if present
-          if (endpoint.config.params) {
-            axiosConfig.params = endpoint.config.params;
-          }
-
-          // Determine HTTP method
-          const method = endpoint.config.method || 'POST';
-
-          const response = await axios.request<UpdateStatusApiResponse>({
-            method,
-            url: endpoint.url,
-            data: endpoint.config.body,
-            ...axiosConfig
-          });
-
-          console.log(`🟢 [API] Success with ${endpoint.name}:`, response.data);
-          successfulEndpoint = endpoint.name;
-
-          if (response.data.success) {
-            toast.success('Order status updated successfully!');
-            console.log(`✅ Used endpoint: ${endpoint.name}`);
-            console.log('✅ Order list will refresh automatically');
-            return true;
-          } else {
-            throw new Error(response.data.message || 'Failed to update order status');
-          }
-
-        } catch (err: any) {
-          console.warn(`⚠️ Failed with ${endpoint.name}:`, err.response?.status, err.response?.data);
-          lastError = err;
-
-          // If it's not a 404 or 405, stop trying other endpoints
-          if (err.response?.status !== 404 && err.response?.status !== 405) {
-            console.error(`❌ Stopping at ${endpoint.name} due to error ${err.response?.status}`);
-            throw err;
-          }
-          // Continue to next endpoint pattern
-        }
+      // Add params if present
+      if (endpoint.config.params) {
+        axiosConfig.params = endpoint.config.params;
       }
+
+      // Determine HTTP method
+      const method = endpoint.config.method || 'POST';
+
+      const response = await axios.request<UpdateStatusApiResponse>({
+        method,
+        url: endpoint.url,
+        data: endpoint.config.body,
+        ...axiosConfig
+      });
+
+      console.log(`🟢 [API] Success with ${endpoint.name}:`, response.data);
+      successfulEndpoint = endpoint.name;
+
+      if (response.data.success) {
+        toast.success('Order status updated successfully!');
+        console.log(`✅ Used endpoint: ${endpoint.name}`);
+        console.log('✅ Order list will refresh automatically');
+        return true;
+      } else {
+        throw new Error(response.data.message || 'Failed to update order status');
+      }
+
+    } catch (err: any) {
+      console.warn(`⚠️ Failed with ${endpoint.name}:`, err.response?.status, err.response?.data);
+      lastError = err;
+
+      // If it's not a 404 or 405, stop trying other endpoints
+      if (err.response?.status !== 404 && err.response?.status !== 405) {
+        console.error(`❌ Stopping at ${endpoint.name} due to error ${err.response?.status}`);
+        throw err;
+      }
+      // Continue to next endpoint pattern
+    }
+  }
 
       // All endpoints failed
       if (!successfulEndpoint) {
-        console.error('❌ [API] All endpoints failed. Last error:', lastError);
-        console.error('❌ [API] Error details:', lastError.response?.data);
-        throw new Error(
-          `Unable to update order status. Tried ${endpointsToTry.length} endpoints but all failed. ` +
-          `Please contact administrator to verify the correct API endpoint. ` +
-          `Last error: ${lastError.response?.data?.message || lastError.message}`
-        );
-      }
+    console.error('❌ [API] All endpoints failed. Last error:', lastError);
+    console.error('❌ [API] Error details:', lastError.response?.data);
+    throw new Error(
+      `Unable to update order status. Tried ${endpointsToTry.length} endpoints but all failed. ` +
+      `Please contact administrator to verify the correct API endpoint. ` +
+      `Last error: ${lastError.response?.data?.message || lastError.message}`
+    );
+  }
 
-      return false;
+  return false;
 
-    } catch (err: any) {
-      console.error('❌ [API] Update order status error:', err);
-      console.error('❌ [API] Error response:', err.response?.data);
-      console.error('❌ [API] Error status:', err.response?.status);
+} catch (err: any) {
+  console.error('❌ [API] Update order status error:', err);
+  console.error('❌ [API] Error response:', err.response?.data);
+  console.error('❌ [API] Error status:', err.response?.status);
 
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to update order status';
-      setError(errorMessage);
+  const errorMessage = err.response?.data?.message || err.message || 'Failed to update order status';
+  setError(errorMessage);
 
-      // Handle specific error cases
-      if (err.response?.status === 404) {
-        console.error('❌ [API] Endpoint not found - Check if backend route exists');
-        toast.error('Update endpoint not found. Please contact administrator.');
-      } else if (err.response?.status === 401) {
-        console.error('❌ [API] Authentication failed - Token may be invalid');
-        toast.error('Authentication failed. Please login again.');
-      } else if (err.response?.status === 500) {
-        console.error('❌ [API] Server error');
-        toast.error('Server error. Please try again later.');
-      } else if (err.response?.status === 400) {
-        console.error('❌ [API] Bad request - Invalid data sent');
-        toast.error('Invalid request. Please check the order number and status.');
-      } else {
-        toast.error(errorMessage);
-      }
+  // Handle specific error cases
+  if (err.response?.status === 404) {
+    console.error('❌ [API] Endpoint not found - Check if backend route exists');
+    toast.error('Update endpoint not found. Please contact administrator.');
+  } else if (err.response?.status === 401) {
+    console.error('❌ [API] Authentication failed - Token may be invalid');
+    toast.error('Authentication failed. Please login again.');
+  } else if (err.response?.status === 500) {
+    console.error('❌ [API] Server error');
+    toast.error('Server error. Please try again later.');
+  } else if (err.response?.status === 400) {
+    console.error('❌ [API] Bad request - Invalid data sent');
+    toast.error('Invalid request. Please check the order number and status.');
+  } else {
+    toast.error(errorMessage);
+  }
 
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
+  return false;
+} finally {
+  setIsLoading(false);
+}
   }, [baseURL]);
 
-  return {
-    fetchOrders,
-    fetchOrderDetails,
-    updateOrderStatus,
-    isLoading,
-    error,
-  };
+return {
+  fetchOrders,
+  fetchOrderDetails,
+  updateOrderStatus,
+  isLoading,
+  error,
+};
 }

@@ -850,7 +850,7 @@ for (const endpoint of possibleEndpoints) {
     const response = await axios.put(
       `${baseURL}${endpoint}`,
       { product_id: id, status: newStatus },
-      { headers: { Authorization: `Bearer ${token}` } }
+      { headers: { 'X-Auth-Token': `Bearer ${token}` } }
     );
     successData = response.data;
     break;
@@ -870,7 +870,7 @@ for (const endpoint of possibleEndpoints) {
 **Required Backend Endpoint:**
 ```http
 PUT /api/vendor/product/toggle-status
-Authorization: Bearer {token}
+'X-Auth-Token': Bearer {token}
 Content-Type: application/json
 
 Body:
@@ -914,7 +914,7 @@ Currently removed from UI. Status toggle button is commented out.
 **Required Backend API:**
 ```http
 GET /api/vendor/dashboard/stats
-Authorization: Bearer {token}
+'X-Auth-Token': Bearer {token}
 Query params:
   - period: 'today'|'weekly'|'monthly'|'yearly'
 
@@ -959,7 +959,7 @@ Response:
 ```typescript
 // useProducts.ts line 145-160
 await axios.delete(`${baseURL}/api/vendor/product/${productId}`, {
-  headers: { Authorization: `Bearer ${token}` }
+  headers: { 'X-Auth-Token': `Bearer ${token}` }
 });
 ```
 

@@ -26,11 +26,11 @@ export default function ReferralsTab() {
             const session = sessionStorage.getItem("student_session");
             const token = session ? JSON.parse(session).token : null;
             if (!token) {
-                throw new Error("Authorization token missing.");
+                throw new Error("'X-Auth-Token' token missing.");
             }
 
             const response = await axios.get(`${baseURL}/api/referred-students`, {
-                headers: { Authorization: `Bearer ${token}` }
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (response.data && response.data.success) {
@@ -108,7 +108,7 @@ export default function ReferralsTab() {
                             </thead>
                             <tbody className="divide-y divide-slate-50">
                                 {referrals.map((req, idx) => (
-                                    <motion.tr 
+                                    <motion.tr
                                         key={req.id}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -133,18 +133,17 @@ export default function ReferralsTab() {
                                         </td>
                                         <td className="py-4 font-medium text-slate-600">
                                             <div className="flex items-center gap-1 whitespace-nowrap">
-                                                <Phone size={14} className="text-slate-400"/> {req.mobile}
+                                                <Phone size={14} className="text-slate-400" /> {req.mobile}
                                             </div>
                                         </td>
                                         <td className="py-4 font-medium text-slate-600">
                                             {format(new Date(req.created_at), 'dd MMM yyyy')}
                                         </td>
                                         <td className="py-4 text-right">
-                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold leading-none ${
-                                                req.status.toLowerCase() === 'active' 
-                                                ? 'bg-emerald-50 text-emerald-600' 
+                                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold leading-none ${req.status.toLowerCase() === 'active'
+                                                ? 'bg-emerald-50 text-emerald-600'
                                                 : 'bg-amber-50 text-amber-600'
-                                            }`}>
+                                                }`}>
                                                 {req.status.toLowerCase() === 'active' ? <CheckCircle size={12} /> : <div className="w-1.5 h-1.5 rounded-full bg-amber-500" />}
                                                 {req.status}
                                             </span>
@@ -158,8 +157,8 @@ export default function ReferralsTab() {
                     {/* Mobile View: Cards */}
                     <div className="grid gap-4 md:hidden">
                         {referrals.map((req, idx) => (
-                            <motion.div 
-                                key={req.id} 
+                            <motion.div
+                                key={req.id}
                                 initial={{ opacity: 0, scale: 0.98 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: idx * 0.05 }}
@@ -175,11 +174,10 @@ export default function ReferralsTab() {
                                             <p className="text-xs text-slate-400 font-medium truncate max-w-[120px]">{req.email}</p>
                                         </div>
                                     </div>
-                                    <span className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                                        req.status.toLowerCase() === 'active' 
-                                        ? 'bg-emerald-50 text-emerald-600' 
+                                    <span className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${req.status.toLowerCase() === 'active'
+                                        ? 'bg-emerald-50 text-emerald-600'
                                         : 'bg-amber-50 text-amber-600'
-                                    }`}>
+                                        }`}>
                                         {req.status}
                                     </span>
                                 </div>
@@ -191,7 +189,7 @@ export default function ReferralsTab() {
                                     <div>
                                         <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Contact</p>
                                         <p className="text-slate-700 font-bold flex items-center gap-1">
-                                            <Phone size={12} className="text-slate-400"/> {req.mobile}
+                                            <Phone size={12} className="text-slate-400" /> {req.mobile}
                                         </p>
                                     </div>
                                     <div className="col-span-2">
