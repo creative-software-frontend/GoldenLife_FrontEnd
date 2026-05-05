@@ -32,6 +32,7 @@ export const createNavbarSlice: StateCreator<AppState, [], [], NavbarSlice> = (s
             });
 
             const data = response.data;
+            console.log('navbar data', data);
             if (data?.status) {
                 // 1. Update Wallet Balance
                 if (data.balance !== undefined) {

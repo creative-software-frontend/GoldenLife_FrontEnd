@@ -39,10 +39,10 @@ export const useInstructorNavbarQuery = () => {
     queryFn: async () => {
       const token = getInstructorToken();
       const response = await axios.get<NavbarResponse>(`${baseURL}/api/navbar`, {
-        headers: { X- Auth - Token: `Bearer ${token}`, Accept: 'application/json' },
-  });
-  return response.data;
-},
-  staleTime: 60 * 1000, // 1 minute
+        headers: { 'X-Auth-Token': `Bearer ${token}`, Accept: 'application/json' },
+      });
+      return response.data;
+    },
+    staleTime: 60 * 1000, // 1 minute
   });
 };

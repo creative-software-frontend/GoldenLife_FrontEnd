@@ -51,64 +51,64 @@ export const useInstructorWallet = () => {
             if (!token) throw new Error("Unauthorized");
             const { data } = await axios.post(`${baseURL}/api/transactions`, formData, {
                 headers: {
-                    X- Auth - Token: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data'
+                    'X-Auth-Token': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
                 }
-    });
-    return data;
-},
-    onSuccess: (data) => {
-        if(data?.status === 'success' || data?.success) {
-    toast.success(data.message || "Request submitted successfully!");
-    queryClient.invalidateQueries({ queryKey: ['instructor-wallet-balance'] });
-    queryClient.invalidateQueries({ queryKey: ['instructor-transactions'] });
-} else {
-    toast.error(data?.message || "Failed to submit request.");
-}
-},
-onError: (error: any) => {
-    toast.error(error.response?.data?.message || "Internal server error.");
-}
-    });
-
-// 4. Withdraw Money Mutation (Assuming it uses the same /api/transactions endpoint but with type: 'withdraw')
-const withdrawMoneyMutation = useMutation({
-    mutationFn: async (payload: any) => {
-        if (!token) throw new Error("Unauthorized");
-        // Standardize payload if needed
-        const { data } = await axios.post(`${baseURL}/api/transactions`, {
-            ...payload,
-            type: 'withdraw',
-            role: '4' // Instructor role
-        }, {
-            headers: { 'X-Auth-Token': `Bearer ${token}` }
-        });
-        return data;
-    },
-    onSuccess: (data) => {
-        if (data?.status === 'success' || data?.success) {
-            toast.success(data.message || "Withdrawal request submitted!");
-            queryClient.invalidateQueries({ queryKey: ['instructor-wallet-balance'] });
-            queryClient.invalidateQueries({ queryKey: ['instructor-transactions'] });
-        } else {
-            toast.error(data?.message || "Withdrawal failed.");
+            });
+            return data;
+        },
+        onSuccess: (data) => {
+            if (data?.status === 'success' || data?.success) {
+                toast.success(data.message || "Request submitted successfully!");
+                queryClient.invalidateQueries({ queryKey: ['instructor-wallet-balance'] });
+                queryClient.invalidateQueries({ queryKey: ['instructor-transactions'] });
+            } else {
+                toast.error(data?.message || "Failed to submit request.");
+            }
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Internal server error.");
         }
-    },
-    onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Internal server error.");
-    }
-});
+    });
 
-return {
-    balance: balanceData?.balance || "0.00",
-    transactions: transactionsData || [],
-    isBalanceLoading,
-    isTransactionsLoading,
-    addMoney: addMoneyMutation.mutateAsync,
-    isAddingMoney: addMoneyMutation.isPending,
-    withdrawMoney: withdrawMoneyMutation.mutateAsync,
-    isWithdrawingMoney: withdrawMoneyMutation.isPending,
-    refetchBalance,
-    refetchTransactions
-};
+    // 4. Withdraw Money Mutation (Assuming it uses the same /api/transactions endpoint but with type: 'withdraw')
+    const withdrawMoneyMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            if (!token) throw new Error("Unauthorized");
+            // Standardize payload if needed
+            const { data } = await axios.post(`${baseURL}/api/transactions`, {
+                ...payload,
+                type: 'withdraw',
+                role: '4' // Instructor role
+            }, {
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
+            });
+            return data;
+        },
+        onSuccess: (data) => {
+            if (data?.status === 'success' || data?.success) {
+                toast.success(data.message || "Withdrawal request submitted!");
+                queryClient.invalidateQueries({ queryKey: ['instructor-wallet-balance'] });
+                queryClient.invalidateQueries({ queryKey: ['instructor-transactions'] });
+            } else {
+                toast.error(data?.message || "Withdrawal failed.");
+            }
+        },
+        onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Internal server error.");
+        }
+    });
+
+    return {
+        balance: balanceData?.balance || "0.00",
+        transactions: transactionsData || [],
+        isBalanceLoading,
+        isTransactionsLoading,
+        addMoney: addMoneyMutation.mutateAsync,
+        isAddingMoney: addMoneyMutation.isPending,
+        withdrawMoney: withdrawMoneyMutation.mutateAsync,
+        isWithdrawingMoney: withdrawMoneyMutation.isPending,
+        refetchBalance,
+        refetchTransactions
+    };
 };

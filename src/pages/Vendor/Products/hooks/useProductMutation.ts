@@ -36,169 +36,169 @@ export function useProductMutation() {
         formData,
         {
           headers: {
-            X- Auth - Token: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
+            'X-Auth-Token': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
           }
         }
       );
 
-  const isSuccess = response.data?.success === true ||
-    response.data?.status === 'success' ||
-    response.data?.message?.toLowerCase().includes('success');
+      const isSuccess = response.data?.success === true ||
+        response.data?.status === 'success' ||
+        response.data?.message?.toLowerCase().includes('success');
 
-  if (isSuccess) {
-    return true;
-  } else {
-    throw new Error(response.data?.message || 'Failed to create product');
-  }
-} catch (err: any) {
-  console.error('Create product error:', err);
-  const errorMessage = err.response?.data?.message || err.message || 'Failed to create product';
-  setError(errorMessage);
-  throw new Error(errorMessage);
-} finally {
-  setIsLoading(false);
-}
-  };
-
-const updateProduct = async (id: number, formData: FormData): Promise<boolean> => {
-  console.log('🟢 [API] updateProduct CALLED with ID:', id);
-  console.log('🟢 [API] FormData keys:', Array.from(formData.keys()));
-
-  try {
-    setIsLoading(true);
-    setError(null);
-
-    const token = getAuthToken();
-
-    if (!token) {
-      throw new Error('Authentication required. Please log in again.');
-    }
-
-
-    // Many Laravel backends require product_id as a query parameter + in body when using multipart/form-data
-    formData.append('product_id', id.toString());
-    console.log('🟢 [API] Sending update request for product ID:', id);
-
-    const response = await axios.post(
-      `${baseURL}/api/vendor/product/update?product_id=${id}`,
-      formData,
-      {
-        headers: {
-          X- Auth - Token: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data'
-          }
-        }
-      );
-
-console.log('🟢 [API] Update response received:', response.data);
-
-// Check for success more flexibly
-const isSuccess = response.data?.success === true ||
-  response.data?.status === 'success' ||
-  response.data?.status === true ||
-  response.data?.data?.product?.id ||
-  response.data?.message?.toLowerCase().includes('success');
-
-if (isSuccess) {
-  toast.success('Product updated successfully!');
-  return true;
-} else {
-  const errorMessage = response.data?.message || 'Failed to update product';
-  toast.error(errorMessage);
-  return false;
-}
-    } catch (err: any) {
-  console.error('Update product error:', err);
-  if (err.response) {
-    console.error('Error status:', err.response.status);
-    console.error('Error data:', err.response.data);
-  }
-
-  let errorMessage = 'Failed to update product';
-  if (err.response?.status === 404) {
-    errorMessage = 'Update endpoint not found.';
-  } else if (err.response?.status === 401) {
-    errorMessage = 'Authentication failed. Please login again.';
-  } else if (err.response?.status === 500) {
-    errorMessage = 'Server error. Please try again later.';
-  } else if (err.response?.data?.message) {
-    errorMessage = err.response.data.message;
-  }
-
-  setError(errorMessage);
-  toast.error(errorMessage);
-  return false;
-} finally {
-  setIsLoading(false);
-}
-  };
-
-const fetchProductById = async (id: number): Promise<ProductFormData> => {
-  try {
-    setIsLoading(true);
-    setError(null);
-
-    const token = getAuthToken();
-
-    if (!token) {
-      throw new Error('Authentication required. Please log in again.');
-    }
-
-    const response = await axios.get(
-      `${baseURL}/api/vendor/product/details`,
-      {
-        headers: { 'X-Auth-Token': `Bearer ${token}` },
-        params: { product_id: id }
+      if (isSuccess) {
+        return true;
+      } else {
+        throw new Error(response.data?.message || 'Failed to create product');
       }
-    );
-
-    let productData = response.data?.data || response.data?.product || response.data;
-
-    if (response.data?.status === true || response.data?.success === true) {
-      productData = response.data?.data || response.data?.product || productData;
+    } catch (err: any) {
+      console.error('Create product error:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to create product';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    const formData: ProductFormData = {
-      product_title_english: productData.product_title_english || '',
-      product_title_bangla: productData.product_title_bangla || '',
-      category_id: productData.category_id || 0,
-      subcategory_id: productData.subcategory_id || 0,
-      short_description_english: productData.short_description_english || '',
-      short_description_bangla: productData.short_description_bangla || '',
-      long_description_english: productData.long_description_english || '',
-      long_description_bangla: productData.long_description_bangla || '',
-      seller_price: parseFloat(productData.seller_price) || 0,
-      regular_price: parseFloat(productData.regular_price) || 0,
-      offer_price: parseFloat(productData.offer_price) || 0,
-      sku: productData.sku || '',
-      stock: parseInt(productData.stock) || 0,
-      video_link: productData.video_link || '',
-      ebook: productData.ebook ?? '0',
-      images: [],
-      existing_images: [
-        productData.product_image,
-        ...(productData.gallery_images || [])
-      ].filter(Boolean),
-      removed_images: []
-    };
+  const updateProduct = async (id: number, formData: FormData): Promise<boolean> => {
+    console.log('🟢 [API] updateProduct CALLED with ID:', id);
+    console.log('🟢 [API] FormData keys:', Array.from(formData.keys()));
 
-    return formData;
-  } catch (err: any) {
-    console.error('Fetch product error:', err);
-    const errorMessage = err.response?.data?.message || err.message || 'Failed to load product';
-    setError(errorMessage);
-    throw new Error(errorMessage);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    try {
+      setIsLoading(true);
+      setError(null);
 
-return {
-  createProduct,
-  updateProduct,
-  fetchProductById,
-  isLoading,
-  error,
-};
+      const token = getAuthToken();
+
+      if (!token) {
+        throw new Error('Authentication required. Please log in again.');
+      }
+
+
+      // Many Laravel backends require product_id as a query parameter + in body when using multipart/form-data
+      formData.append('product_id', id.toString());
+      console.log('🟢 [API] Sending update request for product ID:', id);
+
+      const response = await axios.post(
+        `${baseURL}/api/vendor/product/update?product_id=${id}`,
+        formData,
+        {
+          headers: {
+            'X-Auth-Token': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      console.log('🟢 [API] Update response received:', response.data);
+
+      // Check for success more flexibly
+      const isSuccess = response.data?.success === true ||
+        response.data?.status === 'success' ||
+        response.data?.status === true ||
+        response.data?.data?.product?.id ||
+        response.data?.message?.toLowerCase().includes('success');
+
+      if (isSuccess) {
+        toast.success('Product updated successfully!');
+        return true;
+      } else {
+        const errorMessage = response.data?.message || 'Failed to update product';
+        toast.error(errorMessage);
+        return false;
+      }
+    } catch (err: any) {
+      console.error('Update product error:', err);
+      if (err.response) {
+        console.error('Error status:', err.response.status);
+        console.error('Error data:', err.response.data);
+      }
+
+      let errorMessage = 'Failed to update product';
+      if (err.response?.status === 404) {
+        errorMessage = 'Update endpoint not found.';
+      } else if (err.response?.status === 401) {
+        errorMessage = 'Authentication failed. Please login again.';
+      } else if (err.response?.status === 500) {
+        errorMessage = 'Server error. Please try again later.';
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchProductById = async (id: number): Promise<ProductFormData> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const token = getAuthToken();
+
+      if (!token) {
+        throw new Error('Authentication required. Please log in again.');
+      }
+
+      const response = await axios.get(
+        `${baseURL}/api/vendor/product/details`,
+        {
+          headers: { 'X-Auth-Token': `Bearer ${token}` },
+          params: { product_id: id }
+        }
+      );
+
+      let productData = response.data?.data || response.data?.product || response.data;
+
+      if (response.data?.status === true || response.data?.success === true) {
+        productData = response.data?.data || response.data?.product || productData;
+      }
+
+      const formData: ProductFormData = {
+        product_title_english: productData.product_title_english || '',
+        product_title_bangla: productData.product_title_bangla || '',
+        category_id: productData.category_id || 0,
+        subcategory_id: productData.subcategory_id || 0,
+        short_description_english: productData.short_description_english || '',
+        short_description_bangla: productData.short_description_bangla || '',
+        long_description_english: productData.long_description_english || '',
+        long_description_bangla: productData.long_description_bangla || '',
+        seller_price: parseFloat(productData.seller_price) || 0,
+        regular_price: parseFloat(productData.regular_price) || 0,
+        offer_price: parseFloat(productData.offer_price) || 0,
+        sku: productData.sku || '',
+        stock: parseInt(productData.stock) || 0,
+        video_link: productData.video_link || '',
+        ebook: productData.ebook ?? '0',
+        images: [],
+        existing_images: [
+          productData.product_image,
+          ...(productData.gallery_images || [])
+        ].filter(Boolean),
+        removed_images: []
+      };
+
+      return formData;
+    } catch (err: any) {
+      console.error('Fetch product error:', err);
+      const errorMessage = err.response?.data?.message || err.message || 'Failed to load product';
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    createProduct,
+    updateProduct,
+    fetchProductById,
+    isLoading,
+    error,
+  };
 }

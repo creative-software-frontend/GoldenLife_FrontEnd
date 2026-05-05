@@ -93,55 +93,55 @@ export function useInstructorProfile() {
         formData,
         {
           headers: {
-            X- Auth - Token: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
+            'X-Auth-Token': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
           }
         }
       );
 
-  if (response.data?.success || response.data?.status === 'success' || response.data?.message?.toLowerCase()?.includes('success')) {
-    await fetchProfile();
-    return true;
-  }
-  return false;
-} catch (err: any) {
-  console.error('Failed to update profile:', err);
-  throw new Error(err.response?.data?.message || err.message || 'Failed to update profile');
-}
+      if (response.data?.success || response.data?.status === 'success' || response.data?.message?.toLowerCase()?.includes('success')) {
+        await fetchProfile();
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Failed to update profile:', err);
+      throw new Error(err.response?.data?.message || err.message || 'Failed to update profile');
+    }
   };
 
-const deleteField = async (field: string): Promise<boolean> => {
-  try {
-    const session = sessionStorage.getItem('instructor_session');
-    const token = session ? JSON.parse(session).token : null;
+  const deleteField = async (field: string): Promise<boolean> => {
+    try {
+      const session = sessionStorage.getItem('instructor_session');
+      const token = session ? JSON.parse(session).token : null;
 
-    if (!token) throw new Error('Authentication required');
+      if (!token) throw new Error('Authentication required');
 
-    const response = await axios.post(
-      `${baseURL}/api/instructor/profile/delete-field`,
-      { field },
-      {
-        headers: { 'X-Auth-Token': `Bearer ${token}` }
+      const response = await axios.post(
+        `${baseURL}/api/instructor/profile/delete-field`,
+        { field },
+        {
+          headers: { 'X-Auth-Token': `Bearer ${token}` }
+        }
+      );
+
+      if (response.data?.success || response.data?.status === 'success' || response.data?.message?.toLowerCase()?.includes('success')) {
+        await fetchProfile();
+        return true;
       }
-    );
-
-    if (response.data?.success || response.data?.status === 'success' || response.data?.message?.toLowerCase()?.includes('success')) {
-      await fetchProfile();
-      return true;
+      return false;
+    } catch (err: any) {
+      console.error('Failed to delete field:', err);
+      throw new Error(err.response?.data?.message || err.message || 'Failed to delete field');
     }
-    return false;
-  } catch (err: any) {
-    console.error('Failed to delete field:', err);
-    throw new Error(err.response?.data?.message || err.message || 'Failed to delete field');
-  }
-};
+  };
 
-return {
-  data,
-  isLoading,
-  error,
-  refetch: fetchProfile,
-  updateProfile,
-  deleteField
-};
+  return {
+    data,
+    isLoading,
+    error,
+    refetch: fetchProfile,
+    updateProfile,
+    deleteField
+  };
 }
