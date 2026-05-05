@@ -90,7 +90,7 @@ export default function EditProfileModal({ isOpen, onClose, student, baseURL }: 
                 dataToSend,
                 {
                     headers: {
-                        ''X - Auth - Token'': `Bearer ${token}`,
+                        'X-Auth-Token': `Bearer ${token}`,
                         'Accept': 'application/json',
                     }
                 }

@@ -75,7 +75,7 @@ export default function OrderDetails() {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              ''X - Auth - Token'': `Bearer ${token}`
+              'X-Auth-Token': `Bearer ${token}`
             },
             body: JSON.stringify({ id: order.user_id })
           });
@@ -114,7 +114,7 @@ export default function OrderDetails() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            ''X - Auth - Token'': `Bearer ${token}`,
+            'X-Auth-Token': `Bearer ${token}`,
             'Accept': 'application/json'
           }
         });

@@ -158,7 +158,7 @@ export default function EditNomineeInfoTabModal({
         submitData,
         {
           headers: {
-            ''X - Auth - Token'': `Bearer ${token}`,
+            'X-Auth-Token': `Bearer ${token}`,
             'Accept': 'application/json'
           }
         }

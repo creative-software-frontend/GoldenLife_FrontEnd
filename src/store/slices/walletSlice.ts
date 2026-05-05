@@ -199,7 +199,7 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
         try {
             const { data } = await axios.post(`${baseURL}/api/send-money`, formData, {
                 headers: {
-                    ''X - Auth - Token'': `Bearer ${token}`
+                    'X-Auth-Token': `Bearer ${token}`
                 }
             });
 
@@ -226,21 +226,23 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
         try {
             const [sendRes, withdrawRes] = await Promise.all([
                 axios.get(`${baseURL}/api/sendMoney_charge`, {
-                    headers: token ? { X- Auth - Token : `Bearer ${token}`
-                } : {}
+                    headers: token ? {
+                        'X-Auth-Token': `Bearer ${token}`
+                    } : {}
                 }),
-        axios.get(`${baseURL}/api/withdraw_charge`, {
-            headers: token ? { X- Auth - Token : `Bearer ${token}`
-        } : {}
+                axios.get(`${baseURL}/api/withdraw_charge`, {
+                    headers: token ? {
+                        'X-Auth-Token': `Bearer ${token}`
+                    } : {}
                 })
             ]);
 
-set({
-    sendMoneyCharge: sendRes.data?.data || "0.00",
-    withdrawCharge: withdrawRes.data?.data || "0.00"
-});
+            set({
+                sendMoneyCharge: sendRes.data?.data || "0.00",
+                withdrawCharge: withdrawRes.data?.data || "0.00"
+            });
         } catch (error) {
-    console.error("Fetch Charges Error:", error);
-}
+            console.error("Fetch Charges Error:", error);
+        }
     }
 });
