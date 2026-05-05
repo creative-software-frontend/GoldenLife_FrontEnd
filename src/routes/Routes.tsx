@@ -121,6 +121,8 @@ import AISupportPage from "@/pages/Help/AISupportPage";
 
 
 import InstructorInfo from "@/pages/Home/InstructorInfo/InstructorInfo";
+import AllCoursesListView from "@/pages/Home/AllCourses/AllCoursesListView";
+
 
 export const routes = createBrowserRouter([
     // PUBLIC ROUTES (No Layout - Full Screen Pages)
@@ -231,6 +233,11 @@ export const routes = createBrowserRouter([
                         path: 'all-courses',
                         element: <AllCourses2 />
                     },
+                    {
+                        path: 'all-courses-view',
+                        element: <AllCoursesListView />
+                    },
+
                     {
                         path: 'productpage',
                         element: <ProductPage />,

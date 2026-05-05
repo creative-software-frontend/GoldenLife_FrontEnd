@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   X, Plus, Trash2, ChevronDown, ChevronUp, BookOpen,
   Upload, Save, Loader2, GripVertical, Video, Link2,
-  ArrowLeft, Sparkles, Clock
+  ArrowLeft, Sparkles, Clock, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import { useCreateCourseMutation, useCourseCategoriesQuery } from '@/hooks/useInstructorAuth';
+import { useAppStore } from '@/store/useAppStore';
+import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface VideoItem { id: number; url: string; label: string; }
@@ -39,20 +41,17 @@ const Field = ({ label, req, children, span2 }: { label: string; req?: boolean; 
   </motion.div>
 );
 
-const SectionHead = ({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) => (
-  <div className="flex items-center gap-4 mb-8">
-    <h3 className="text-[15px] font-bold text-black uppercase tracking-widest whitespace-nowrap">{children}</h3>
-    <div className="flex-1 h-[2px] bg-black/40 rounded-full" />
-    {action}
-  </div>
-);
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 const InstructorAddCourse: React.FC = () => {
   const navigate = useNavigate();
   const [img, setImg] = useState<File | null>(null);
   const createMutation = useCreateCourseMutation();
   const { data: categories, isLoading: isCatsLoading } = useCourseCategoriesQuery();
+  const { instructorProfile, fetchProfile } = useAppStore();
+  
+  // Profile Completion Logic
+  const { percentage, isComplete, missingFields } = useProfileCompletion(instructorProfile?.instructor, 'instructor');
+
   const [form, setForm] = useState({
     instructorName: '', titleEn: '', titleBn: '', courseType: '',
     downloadUrl: '', courseCode: '', category: '', duration: '',
@@ -62,6 +61,7 @@ const InstructorAddCourse: React.FC = () => {
 
   // ── Populate Instructor Name from Session ──────────────────────────────────
   React.useEffect(() => {
+    fetchProfile();
     try {
       const session = sessionStorage.getItem('instructor_session');
       if (session) {
@@ -73,7 +73,7 @@ const InstructorAddCourse: React.FC = () => {
     } catch (err) {
       console.error('Failed to parse instructor session:', err);
     }
-  }, []);
+  }, [fetchProfile]);
 
   // ── Automatic Price Calculation ──────────────────────────────────────────────
   React.useEffect(() => {
@@ -101,6 +101,10 @@ const InstructorAddCourse: React.FC = () => {
   const handleBack = () => navigate('/instructor/dashboard/courses');
 
   const handleSave = () => {
+    if (!isComplete) {
+        toast.error('Please complete your profile to 100% before adding a course.');
+        return;
+    }
     if (!form.titleEn || !form.courseType || !form.category) { toast.error('Fill required fields.'); return; }
     const fd = new FormData();
     if (img) fd.append('image', img);
@@ -127,17 +131,69 @@ const InstructorAddCourse: React.FC = () => {
     });
   };
 
-  // ── Helpers for dynamic URL field ──
-  const getUrlLabel = () => {
-    if (form.courseType === 'Live Class') return "Live Class URL";
-    if (form.courseType === 'Ebook') return "Ebook URL";
-    return "Course video URL";
-  };
-  const getUrlPlaceholder = () => {
-    if (form.courseType === 'Live Class') return "Enter Live Class URL";
-    if (form.courseType === 'Ebook') return "Enter Ebook URL";
-    return "Enter Course video URL";
-  };
+  // Blocked Popup Component
+  const BlockedPopup = () => (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white border-2 border-orange-100 rounded-[2.5rem] p-10 text-center max-w-2xl w-full shadow-2xl shadow-orange-500/5"
+        >
+            <div className="w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="w-10 h-10 text-orange-600" strokeWidth={2.5} />
+            </div>
+            <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">
+                Profile Completion Required
+            </h2>
+            <p className="text-gray-500 font-bold mb-8 text-lg">
+                You need to complete your profile before adding courses. Your profile is currently 
+                <span className="text-orange-600 mx-1.5 font-black underline decoration-2 underline-offset-4"> {percentage}% complete</span>.
+            </p>
+            
+            <div className="bg-gray-50/80 rounded-[2rem] p-6 mb-10 border border-gray-100 text-left">
+                <h3 className="font-black text-gray-900 mb-4 px-2 uppercase tracking-widest text-[11px]">Missing Required Fields:</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-2">
+                    {missingFields.map((field: string, index: number) => (
+                        <div key={index} className="flex items-center gap-3 text-gray-600 font-bold text-sm bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                            <div className="w-2 h-2 bg-orange-500 rounded-full flex-shrink-0" />
+                            {field}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                    onClick={() => navigate('/instructor/dashboard/profile')}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black py-7 px-10 rounded-2xl transition-all duration-300 shadow-xl shadow-orange-500/20 active:scale-95 text-sm uppercase tracking-widest border-none"
+                >
+                    Complete Profile Now
+                </Button>
+                <Button
+                    variant="outline"
+                    onClick={() => navigate('/instructor/dashboard/courses')}
+                    className="border-2 border-gray-200 text-gray-500 hover:text-black hover:bg-gray-100 font-black py-7 px-10 rounded-2xl transition-all duration-300 active:scale-95 text-sm uppercase tracking-widest bg-transparent"
+                >
+                    Maybe Later
+                </Button>
+            </div>
+        </motion.div>
+    </div>
+  );
+
+  // Loading state
+  if (!instructorProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Loader2 className="w-12 h-12 animate-spin text-orange-500" strokeWidth={2.5} />
+      </div>
+    );
+  }
+
+  // Block access if profile is incomplete
+  if (!isComplete) {
+    return <BlockedPopup />;
+  }
 
   return (
     <motion.div
@@ -189,10 +245,10 @@ const InstructorAddCourse: React.FC = () => {
               </Field>
 
               {form.courseType && (
-                <Field label={getUrlLabel()}>
+                <Field label={form.courseType === 'Live Class' ? "Live Class URL" : form.courseType === 'Ebook' ? "Ebook URL" : "Course video URL"}>
                   <Input 
                     className={inp} 
-                    placeholder={getUrlPlaceholder()} 
+                    placeholder={form.courseType === 'Live Class' ? "Enter Live Class URL" : form.courseType === 'Ebook' ? "Enter Ebook URL" : "Enter Course video URL"} 
                     value={form.downloadUrl} 
                     onChange={set('downloadUrl')} 
                   />

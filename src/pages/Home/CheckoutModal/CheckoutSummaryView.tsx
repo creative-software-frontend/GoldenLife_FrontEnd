@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X, MapPin, ArrowLeft, AlertCircle, Loader2, Receipt, Package, Trash2 } from 'lucide-react'; // Added Trash2
 import { Address, PaymentMethod } from './CheckoutModal';
 import useModalStore from '@/store/modalStore';
-import axios from 'axios';
+import { usePlaceOrder } from '@/hooks/useOrder';
 import { toast } from 'react-toastify';
 
 import { useCartStore } from '@/store/cartStore';
@@ -48,7 +48,8 @@ const CheckoutSummaryView = ({
 
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [error, setError] = useState(false);
-    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    
+    const { mutate: placeOrder, isPending: isPlacingOrder } = usePlaceOrder();
 
     // Convert string balance from store to number for calculations
     const walletBalance = parseFloat(storeWalletBalance) || 0;
@@ -121,94 +122,56 @@ const CheckoutSummaryView = ({
             return;
         }
 
-        setIsPlacingOrder(true);
-
-        try {
-            const session = sessionStorage.getItem("student_session");
-            const token = session ? JSON.parse(session).token : null;
-            if (!token) throw new Error("No authentication token");
-
-            if (cartItems.length === 0) throw new Error("Cart is empty");
-
-            let calculatedSubTotal = 0;
-            const delivery = Number(deliveryFee) || 0;
-
-            const formData = new FormData();
-            formData.append('address_id', String(selectedAddress.id));
-            formData.append('payment_method', paymentMethod.toLowerCase());
-            formData.append('delivery_charge', delivery.toFixed(2));
-
-            cartItems.forEach((item: any) => {
-                const offerPrice = Number(item.offer_price) || 0;
-                const regularPrice = Number(item.regular_price) || Number(item.price) || 0;
-                const price = (offerPrice > 0 && offerPrice < regularPrice) ? offerPrice : regularPrice;
-                const qty = Number(item.quantity) || 1;
-                const itemTotal = price * qty;
-
-                calculatedSubTotal += itemTotal;
-
-                formData.append('product_id[]', String(item.id));
-                formData.append('service_type[]', "product");
-                formData.append('quantity[]', String(qty));
-                formData.append('item_total[]', String(itemTotal));
-            });
-
-            const finalTotal = calculatedSubTotal + delivery;
-            formData.append('order_total', finalTotal.toFixed(2));
-
-            const response = await axios.post(
-                `${baseURL}/api/student/Orderstore`,
-                formData,
-                {
-                    headers: {
-                        'X-Auth-Token': `Bearer ${token}`,
-                    },
-                }
-            );
-
-            if (response.data?.status === 'success' || response.data?.success) {
-                toast.success(response.data?.message || "Order placed successfully!");
-
-                const orderNo = response.data?.order?.order_no;
-
-                // Only clear the checked out items from the cart
-                cartItems.forEach((item: any) => removeItem(item.id));
-
-                // GLOBAL STORE REFRESH: Refresh wallet and navbar components automatically
-                await Promise.all([
-                    fetchWallet(true),
-                    fetchNavbarData(true)
-                ]);
-
-                if (paymentMethod.toLowerCase() === 'wallet') {
-                    triggerWalletUpdate?.(); // Sync with components using this manual trigger
-                }
-
-                onConfirm();
-
-                if (orderNo) {
-                    navigate(`/dashboard/order-details?order=${orderNo}`);
-                } else {
-                    navigate('/dashboard');
-                }
-            } else {
-                throw new Error(response.data?.message || "Order placement failed");
-            }
-        } catch (err: any) {
-            console.error("Order placement failed:", err);
-
-            let msg = "Failed to place order. Please try again.";
-            if (err.response?.data?.message) {
-                msg = err.response.data.message;
-            } else if (err.response?.data?.errors) {
-                const firstKey = Object.keys(err.response.data.errors)[0];
-                msg = err.response.data.errors[firstKey][0];
-            }
-
-            toast.error(msg);
-        } finally {
-            setIsPlacingOrder(false);
+        if (cartItems.length === 0) {
+            toast.error("Cart is empty");
+            return;
         }
+
+        let calculatedSubTotal = 0;
+        const delivery = Number(deliveryFee) || 0;
+
+        const formData = new FormData();
+        formData.append('address_id', String(selectedAddress.id));
+        formData.append('payment_method', paymentMethod.toLowerCase());
+        formData.append('delivery_charge', delivery.toFixed(2));
+
+        cartItems.forEach((item: any) => {
+            const offerPrice = Number(item.offer_price) || 0;
+            const regularPrice = Number(item.regular_price) || Number(item.price) || 0;
+            const price = (offerPrice > 0 && offerPrice < regularPrice) ? offerPrice : regularPrice;
+            const qty = Number(item.quantity) || 1;
+            const itemTotal = price * qty;
+
+            calculatedSubTotal += itemTotal;
+
+            formData.append('product_id[]', String(item.id));
+            // Use item.type or fallback to "product"
+            formData.append('service_type[]', item.type || "product");
+            formData.append('quantity[]', String(qty));
+            formData.append('item_total[]', String(itemTotal));
+        });
+
+        const finalTotal = calculatedSubTotal + delivery;
+        formData.append('order_total', finalTotal.toFixed(2));
+
+        placeOrder(formData, {
+            onSuccess: (response) => {
+                if (response?.status === 'success' || response?.success) {
+                    const orderNo = response?.order?.order_no;
+
+                    // Only clear the checked out items from the cart
+                    cartItems.forEach((item: any) => removeItem(item.id));
+
+                    onConfirm();
+
+                    if (orderNo) {
+                        navigate(`/dashboard/order-details?order=${orderNo}`);
+                    } else {
+                        navigate('/dashboard');
+                    }
+                }
+            }
+        });
     };
 
     const handleBackToCart = () => {

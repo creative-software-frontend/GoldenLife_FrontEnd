@@ -10,6 +10,7 @@ import {
 import ImageUploadModal from '@/components/shared/ImageUploadModal';
 import useModalStore from '@/store/modalStore';
 import { useAppStore } from '@/store/useAppStore';
+import { useProfileCompletion } from '@/hooks/useProfileCompletion';
 
 import { useInstructorWallet } from '@/hooks/useInstructorWallet';
 import InstructorNotificationBell from './InstructorNotificationBell';
@@ -39,7 +40,11 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
     const navigate = useNavigate();
     const { balance, isBalanceLoading } = useInstructorWallet();
-    const { instructorProfile, fetchProfile } = useAppStore();
+    const { instructorProfile, fetchProfile, profileLastUpdated } = useAppStore();
+    
+    // Dynamic Profile Completion
+    const { percentage: profilePercentage, isComplete: isProfileComplete } = useProfileCompletion(instructorProfile?.instructor, 'instructor');
+    
     const walletRefDesktop = useRef<HTMLDivElement>(null);
     const walletRefMobile = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
@@ -60,11 +65,9 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     if (instructorInfo?.image) {
         avatarUrl = instructorInfo.image.startsWith('http')
             ? instructorInfo.image
-            : `${baseURL}/uploads/instructor/image/${instructorInfo.image}?t=${Date.now()}`;
+            : `${baseURL}/uploads/instructor/image/${instructorInfo.image}?t=${profileLastUpdated}`;
     }
 
-    const profilePercentage = 60;
-    const isProfileComplete = false;
     const isLoading = false;
 
     useEffect(() => {

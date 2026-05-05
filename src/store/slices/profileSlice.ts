@@ -109,6 +109,7 @@ export interface ProfileSlice {
     documentInfo: DocumentInfo | null;
     nomineeInfo: NomineeInfo | null;
     additionalInfo: AdditionalInfo | null;
+    profileLastUpdated: number;
     fetchProfile: (silent?: boolean) => Promise<void>;
     logout: (navigate: (path: string) => void) => void;
 }
@@ -121,6 +122,7 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
     documentInfo: null,
     nomineeInfo: null,
     additionalInfo: null,
+    profileLastUpdated: Date.now(),
 
     fetchProfile: async (silent = false) => {
         // Refined Guard: Only skip if already fetching PROFILE specifically, 
@@ -157,7 +159,8 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
                 if (isInstructor) {
                     set({
                         instructorProfile: resData,
-                        isProfileFetched: true
+                        isProfileFetched: true,
+                        profileLastUpdated: Date.now()
                     });
                 } else if (isVendor) {
                     set({
@@ -165,7 +168,8 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
                             user: resData.user,
                             vendor: resData.vendor
                         },
-                        isProfileFetched: true
+                        isProfileFetched: true,
+                        profileLastUpdated: Date.now()
                     });
                 } else {
                     // Update Student Profile with all related info from API
@@ -175,7 +179,8 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
                         documentInfo: resData.document_info,
                         nomineeInfo: resData.nominee_info,
                         additionalInfo: resData.additional_info,
-                        isProfileFetched: true
+                        isProfileFetched: true,
+                        profileLastUpdated: Date.now()
                     });
                 }
 

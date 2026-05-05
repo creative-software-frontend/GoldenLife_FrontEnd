@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAppStore } from '@/store/useAppStore';
 
 const getAuthToken = () => {
   const session = sessionStorage.getItem("instructor_session");
@@ -30,17 +31,12 @@ export function InstructorHeader({
   onEditToggle
 }: InstructorHeaderProps) {
   const [imageError, setImageError] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(Date.now());
+  const { profileLastUpdated } = useAppStore();
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRefreshKey(Date.now());
-    }, 5000); // Force-refresh image cache every 5 seconds
-    return () => clearInterval(interval);
-  }, []);
+  const refreshKey = profileLastUpdated;
 
   // Fetch Banner
   const { data: bannerData, dataUpdatedAt } = useQuery({
@@ -53,7 +49,7 @@ export function InstructorHeader({
       });
       return data?.banner || data?.image || data?.data?.banner || data?.data?.image || data;
     },
-    refetchInterval: 5000, // Automatically refresh every 5 seconds
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   // Update Banner Mutation
@@ -81,8 +77,9 @@ export function InstructorHeader({
 
       if (isSuccess) {
         toast.success(data?.message || "Banner updated successfully!", { theme: "colored" });
-        setRefreshKey(Date.now());
         queryClient.invalidateQueries({ queryKey: ['instructor-banner'] });
+        // Use AppStore to trigger a global refresh if needed
+        useAppStore.getState().fetchProfile(true);
       } else {
         toast.error(data?.message || "Failed to update banner.", { theme: "colored" });
       }
@@ -98,13 +95,24 @@ export function InstructorHeader({
     }
   };
 
-  const displayImageUrl = imageError ? '/default-avatar.png' : (imageUrl?.startsWith('http') ? imageUrl : `${baseURL}/uploads/instructor/image/${imageUrl}?t=${refreshKey}`);
+  useEffect(() => {
+    setImageError(false);
+  }, [imageUrl]);
+
+  const getFinalImageUrl = () => {
+    if (imageError || !imageUrl) return '/default-avatar.png';
+    if (imageUrl.startsWith('http')) return imageUrl;
+    
+    // Standard path for instructor images
+    return `${baseURL}/uploads/instructor/image/${imageUrl}?t=${refreshKey}`;
+  };
+
+  const displayImageUrl = getFinalImageUrl();
 
   let displayBannerUrl = '';
   if (bannerData) {
     const bannerField = typeof bannerData === 'string' ? bannerData : bannerData.banner || bannerData.image || bannerData.data?.banner || bannerData.data?.image;
     if (bannerField) {
-      // It could be 'instructor/banner/xyz.jpg' or just 'xyz.jpg'. Let's handle generic cases
       if (bannerField.startsWith('http')) {
         displayBannerUrl = bannerField;
       } else if (bannerField.includes('/')) {
@@ -113,7 +121,6 @@ export function InstructorHeader({
         displayBannerUrl = `${baseURL}/uploads/instructor/banner/${bannerField}`;
       }
 
-      // Add cache buster to force visual update after successful upload
       if (displayBannerUrl) {
         displayBannerUrl += (displayBannerUrl.includes('?') ? '&' : '?') + `t=${refreshKey}`;
       }

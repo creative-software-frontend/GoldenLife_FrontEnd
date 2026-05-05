@@ -98,7 +98,7 @@ export default function InstructorProfile() {
           name={instructor.name}
           email={instructor.email}
           instructorId={instructor.instructor_id}
-          imageUrl={instructor.image}
+          imageUrl={instructor.image || instructor.profile_image || user.image || user.profile_image}
           onEditToggle={() => setIsEditMode(true)}
         />
 

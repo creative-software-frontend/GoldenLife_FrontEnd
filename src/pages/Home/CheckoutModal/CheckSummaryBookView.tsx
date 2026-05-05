@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { X, MapPin, ArrowLeft, AlertCircle, Loader2, Receipt, Package, Trash2 } from 'lucide-react';
 import { Address, PaymentMethod } from './CheckoutModal';
 import useModalStore from '@/store/modalStore';
-import axios from 'axios';
+import { usePlaceOrder } from '@/hooks/useOrder';
+import { useAppStore } from '@/store/useAppStore';
 import { toast } from 'react-toastify';
 
 interface Props {
@@ -17,20 +18,6 @@ interface Props {
 }
 
 // Helper to get Token
-const getAuthToken = () => {
-    const session = sessionStorage.getItem("student_session");
-    if (!session) return null;
-    try {
-        const parsedSession = JSON.parse(session);
-        if (new Date().getTime() > parsedSession.expiry) {
-            sessionStorage.removeItem("student_session");
-            return null;
-        }
-        return parsedSession.token;
-    } catch (e) {
-        return null;
-    }
-};
 
 const CheckSummaryBookView = ({
     selectedAddress,
@@ -42,45 +29,26 @@ const CheckSummaryBookView = ({
     deliveryFee
 }: Props) => {
     const { closeBuyNow, triggerWalletUpdate, buyNowProduct } = useModalStore();
+    const { 
+        walletBalance: storeWalletBalance, 
+        isWalletLoading: isFetchingBalance, 
+        fetchWallet,
+        fetchNavbarData 
+    } = useAppStore();
+    
     const navigate = useNavigate();
 
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [error, setError] = useState(false);
-    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+    
+    const { mutate: placeOrder, isPending: isPlacingOrder } = usePlaceOrder();
 
-    // --- WALLET BALANCE STATE ---
-    const [walletBalance, setWalletBalance] = useState<number>(0);
-    const [isFetchingBalance, setIsFetchingBalance] = useState(true);
+    // Convert string balance from store to number for calculations
+    const walletBalance = parseFloat(storeWalletBalance) || 0;
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
-
-    // Fetch Initial Wallet Balance
     useEffect(() => {
-        const fetchWalletBalance = async () => {
-            setIsFetchingBalance(true);
-            try {
-                const token = getAuthToken();
-                const response = await axios.get(`${baseURL}/api/wallet-balance`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...(token && {
-                            'X-Auth-Token': `Bearer ${token}`
-                        })
-                    }
-                });
-                if (response.data?.success && response.data?.data) {
-                    setWalletBalance(parseFloat(response.data.data.balance) || 0);
-                }
-            } catch (error) {
-                console.error("Wallet Fetch Error:", error);
-                setWalletBalance(0);
-            } finally {
-                setTimeout(() => setIsFetchingBalance(false), 300);
-            }
-        };
-
-        fetchWalletBalance();
-    }, [baseURL]);
+        fetchWallet();
+    }, [fetchWallet]);
 
     useEffect(() => {
         document.body.style.overflow = 'hidden';
@@ -125,63 +93,34 @@ const CheckSummaryBookView = ({
             return;
         }
 
-        setIsPlacingOrder(true);
+        const formData = new FormData();
+        formData.append('address_id', String(selectedAddress.id));
+        formData.append('payment_method', paymentMethod.toLowerCase());
+        formData.append('delivery_charge', safeDeliveryFee.toFixed(2));
 
-        try {
-            const token = getAuthToken();
-            if (!token) throw new Error("No authentication token");
+        formData.append('product_id[]', String(buyNowProduct.id));
+        formData.append('service_type[]', buyNowProduct.type || "product");
+        formData.append('quantity[]', String(qty));
+        formData.append('item_total[]', String(currentSubTotal));
 
-            const formData = new FormData();
-            formData.append('address_id', String(selectedAddress.id));
-            formData.append('payment_method', paymentMethod.toLowerCase());
-            formData.append('delivery_charge', safeDeliveryFee.toFixed(2));
+        formData.append('order_total', total.toFixed(2));
 
-            formData.append('product_id[]', String(buyNowProduct.id));
-            formData.append('service_type[]', "product");
-            formData.append('quantity[]', String(qty));
-            formData.append('item_total[]', String(currentSubTotal));
+        placeOrder(formData, {
+            onSuccess: (response) => {
+                if (response?.status === 'success' || response?.success) {
+                    const orderNo = response?.order?.order_no;
 
-            formData.append('order_total', total.toFixed(2));
+                    onConfirm();
+                    closeBuyNow();
 
-            const response = await axios.post(
-                `${baseURL}/api/student/Orderstore`,
-                formData,
-                {
-                    headers: {
-                        'X-Auth-Token': `Bearer ${token}`,
-                    },
+                    if (orderNo) {
+                        navigate(`/dashboard/order-details?order=${orderNo}`);
+                    } else {
+                        navigate('/dashboard');
+                    }
                 }
-            );
-
-            if (response.data?.status === 'success' || response.data?.success) {
-                toast.success(response.data?.message || "Order placed successfully!");
-                const orderNo = response.data?.order?.order_no;
-
-                if (paymentMethod.toLowerCase() === 'wallet') {
-                    triggerWalletUpdate?.();
-                }
-
-                onConfirm();
-                closeBuyNow();
-
-                if (orderNo) {
-                    navigate(`/dashboard/order-details?order=${orderNo}`);
-                } else {
-                    navigate('/dashboard');
-                }
-            } else {
-                throw new Error(response.data?.message || "Order placement failed");
             }
-        } catch (err: any) {
-            console.error("Order placement failed:", err);
-            let msg = "Failed to place order. Please try again.";
-            if (err.response?.data?.message) {
-                msg = err.response.data.message;
-            }
-            toast.error(msg);
-        } finally {
-            setIsPlacingOrder(false);
-        }
+        });
     };
 
     if (isFetchingBalance) {
