@@ -85,6 +85,8 @@ export default function AllCoursesListView() {
     const handleAddToCart = (course: any) => {
         const instructorId = course.instructor_id || course.instructor?.id;
         const instructorName = course.instructor?.name || course.instructor_name || `Instructor #${instructorId}`;
+        // Always produce a non-falsy seller_id so each instructor gets its own cart group
+        const sellerId = instructorId ? String(instructorId) : `course_${course.id}`;
 
         addItem({
             id: Number(course.id),
@@ -92,11 +94,11 @@ export default function AllCoursesListView() {
             product_title_english: course.course_title_english,
             image: course.image?.startsWith('http') ? course.image : `${baseImageURL}${course.image}`,
             quantity: 1,
-            offer_price: Number(course.regular_fee) || 0,
-            regular_price: Number(course.offer_fee) || 0,
+            offer_price: Number(course.regular_fee) || 0,   // Member Price
+            regular_price: Number(course.offer_fee) || 0,   // Customer Price
             type: 'course',
             seller_name: instructorName,
-            seller_id: instructorId
+            seller_id: sellerId
         });
     };
 

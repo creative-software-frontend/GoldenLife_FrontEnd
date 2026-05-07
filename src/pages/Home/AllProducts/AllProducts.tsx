@@ -125,7 +125,9 @@ export default function AllProduct() {
     };
 
     const handleAddToCart = (product: any) => {
-        const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id || "empty_vendor";
+        const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id;
+        // Always produce a non-falsy seller_id so each vendor gets its own cart group
+        const sellerId = currentVendorId ? String(currentVendorId) : `vendor_${product.id}`;
 
         const name = i18n.language === 'bn' ? (product.titleBn || product.titleEn) : product.titleEn;
 
@@ -137,10 +139,10 @@ export default function AllProduct() {
             quantity: 1,
             offer_price: Number(product.offer_price) || 0,
             regular_price: Number(product.regular_price) || 0,
-            vendor_id: currentVendorId,
+            vendor_id: sellerId,
             type: 'product',
             seller_name: product.vendor?.businee_name || product.seller_name || 'Partner',
-            seller_id: currentVendorId
+            seller_id: sellerId
         });
     };
 

@@ -389,15 +389,31 @@ export interface CourseData {
   modules?: Array<{
     id: number;
     module_title: string;
+    serial_number?: number;
     lessons: Array<{
       id: number;
       lesson_title: string;
+      description?: string | null;
+      serial_number?: number;
+      is_free?: number;
       videos: Array<{
         id: number;
+        video_title?: string | null;
         video_url: string;
         duration?: string | null;
       }>;
     }>;
+  }>;
+  quizzes?: Array<{
+    id: number;
+    question: string;
+    option_a: string;
+    option_b: string;
+    option_c: string;
+    option_d: string;
+    correct_answer: string;
+    points: number;
+    created_at?: string;
   }>;
 }
 
@@ -552,3 +568,56 @@ export const useCourseCategoriesQuery = () =>
       return payload as Category[];
     },
   });
+// ─── Modules ────────────────────────────────────────────────────────────────
+export const useAddModuleMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ courseId, data }: { courseId: string | number; data: any }) => {
+      const response = await axios.post(`${baseURL}/api/courses/${courseId}/modules`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
+// ─── Lessons ───────────────────────────────────────────────────────────────
+export const useAddLessonMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ moduleId, courseId, data }: { moduleId: string | number; courseId: string | number; data: any }) => {
+      const response = await axios.post(`${baseURL}/api/modules/${moduleId}/lessons`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
+// ─── Quizzes ───────────────────────────────────────────────────────────────
+export const useAddQuizMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ courseId, data }: { courseId: string | number; data: any }) => {
+      const response = await axios.post(`${baseURL}/api/courses/${courseId}/quizzes`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};

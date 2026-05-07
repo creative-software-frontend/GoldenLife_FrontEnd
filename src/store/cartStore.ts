@@ -30,6 +30,7 @@ interface CartState {
     
     // Derived values (can be implemented as functions or computed in components)
     getTotalItems: () => number;
+    getTotalGroups: () => number; // Count of unique seller/instructor groups
     getSubtotal: () => number; // Total based on offer_price (Member Price)
     getCustomerTotal: () => number; // Total based on regular_price (Customer Price)
 }
@@ -72,6 +73,11 @@ export const useCartStore = create<CartState>()(
 
             getTotalItems: () => {
                 return get().cartItems.reduce((acc, item) => acc + (item.quantity || 0), 0);
+            },
+
+            getTotalGroups: () => {
+                const ids = get().cartItems.map(item => String(item.seller_id || item.vendor_id || 'default'));
+                return new Set(ids).size;
             },
 
             getSubtotal: () => {

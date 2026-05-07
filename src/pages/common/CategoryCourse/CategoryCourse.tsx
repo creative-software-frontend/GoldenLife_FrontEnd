@@ -86,6 +86,8 @@ export default function CategoryCourse() {
         }
 
         const instructorName = instructorData?.name || course.instructor_name || course.instructor?.name || `Instructor #${instructorId}`;
+        // Always produce a non-falsy seller_id so each instructor gets its own cart group
+        const sellerId = instructorId ? String(instructorId) : `course_${course.id}`;
 
         addItem({
             id: Number(course.id),
@@ -93,12 +95,12 @@ export default function CategoryCourse() {
             product_title_english: course.course_title_english,
             image: course.image?.startsWith('http') ? course.image : `${baseURL}/uploads/course/course_image/${course.image}`,
             quantity: 1,
-            offer_price: Number(course.regular_fee) || 0, // Member Price
-            regular_price: Number(course.offer_fee) || 0, // Customer Price
+            offer_price: Number(course.regular_fee) || 0,   // Member Price
+            regular_price: Number(course.offer_fee) || 0,   // Customer Price
             original_regular_price: Number(course.offer_fee) || 0,
             type: 'course',
             seller_name: instructorName,
-            seller_id: instructorId
+            seller_id: sellerId
         });
     };
 

@@ -75,6 +75,9 @@ import InstructorEnrollList from "@/pages/Instructor/Enrollments/InstructorEnrol
 import InstructorAddMoney from "@/pages/Instructor/Wallet/InstructorAddMoney";
 import InstructorWithdrawMoney from "@/pages/Instructor/Wallet/InstructorWithdrawMoney";
 import InstructorTransactionsMoney from "@/pages/Instructor/Wallet/InstructorTransactionsMoney";
+import InstructorOrderDetails from "@/pages/Instructor/Enrollments/InstructorOrderDetails";
+import InstructorCourseCurriculum from "@/pages/Instructor/Courses/InstructorCourseCurriculum";
+import InstructorCourseQuizzes from "@/pages/Instructor/Courses/InstructorCourseQuizzes";
 
 
 // Vendor Profile
@@ -528,12 +531,18 @@ export const routes = createBrowserRouter([
                                     { index: true, element: <InstructorCourseList /> },
                                     { path: 'add', element: <InstructorAddCourse /> },
                                     { path: 'update/:id', element: <InstructorEditCourse /> },
-                                    { path: 'view/:id', element: <InstructorCourseDetails /> }
+                                    { path: 'view/:id', element: <InstructorCourseDetails /> },
+                                    { path: 'curriculum/:id', element: <InstructorCourseCurriculum /> },
+                                    { path: 'quizzes/:id', element: <InstructorCourseQuizzes /> }
                                 ]
                             },
                             {
                                 path: 'enrollments',
                                 element: <InstructorEnrollList />
+                            },
+                            {
+                                path: 'orders/:order_no',
+                                element: <InstructorOrderDetails />
                             },
                             {
                                 path: 'wallet',
