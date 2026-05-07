@@ -20,6 +20,9 @@ import {
   RotateCcw,
   Loader2,
   AlertCircle,
+  Layout,
+  FileText,
+  HelpCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -348,6 +351,24 @@ const InstrutorCourseList: React.FC = () => {
                               >
                                 <Edit size={18} className="text-emerald-500 group-hover:scale-110 transition-transform" /> Edit Course
                               </DropdownMenuItem>
+
+                              {(course.course_type === 'Course (Video)' || course.course_type === 'Live Class') && (
+                                <>
+                                  <DropdownMenuSeparator className="bg-gray-50" />
+                                  <DropdownMenuItem
+                                    className="rounded-xl font-black gap-3 py-3 px-3 cursor-pointer group text-sm"
+                                    onClick={() => navigate(`/instructor/dashboard/courses/curriculum/${course.id}`)}
+                                  >
+                                    <Layout size={18} className="text-purple-500 group-hover:scale-110 transition-transform" /> Modules & Lessons
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    className="rounded-xl font-black gap-3 py-3 px-3 cursor-pointer group text-sm"
+                                    onClick={() => navigate(`/instructor/dashboard/courses/quizzes/${course.id}`)}
+                                  >
+                                    <FileText size={18} className="text-orange-500 group-hover:scale-110 transition-transform" /> Quizzes
+                                  </DropdownMenuItem>
+                                </>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -402,6 +423,17 @@ const InstrutorCourseList: React.FC = () => {
                             <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/view/${course.id}`)}>
                               <Eye size={16} className="mr-2" /> View
                             </DropdownMenuItem>
+                            {(course.course_type === 'Course (Video)' || course.course_type === 'Live Class') && (
+                              <>
+                                <DropdownMenuSeparator className="bg-gray-50" />
+                                <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/curriculum/${course.id}`)}>
+                                  <Layout size={16} className="mr-2 text-purple-500" /> Modules
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/quizzes/${course.id}`)}>
+                                  <FileText size={16} className="mr-2 text-orange-500" /> Quizzes
+                                </DropdownMenuItem>
+                              </>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>

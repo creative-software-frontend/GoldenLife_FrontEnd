@@ -42,6 +42,7 @@ export default function Cart() {
     updatePrice,
     clearCart,
     getTotalItems,
+    getTotalGroups,
     getSubtotal,
     getCustomerTotal
   } = useCartStore();
@@ -85,6 +86,7 @@ export default function Cart() {
   };
 
   const totalItemsCount = getTotalItems();
+  const totalGroupsCount = getTotalGroups();
 
   return (
     <>
@@ -96,15 +98,15 @@ export default function Cart() {
         >
           <div className="relative flex items-center justify-center p-2.5 bg-[#F0FDF4] rounded-xl text-[#5C9C72] group-hover:bg-[#5C9C72] group-hover:text-white transition-colors duration-300">
             <ShoppingBag className="h-5 w-5 stroke-[2.5px]" />
-            {totalItemsCount > 0 && (
+            {totalGroupsCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 border-2 border-white text-white text-[10px] font-black h-5 w-5 rounded-full flex items-center justify-center shadow-sm">
-                {totalItemsCount}
+                {totalGroupsCount}
               </span>
             )}
           </div>
           <div className="text-left py-1">
             <div className="font-bold text-gray-400 text-[9px] uppercase tracking-widest mb-0.5">
-              {totalItemsCount} {t("cart.TotalItems", "Items")}
+              {totalGroupsCount} {t("cart.TotalItems", "Active Carts")}
             </div>
             <div className="text-sm font-black text-gray-900 group-hover:text-[#5C9C72] transition-colors leading-none tracking-tight">
               ৳{formatBDT(getSubtotal())}
@@ -131,7 +133,7 @@ export default function Cart() {
               </div>
               <div>
                 <h2 className="text-lg font-black text-gray-900 uppercase tracking-tight">{t('cart.title', 'All carts')}</h2>
-                <p className="text-xs text-gray-500 font-medium">{totalItemsCount} active items</p>
+                <p className="text-xs text-gray-500 font-medium">{totalGroupsCount} active {totalGroupsCount === 1 ? 'cart' : 'carts'}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

@@ -16,7 +16,7 @@ export default function FreshSell() {
     const { t, i18n } = useTranslation('global');
     const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 30, seconds: 0 });
 
-    const { cartItems, addItem, clearCart, toggleCart } = useCartStore();
+    const { cartItems, addItem, clearCart } = useCartStore();
 
     // --- STORE ---
     const {
@@ -84,7 +84,9 @@ export default function FreshSell() {
     }, [products, search, stock, sortBy]);
 
     const handleAddToCart = (product: any) => {
-        const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id || "empty_vendor";
+        const currentVendorId = (product as any).vendor_id || (product as any).vendor?.id;
+        // Always produce a non-falsy seller_id so each vendor gets its own cart group
+        const sellerId = currentVendorId ? String(currentVendorId) : `vendor_${product.id}`;
 
         const name = i18n.language === 'bn' ? (product.titleBn || product.titleEn) : product.titleEn;
 
@@ -96,10 +98,10 @@ export default function FreshSell() {
             quantity: 1,
             offer_price: Number(product.offer_price) || 0, // Member Price
             regular_price: Number(product.regular_price) || 0, // Customer Price
-            vendor_id: currentVendorId,
+            vendor_id: sellerId,
             type: 'product',
             seller_name: product.vendor?.businee_name || 'Partner',
-            seller_id: currentVendorId
+            seller_id: sellerId
         });
     };
 

@@ -20,19 +20,25 @@ const InstructorLayout: React.FC = () => {
     return (
         <div className="flex h-screen bg-muted/40 text-foreground overflow-hidden">
             {/* Sidebar receives state and toggle function */}
-            <InstructorSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <div className="screen-only">
+                <InstructorSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            </div>
 
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
                 <LiveChat showLegacy={false} mode="instructor" />
                 {/* Navbar receives state and toggle function so the custom icon works */}
-                <InstructorNavbar toggleSidebar={toggleSidebar} isOpen={isSidebarOpen} />
+                <div className="screen-only">
+                    <InstructorNavbar toggleSidebar={toggleSidebar} isOpen={isSidebarOpen} />
+                </div>
 
                 <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6 md:p-8">
                     {/* Your page content renders here */}
                     <Outlet />
                 </main>
 
-                <InstructorFooter />
+                <div className="screen-only">
+                    <InstructorFooter />
+                </div>
                 <HotlineModal />
                 <FAQModal />
                 <TicketModal />

@@ -1,18 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Calendar,
-  CheckCircle2,
   Clock,
-  Mail,
   UserCheck,
   SearchX,
   RefreshCw,
   LayoutGrid,
   List as ListIcon,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  Package
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Select,
@@ -35,66 +34,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useInstructorNavbarQuery } from '@/hooks/useInstructorNavbar';
-
-// Dummy Data for Enrollments
-const DUMMY_ENROLLMENTS = [
-  {
-    id: "ENR-001",
-    student: {
-      name: "Ariful Islam",
-      email: "arif.islam@example.com",
-      phone: "+880 1712-345678",
-      avatar: "AI"
-    },
-    course: "Mastering React.js & Modern Web Development",
-    enrollmentDate: "2026-04-18",
-    amount: 2500,
-    paymentStatus: "completed",
-    status: "active",
-  },
-  {
-    id: "ENR-002",
-    student: {
-      name: "Tahmina Akter",
-      email: "tahmina.a@example.com",
-      phone: "+880 1912-888999",
-      avatar: "TA"
-    },
-    course: "Complete Graphics Design Bootcamp 2026",
-    enrollmentDate: "2026-04-19",
-    amount: 1800,
-    paymentStatus: "pending",
-    status: "pending",
-  },
-  {
-    id: "ENR-003",
-    student: {
-      name: "Rakib Hassan",
-      email: "rakib.h@example.com",
-      phone: "+880 1812-111222",
-      avatar: "RH"
-    },
-    course: "Digital Marketing Fundamentals",
-    enrollmentDate: "2026-04-20",
-    amount: 1500,
-    paymentStatus: "completed",
-    status: "active",
-  },
-  {
-    id: "ENR-004",
-    student: {
-      name: "Sabina Yeasmin",
-      email: "sabina.y@example.com",
-      phone: "+880 1512-555666",
-      avatar: "SY"
-    },
-    course: "Advanced Data Science with Python",
-    enrollmentDate: "2026-04-21",
-    amount: 3200,
-    paymentStatus: "completed",
-    status: "active",
-  }
-];
+import { useInstructorOrders } from './hooks/useInstructorOrders';
+import { Order, OrderStatus, OrderFilters } from './types/instructor_order.types';
+import { InstructorStatusUpdateModal } from './components/InstructorStatusUpdateModal';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -114,24 +56,111 @@ const itemVariants = {
 };
 
 const InstructorEnrollList: React.FC = () => {
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [paymentFilter, setPaymentFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
+  const [filters, setFilters] = useState<OrderFilters>({
+    search: '',
+    status: 'All',
+    page: 1,
+    limit: 50
+  });
 
-  // ── Real API data ──────────────────────────────────────────────────────────
+  const { fetchOrders, updateOrderStatus, isLoading } = useInstructorOrders();
   const { data: navbarData, isLoading: isNavbarLoading } = useInstructorNavbarQuery();
 
-  const filteredEnrollments = useMemo(() => {
-    return DUMMY_ENROLLMENTS.filter(enroll => {
-      const matchesSearch = 
-        enroll.student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        enroll.course.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesPayment = paymentFilter === 'all' || enroll.paymentStatus === paymentFilter;
-      const matchesStatus = statusFilter === 'all' || enroll.status === statusFilter;
-      return matchesSearch && matchesPayment && matchesStatus;
-    });
-  }, [searchQuery, paymentFilter, statusFilter]);
+  const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
+
+  const loadOrders = useCallback(async () => {
+    try {
+      console.log('🔵 [Orders] Loading instructor orders with filters:', filters);
+      const data = await fetchOrders(filters);
+      setOrders(data);
+      applyLocalFilters(data, filters);
+      setLastRefreshed(new Date());
+    } catch (error) {
+      console.error('❌ [Orders] Failed to load orders:', error);
+    }
+  }, [filters, fetchOrders]);
+
+  const applyLocalFilters = (data: Order[], currentFilters: OrderFilters) => {
+    let filtered = [...data];
+
+    // Apply status filter (if not already handled by API)
+    if (currentFilters.status && currentFilters.status !== 'All') {
+      if (currentFilters.status === 'today') {
+        const today = new Date().toISOString().split('T')[0];
+        filtered = filtered.filter(order => 
+          new Date(order.created_at).toISOString().split('T')[0] === today
+        );
+      } else {
+        filtered = filtered.filter(order => order.status === currentFilters.status);
+      }
+    }
+
+    // Apply search filter
+    if (currentFilters.search) {
+      const searchTerm = currentFilters.search.toLowerCase();
+      filtered = filtered.filter(order =>
+        order.order_no.toLowerCase().includes(searchTerm) ||
+        order.user_name.toLowerCase().includes(searchTerm) ||
+        order.user_phone.toLowerCase().includes(searchTerm) ||
+        order.products.some(p => p.product_name.toLowerCase().includes(searchTerm))
+      );
+    }
+
+    setFilteredOrders(filtered);
+  };
+
+  useEffect(() => {
+    loadOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.status]); 
+
+  useEffect(() => {
+    applyLocalFilters(orders, filters);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.search, orders]);
+
+  const handleSearch = (value: string) => {
+    setFilters(prev => ({ ...prev, search: value }));
+  };
+
+  const handleStatusFilter = (value: string) => {
+    setFilters(prev => ({ ...prev, status: value as any, page: 1 }));
+  };
+
+  const handleUpdateStatusClick = (order: Order) => {
+    setSelectedOrder(order);
+    setIsStatusModalOpen(true);
+  };
+
+  const handleStatusUpdate = async (newStatus: OrderStatus) => {
+    if (!selectedOrder) return;
+    
+    const success = await updateOrderStatus(selectedOrder.id, newStatus);
+    if (success) {
+      await loadOrders();
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Delivered': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
+      case 'Processing': return 'text-blue-600 bg-blue-50 border-blue-100';
+      case 'Order Placed': return 'text-amber-600 bg-amber-50 border-amber-100';
+      case 'Packaging': return 'text-indigo-600 bg-indigo-50 border-indigo-100';
+      case 'Sent To Courier': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
+      case 'Ready To Courier': return 'text-cyan-600 bg-cyan-50 border-cyan-100';
+      case 'On The Way': return 'text-violet-600 bg-violet-50 border-violet-100';
+      case 'Returned': return 'text-red-600 bg-red-50 border-red-100';
+      case 'Cancelled': return 'text-red-600 bg-red-50 border-red-100';
+      default: return 'text-gray-600 bg-gray-50 border-gray-100';
+    }
+  };
 
   return (
     <motion.div 
@@ -145,13 +174,16 @@ const InstructorEnrollList: React.FC = () => {
         <motion.div variants={itemVariants} className="space-y-1">
           <div className="flex items-center gap-4">
              <div className="bg-emerald-600 p-2.5 rounded-2xl text-white shadow-xl shadow-emerald-600/20">
-                <UserCheck size={28} strokeWidth={2.5} />
+                <Package size={28} strokeWidth={2.5} />
              </div>
              <div>
-                <h1 className="text-3xl font-black text-gray-900 tracking-tight">Student Enrollments</h1>
-                <p className="text-gray-500 font-bold text-sm">Monitor acquisition signals with precision.</p>
+                <h1 className="text-3xl font-black text-gray-900 tracking-tight">Order Management</h1>
+                <p className="text-gray-500 font-bold text-sm">Monitor course enrollments and product signals.</p>
              </div>
           </div>
+        </motion.div>
+        <motion.div variants={itemVariants} className="text-xs font-black text-gray-400 uppercase tracking-widest">
+          Last Synchronized: {lastRefreshed.toLocaleTimeString()}
         </motion.div>
       </div>
 
@@ -159,10 +191,10 @@ const InstructorEnrollList: React.FC = () => {
       <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Card className="border-none shadow-sm bg-gray-900 text-white rounded-[2.5rem] overflow-hidden relative group">
            <CardContent className="p-8 space-y-2 relative z-10">
-              <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px]">Total Learners</p>
-              <h2 className="text-4xl font-black tracking-tighter">1,248</h2>
+              <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px]">Total Orders</p>
+              <h2 className="text-4xl font-black tracking-tighter">{orders.length}</h2>
               <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-black pt-2 uppercase">
-                 <TrendingUp size={14} /> +14.2% Growth
+                 <TrendingUp size={14} /> Real-time Feed
               </div>
            </CardContent>
            <UserCheck className="absolute right-[-10px] bottom-[-10px] w-36 h-36 text-white/[0.04] group-hover:scale-125 transition-transform duration-1000" />
@@ -170,8 +202,10 @@ const InstructorEnrollList: React.FC = () => {
 
         <Card className="border-none shadow-sm bg-white rounded-[2.5rem] overflow-hidden group ring-1 ring-gray-100">
            <CardContent className="p-8 space-y-2 border-l-8 border-amber-500">
-              <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Awaiting Settlement</p>
-              <h2 className="text-4xl font-black tracking-tighter text-amber-500">৳45,200</h2>
+              <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Processing Pipeline</p>
+              <h2 className="text-4xl font-black tracking-tighter text-amber-500">
+                {orders.filter(o => o.status === 'Processing' || o.status === 'Order Placed').length}
+              </h2>
               <div className="flex items-center gap-2 text-gray-500 text-[11px] font-black pt-2 uppercase">
                  <Clock size={14} className="text-amber-400" /> Action Required
               </div>
@@ -196,33 +230,27 @@ const InstructorEnrollList: React.FC = () => {
         <div className="relative flex-1 group w-full">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={20} strokeWidth={3} />
           <Input 
-            placeholder="Search student identity, course title, or transaction ID..." 
+            placeholder="Search order number, customer identity, or course title..." 
             className="pl-14 h-14 bg-gray-50/50 border-none focus:ring-4 focus:ring-emerald-500/5 rounded-[1.5rem] font-bold text-gray-700 transition-all text-base w-full max-w-4xl shadow-inner"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={filters.search}
+            onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
         
         <div className="flex items-center gap-4 w-full xl:w-auto">
-          <Select value={paymentFilter} onValueChange={setPaymentFilter}>
-             <SelectTrigger className="h-14 w-full xl:w-[160px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 px-6 shadow-sm">
-                <SelectValue placeholder="Payment" />
+          <Select value={filters.status} onValueChange={handleStatusFilter}>
+             <SelectTrigger className="h-14 w-full xl:w-[180px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 px-6 shadow-sm">
+                <SelectValue placeholder="Lifecycle" />
              </SelectTrigger>
              <SelectContent className="rounded-2xl border-none shadow-2xl">
-                <SelectItem value="all" className="font-bold">Payments</SelectItem>
-                <SelectItem value="completed" className="font-bold text-emerald-600">Completed</SelectItem>
-                <SelectItem value="pending" className="font-bold text-amber-600">Pending</SelectItem>
-             </SelectContent>
-          </Select>
-
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-             <SelectTrigger className="h-14 w-full xl:w-[160px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 px-6 shadow-sm">
-                <SelectValue placeholder="Status" />
-             </SelectTrigger>
-             <SelectContent className="rounded-2xl border-none shadow-2xl">
-                <SelectItem value="all" className="font-bold">Lifecycle</SelectItem>
-                <SelectItem value="active" className="font-bold text-emerald-600">Active</SelectItem>
-                <SelectItem value="pending" className="font-bold text-amber-600">Pending</SelectItem>
+                <SelectItem value="All" className="font-bold">All Signals</SelectItem>
+                <SelectItem value="today" className="font-bold">Today's Traffic</SelectItem>
+                <SelectItem value="Order Placed" className="font-bold">Order Placed</SelectItem>
+                <SelectItem value="Pending" className="font-bold">Pending</SelectItem>
+                <SelectItem value="Processing" className="font-bold text-blue-600">Processing</SelectItem>
+                <SelectItem value="Packaging" className="font-bold text-indigo-600">Packaging</SelectItem>
+                <SelectItem value="Delivered" className="font-bold text-emerald-600">Delivered</SelectItem>
+                <SelectItem value="Returned" className="font-bold text-red-600">Returned</SelectItem>
              </SelectContent>
           </Select>
 
@@ -237,12 +265,33 @@ const InstructorEnrollList: React.FC = () => {
               <><LayoutGrid size={18} strokeWidth={3} /> Switch Mode</>
             )}
           </Button>
+          
+          <Button 
+            onClick={loadOrders}
+            disabled={isLoading}
+            className="h-14 w-14 p-0 rounded-2xl bg-gray-900 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl"
+          >
+            <RefreshCw size={20} className={isLoading ? 'animate-spin' : ''} />
+          </Button>
         </div>
       </motion.div>
 
       {/* Content Area */}
       <AnimatePresence mode="wait">
-        {viewMode === 'table' ? (
+        {isLoading ? (
+          <motion.div 
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center justify-center py-32"
+          >
+            <div className="flex flex-col items-center gap-4">
+               <RefreshCw size={48} className="animate-spin text-emerald-600" />
+               <p className="font-black text-gray-400 uppercase tracking-[0.3em] text-xs">Synchronizing API Feed...</p>
+            </div>
+          </motion.div>
+        ) : viewMode === 'table' ? (
           <motion.div 
             key="table" 
             initial={{ opacity: 0, x: -10 }} 
@@ -255,56 +304,67 @@ const InstructorEnrollList: React.FC = () => {
                 <TableHeader>
                   <TableRow className="hover:bg-transparent border-b border-gray-50 uppercase tracking-[0.1em] text-[9px]">
                     <TableHead className="h-20 font-black text-gray-400 px-6">Entry Token</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-6">Student Silhouette</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-6">Target Track</TableHead>
+                    <TableHead className="h-20 font-black text-gray-400 px-6">Identity</TableHead>
+                    <TableHead className="h-20 font-black text-gray-400 px-6">Target Products</TableHead>
                     <TableHead className="h-20 font-black text-gray-400 px-6">Yield</TableHead>
                     <TableHead className="h-20 font-black text-gray-400 px-10 text-center">Lifecycle</TableHead>
                     <TableHead className="h-20 font-black text-gray-400 px-6 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredEnrollments.map((enroll) => (
-                    <TableRow key={enroll.id} className="group hover:bg-emerald-50/[0.02] transition-colors border-b border-gray-50 last:border-0">
+                  {filteredOrders.map((order) => (
+                    <TableRow key={order.id} className="group hover:bg-emerald-50/[0.02] transition-colors border-b border-gray-50 last:border-0">
                       <TableCell className="px-6 py-8">
                          <div className="flex flex-col gap-0.5 whitespace-nowrap">
-                            <p className="font-black text-emerald-600 text-[10px] tracking-widest">{enroll.id}</p>
+                            <p className="font-black text-emerald-600 text-[10px] tracking-widest">{order.order_no}</p>
                             <p className="text-[10px] font-black text-gray-400 flex items-center gap-1 uppercase">
-                               <Calendar size={10} strokeWidth={3} /> {enroll.enrollmentDate}
+                               <Calendar size={10} strokeWidth={3} /> {new Date(order.created_at).toLocaleDateString()}
                             </p>
                          </div>
                       </TableCell>
                       <TableCell className="px-6">
                         <div className="flex items-center gap-4">
                           <Avatar className="h-10 w-10 border-2 border-white shadow-md ring-1 ring-gray-100">
-                            <AvatarFallback className="bg-emerald-50 text-emerald-600 font-black text-[10px]">{enroll.student.avatar}</AvatarFallback>
+                            <AvatarFallback className="bg-emerald-50 text-emerald-600 font-black text-[10px]">{order.user_name.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="space-y-0.5">
-                            <p className="font-black text-gray-900 group-hover:text-emerald-600 transition-colors text-sm tracking-tight">{enroll.student.name}</p>
+                            <p className="font-black text-gray-900 group-hover:text-emerald-600 transition-colors text-sm tracking-tight">{order.user_name}</p>
                             <p className="text-[10px] text-gray-400 font-black flex items-center gap-1 lowercase">
-                               <Mail size={10} /> {enroll.student.email}
+                               {order.user_phone}
                             </p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="px-6">
-                         <p className="text-sm font-black text-gray-700 tracking-tight leading-tight line-clamp-2 max-w-[320px]">
-                            {enroll.course}
-                         </p>
+                         <div className="space-y-1">
+                            {order.products.map((p, idx) => (
+                              <p key={idx} className="text-xs font-black text-gray-700 tracking-tight leading-tight line-clamp-1 max-w-[320px]">
+                                {p.product_name} <span className="text-gray-400 text-[10px]">x{p.quantity}</span>
+                              </p>
+                            ))}
+                         </div>
                       </TableCell>
                       <TableCell className="px-6 font-black text-gray-900 italic text-base">
-                        ৳{enroll.amount}
+                        ৳{order.total}
                       </TableCell>
                       <TableCell className="px-10 text-center">
-                         <div className="w-[110px] h-[36px] bg-emerald-50 text-emerald-700 font-black rounded-xl text-[9px] uppercase flex items-center justify-center tracking-widest border border-emerald-100 shadow-sm mx-auto select-none">
-                          {enroll.status}
+                         <div className={`w-[110px] h-[36px] font-black rounded-xl text-[9px] uppercase flex items-center justify-center tracking-widest border shadow-sm mx-auto select-none ${getStatusColor(order.status)}`}>
+                          {order.status}
                         </div>
                       </TableCell>
                       <TableCell className="px-6 text-right">
                          <div className="flex items-center justify-end gap-2.5">
-                            <Button variant="outline" className="h-9 px-5 rounded-lg font-black text-[9px] text-gray-600 uppercase transition-all shadow-sm">
-                               View
+                            <Button 
+                              variant="outline" 
+                              onClick={() => navigate(`/instructor/dashboard/orders/${order.order_no}`)}
+                              className="h-9 px-5 rounded-lg font-black text-[9px] text-gray-600 uppercase transition-all shadow-sm"
+                            >
+                                Track
                             </Button>
-                            <Button className="h-9 px-5 rounded-lg font-black text-[9px] bg-[#FF8A00] hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20 active:scale-95 transition-all">
+                            <Button 
+                              onClick={() => handleUpdateStatusClick(order)}
+                              className="h-9 px-5 rounded-lg font-black text-[9px] bg-gray-900 hover:bg-black text-white shadow-lg active:scale-95 transition-all"
+                            >
                                Update
                             </Button>
                          </div>
@@ -323,42 +383,54 @@ const InstructorEnrollList: React.FC = () => {
             animate="visible"
             className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
           >
-            {filteredEnrollments.map((enroll) => (
-              <motion.div key={enroll.id} variants={itemVariants}>
+            {filteredOrders.map((order) => (
+              <motion.div key={order.id} variants={itemVariants}>
                 <Card className="border-none shadow-sm rounded-[2.5rem] overflow-hidden bg-white ring-1 ring-gray-100 group hover:shadow-2xl transition-all duration-700 flex flex-col h-full transform-gpu">
                    <CardContent className="p-0 flex-1 flex flex-col">
                       <div className="p-8 bg-gray-50/50 flex flex-col items-center text-center space-y-4 relative border-b border-gray-50">
                           <Avatar className="h-20 w-20 border-4 border-white shadow-xl transform transition-all duration-700 group-hover:scale-110">
-                            <AvatarFallback className="bg-emerald-600 text-white font-black text-lg">{enroll.student.avatar}</AvatarFallback>
+                            <AvatarFallback className="bg-emerald-600 text-white font-black text-lg">{order.user_name.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="space-y-1">
-                            <p className="font-black text-lg text-gray-900 tracking-tight leading-none">{enroll.student.name}</p>
-                            <p className="text-[9px] font-black text-emerald-600 tracking-widest uppercase">{enroll.id}</p>
+                            <p className="font-black text-lg text-gray-900 tracking-tight leading-none">{order.user_name}</p>
+                            <p className="text-[9px] font-black text-emerald-600 tracking-widest uppercase">{order.order_no}</p>
                           </div>
                       </div>
                       
                       <div className="p-7 space-y-7 flex-1 flex flex-col">
-                         <div className="space-y-1 text-center">
-                            <p className="text-[10px] font-black text-gray-800 leading-snug line-clamp-2 px-1">{enroll.course}</p>
+                         <div className="space-y-2 text-center">
+                            {order.products.slice(0, 2).map((p, idx) => (
+                              <p key={idx} className="text-[10px] font-black text-gray-800 leading-snug line-clamp-1 px-1">{p.product_name}</p>
+                            ))}
+                            {order.products.length > 2 && (
+                              <p className="text-[8px] font-black text-gray-400">+{order.products.length - 2} more items</p>
+                            )}
                          </div>
 
                          <div className="grid grid-cols-2 gap-4 py-5 border-y border-gray-50 mt-auto">
                             <div className="space-y-0.5 text-center border-r border-gray-50">
                                <p className="text-[8px] font-black text-gray-400 tracking-widest uppercase">Yield</p>
-                               <p className="text-base font-black text-emerald-600 italic tracking-tighter leading-none">৳{enroll.amount}</p>
+                               <p className="text-base font-black text-emerald-600 italic tracking-tighter leading-none">৳{order.total}</p>
                             </div>
                             <div className="space-y-0.5 text-center">
                                <p className="text-[8px] font-black text-gray-400 tracking-widest uppercase">Lifecycle</p>
-                               <p className="text-[10px] font-black text-emerald-600 uppercase tracking-tighter leading-none">{enroll.status}</p>
+                               <p className={`text-[10px] font-black uppercase tracking-tighter leading-none ${getStatusColor(order.status).split(' ')[0]}`}>{order.status}</p>
                             </div>
                          </div>
 
                          <div className="flex gap-3 pt-1">
-                            <Button variant="outline" className="flex-1 h-12 rounded-2xl border-gray-200 font-black text-[10px] text-gray-600 hover:bg-gray-900 hover:text-white transition-all uppercase">
-                              View Profile
+                            <Button 
+                              variant="outline" 
+                              onClick={() => navigate(`/instructor/dashboard/orders/${order.order_no}`)}
+                              className="flex-1 h-12 rounded-2xl border-gray-200 font-black text-[10px] text-gray-600 hover:bg-gray-900 hover:text-white transition-all uppercase"
+                            >
+                               Track
                             </Button>
-                            <Button className="flex-1 h-12 rounded-2xl bg-[#FF8A00] hover:bg-orange-600 text-white font-black text-[10px] shadow-xl shadow-orange-500/20 active:scale-95 transition-all uppercase">
-                              Update
+                            <Button 
+                              onClick={() => handleUpdateStatusClick(order)}
+                              className="flex-1 h-12 rounded-2xl bg-gray-900 hover:bg-black text-white font-black text-[10px] shadow-xl active:scale-95 transition-all uppercase"
+                            >
+                               Update
                             </Button>
                          </div>
                       </div>
@@ -372,7 +444,7 @@ const InstructorEnrollList: React.FC = () => {
 
       {/* Empty State Logic */}
       <AnimatePresence>
-        {filteredEnrollments.length === 0 && (
+        {!isLoading && filteredOrders.length === 0 && (
            <motion.div 
              initial={{ opacity: 0, scale: 0.95 }}
              animate={{ opacity: 1, scale: 1 }}
@@ -383,18 +455,32 @@ const InstructorEnrollList: React.FC = () => {
                  <SearchX size={54} strokeWidth={1} />
               </div>
               <div className="space-y-2">
-                 <h3 className="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">Reception Zero.</h3>
+                 <h3 className="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">Signal Void.</h3>
                  <p className="text-gray-500 font-bold max-w-sm mx-auto leading-relaxed px-10 text-sm">No signals detected on the current frequency. Resetting filters might re-establish connection.</p>
               </div>
               <Button 
-                onClick={() => { setSearchQuery(''); setPaymentFilter('all'); setStatusFilter('all'); }} 
+                onClick={() => setFilters({ search: '', status: 'All', page: 1, limit: 50 })} 
                 className="h-15 px-12 rounded-3xl bg-[#FF8A00] hover:bg-orange-600 text-white font-black gap-3 shadow-2xl shadow-orange-500/20 active:scale-95 transition-all"
               >
-                 <RefreshCw size={18} strokeWidth={3} /> Synchronize Channel
+                 <RefreshCw size={18} strokeWidth={3} /> Re-Synchronize Channel
               </Button>
            </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Status Update Modal */}
+      {selectedOrder && (
+        <InstructorStatusUpdateModal
+          isOpen={isStatusModalOpen}
+          onClose={() => {
+            setIsStatusModalOpen(false);
+            setSelectedOrder(null);
+          }}
+          currentStatus={selectedOrder.status}
+          onUpdate={handleStatusUpdate}
+          orderNo={selectedOrder.order_no}
+        />
+      )}
     </motion.div>
   );
 };

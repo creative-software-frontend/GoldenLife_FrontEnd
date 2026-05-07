@@ -129,7 +129,9 @@ const CategoryPage = () => {
 
     // 3. CART LOGIC — Add freely; Cart groups by seller_id
     const handleAddToCart = (product: any) => {
-        const currentVendorId = product.vendor_id || product.vendor?.id || "empty_vendor";
+        const currentVendorId = product.vendor_id || product.vendor?.id;
+        // Always produce a non-falsy seller_id so each vendor gets its own cart group
+        const sellerId = currentVendorId ? String(currentVendorId) : `vendor_${product.id}`;
 
         const name = i18n.language === 'bn'
             ? (product.product_title_bangla || product.product_title_english)
@@ -143,10 +145,10 @@ const CategoryPage = () => {
             quantity: 1,
             offer_price: Number(product.offer_price) || 0,
             regular_price: Number(product.regular_price) || 0,
-            vendor_id: currentVendorId,
+            vendor_id: sellerId,
             type: 'product',
             seller_name: product.vendor?.businee_name || product.seller_name || 'Partner',
-            seller_id: currentVendorId
+            seller_id: sellerId
         });
     };
 
