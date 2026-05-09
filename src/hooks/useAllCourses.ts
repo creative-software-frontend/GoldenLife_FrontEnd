@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
@@ -25,36 +25,18 @@ export interface Course {
     created_at: string;
     updated_at: string;
     service_type: string;
-    instructor?: {
-        id: number;
-        user_id: string;
-        instructor_id: string;
-        name: string;
-        joining_date: string;
-        gender: string;
-        qualification: string;
-        experience: string;
-        designation: string;
-        department: string;
-        business_name: string;
-        date_of_birth: string;
-        website: string;
-        facebook: string;
-        telegram: string;
-        whatsapp: string;
-        mobile: string;
-        email: string;
-        image: string;
-        banner: string;
-        created_at: string;
-        updated_at: string;
-    };
+    instructor?: any;
 }
 
 export interface AllCoursesResponse {
     status: boolean;
     message: string;
-    data: Course[];
+    data: {
+        current_page: number;
+        data: Course[];
+        last_page: number;
+        total: number;
+    };
 }
 
 export interface CourseFilters {
@@ -64,10 +46,10 @@ export interface CourseFilters {
 }
 
 export const useAllCoursesQuery = (filters: CourseFilters = {}) => {
-    return useQuery<Course[]>({
+    return useInfiniteQuery({
         queryKey: ['allCoursesList', filters],
-        queryFn: async () => {
-            const params: any = {};
+        queryFn: async ({ pageParam = 1 }) => {
+            const params: any = { page: pageParam };
             if (filters.type && filters.type !== 'All') params.type = filters.type;
             if (filters.search) params.search = filters.search;
             if (filters.category_id && filters.category_id !== 'all') params.category_id = filters.category_id;
@@ -76,10 +58,41 @@ export const useAllCoursesQuery = (filters: CourseFilters = {}) => {
                 params
             });
             
+            if (response.data.status && response.data.data) {
+                return response.data.data;
+            }
+            return { data: [], current_page: 1, last_page: 1, total: 0 };
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+            if (lastPage.current_page < lastPage.last_page) {
+                return lastPage.current_page + 1;
+            }
+            return undefined;
+        },
+    });
+};
+
+export interface CourseDetailsResponse {
+    status: boolean;
+    message: string;
+    data: Course & {
+        category: any;
+        modules: any[];
+        quizzes: any[];
+    };
+}
+
+export const useCourseDetailsQuery = (id: string | undefined) => {
+    return useQuery({
+        queryKey: ['courseDetails', id],
+        queryFn: async () => {
+            const response = await axios.get<CourseDetailsResponse>(`${baseURL}/api/course/details?id=${id}`);
             if (response.data.status) {
                 return response.data.data;
             }
-            return [];
+            throw new Error(response.data.message);
         },
+        enabled: !!id,
     });
 };

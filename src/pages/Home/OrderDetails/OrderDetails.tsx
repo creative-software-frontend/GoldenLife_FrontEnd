@@ -275,7 +275,10 @@ const OrderDetails = () => {
                   >
                     <div className="w-full sm:w-24 h-24 sm:h-24 rounded-lg overflow-hidden border border-slate-200 bg-white flex-shrink-0">
                       <img
-                        src={`${baseURL}/uploads/ecommarce/product_image/${item.product_image}`}
+                        src={item.service_type === 'course' 
+                          ? `${baseURL}/uploads/course/course_image/${item.product_image}`
+                          : `${baseURL}/uploads/ecommarce/product_image/${item.product_image}`
+                        }
                         alt={item.product_name}
                         className="w-full h-full object-cover"
                         onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Image')}

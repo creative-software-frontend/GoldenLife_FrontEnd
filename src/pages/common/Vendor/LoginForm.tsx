@@ -10,6 +10,7 @@ import Logo from "../Logo";
 import { SendOtpForm } from "./components/SendOtpForm";
 import { OtpModal } from "./components/OtpModal";
 import { useVendorOtp } from "./hooks/useVendorOtp";
+import { useTimedMessage } from "@/hooks/useTimedMessage";
 import ForgotPassword from "./ForgotPassword";
 
 // Scroll Animation Variants
@@ -38,8 +39,13 @@ const LoginForm = () => {
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   // API Feedback States
-  const [apiError, setApiError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const {
+    successMessage,
+    errorMessage: apiError,
+    setSuccessMessage,
+    setErrorMessage: setApiError,
+    clearMessages
+  } = useTimedMessage(5000);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -52,7 +58,7 @@ const LoginForm = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     // Clear error when user starts typing
-    if (apiError) setApiError("");
+    if (apiError) clearMessages();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,7 +71,7 @@ const LoginForm = () => {
     }
 
     setIsLoading(true);
-    setApiError("");
+    clearMessages();
 
     try {
       const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";

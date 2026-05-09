@@ -10,6 +10,7 @@ import SetPinModal from '../SetPinModal/SetPinModal';
 import ConfirmWithdrawModal from '../ConfirmWithdrawModal/ConfirmWithdrawModal';
 import { toast } from 'react-toastify';
 import useModalStore from '@/store/modalStore';
+import { useTimedMessage } from '@/hooks/useTimedMessage';
 
 interface Transaction {
     id: number | string;
@@ -110,8 +111,13 @@ export default function WalletWithdraw() {
         accountNumber: ''
     });
 
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const { 
+        successMessage, 
+        errorMessage, 
+        setSuccessMessage, 
+        setErrorMessage, 
+        clearMessages 
+    } = useTimedMessage(5000);
 
     const presetAmounts: number[] = [500, 1000, 2000, 5000];
 
@@ -156,8 +162,7 @@ export default function WalletWithdraw() {
     // --- Validation & Open Modal ---
     const handleOpenConfirmation = (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        clearMessages();
 
         // 1. Amount Validation
         if (!amount || Number(amount) <= 0) {
@@ -225,15 +230,15 @@ export default function WalletWithdraw() {
             <SetPinModal
                 isOpen={isPinModalOpen}
                 onClose={() => setIsPinModalOpen(false)}
-                onSuccess={(msg) => setSuccessMessage(msg)}
-                onError={(msg) => setErrorMessage(msg)}
+                onSuccess={setSuccessMessage}
+                onError={setErrorMessage}
             />
 
             <ConfirmWithdrawModal
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 onSuccess={handleWithdrawSuccess}
-                onError={(msg) => setErrorMessage(msg)}
+                onError={setErrorMessage}
                 amount={amount}
                 accountNumber={getFinalAccountDetails()}
                 paymentMethod={paymentMethod}
@@ -511,7 +516,7 @@ export default function WalletWithdraw() {
                                                 onChange={(e) => {
                                                     if (!isComingSoon) {
                                                         setPaymentMethod(e.target.value);
-                                                        setErrorMessage('');
+                                                        clearMessages();
                                                         setMfsNumber('');
                                                     }
                                                 }}
@@ -603,7 +608,7 @@ export default function WalletWithdraw() {
                                 <Loader2 className="w-8 h-8 animate-spin mb-4" />
                                 <p className="text-sm font-medium">Loading history...</p>
                             </div>
-                        ) : transactions.length === 0 ? (
+                        ) : transactions.filter(t => t.type === 'withdraw').length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 m-4 md:m-6 text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                                 <Clock className="w-12 h-12 mb-4 text-slate-300" />
                                 <p className="text-sm font-medium">No transactions found.</p>
@@ -615,7 +620,7 @@ export default function WalletWithdraw() {
                                 <div className="flex flex-row items-center justify-between md:justify-start gap-4 px-5 py-5 md:px-8 md:py-6 border-b border-slate-100">
                                     <h2 className="text-sm font-black text-slate-600 tracking-wider uppercase">Withdrawal History</h2>
                                     <span className="px-3 py-1 bg-[#eef7f2] text-[#6cb28d] text-[10px] font-bold rounded-full tracking-wider uppercase shrink-0">
-                                        {transactions.length} Records
+                                        {transactions.filter(t => t.type === 'withdraw').length} Records
                                     </span>
                                 </div>
 
@@ -629,7 +634,7 @@ export default function WalletWithdraw() {
 
                                 {/* Transactions List */}
                                 <div className="p-4 md:p-6 space-y-3 md:space-y-4 bg-[#f8fafc]">
-                                    {transactions.map((trx, idx) => (
+                                    {transactions.filter(t => t.type === 'withdraw').map((trx, idx) => (
                                         <div key={trx.id || idx} className="grid grid-cols-2 md:grid-cols-4 items-center gap-y-4 gap-x-2 md:gap-4 p-4 border border-slate-100 rounded-[20px] bg-white shadow-sm hover:shadow-md transition-shadow">
 
                                             {/* 1. Details Column (Top Left on Mobile) */}
@@ -637,11 +642,11 @@ export default function WalletWithdraw() {
                                                 <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-[14px] md:rounded-2xl bg-[#fff4eb] flex items-center justify-center text-[#f48120]">
                                                     <Minus className="w-4 h-4 md:w-5 md:h-5 stroke-[3]" />
                                                 </div>
-                                                <div>
-                                                    <p className="text-base md:text-lg font-black text-[#0f172a] leading-none mb-1 md:mb-1.5">
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="text-base md:text-lg font-black text-[#0f172a] leading-none mb-1 md:mb-1.5 whitespace-nowrap tracking-tighter" title={`৳${Number(trx.amount).toFixed(2)}`}>
                                                         ৳{Number(trx.amount).toFixed(2)}
                                                     </p>
-                                                    <p className="text-[10px] md:text-[11px] font-medium text-slate-400 uppercase line-clamp-1">
+                                                    <p className="text-[10px] md:text-[11px] font-medium text-slate-400 uppercase truncate" title={`ID: ${trx.invoice_number || `WTD${idx.toString().padStart(3, '0')}`}`}>
                                                         ID: {trx.invoice_number || `WTD${idx.toString().padStart(3, '0')}`}
                                                     </p>
                                                 </div>

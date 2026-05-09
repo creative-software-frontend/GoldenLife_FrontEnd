@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import Logo from "../Logo";
 
+import { useTimedMessage } from "@/hooks/useTimedMessage";
+
 // Scroll Animation Variants
 const scrollVariant = {
   hidden: { opacity: 0, y: 30 },
@@ -45,8 +47,13 @@ const RegisterForm = () => {
   }, [resendTimer]);
 
   // API Feedback States
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState(""); // Added for Toast
+  const {
+    successMessage,
+    errorMessage,
+    setSuccessMessage,
+    setErrorMessage,
+    clearMessages
+  } = useTimedMessage(5000);
 
   // Inline Field Errors State
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -80,7 +87,7 @@ const RegisterForm = () => {
     if (fieldErrors[name]) {
       setFieldErrors(prev => ({ ...prev, [name]: "" }));
     }
-    if (errorMessage) setErrorMessage("");
+    if (errorMessage) clearMessages();
   };
 
   // --- VALIDATION LOGIC ---
@@ -131,7 +138,7 @@ const RegisterForm = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    setErrorMessage("");
+    clearMessages();
 
     try {
       const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";

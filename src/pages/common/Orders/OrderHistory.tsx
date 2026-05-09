@@ -84,7 +84,15 @@ const OrderHistory = () => {
   };
 
   useEffect(() => {
-    fetchOrders();
+    // Fetch immediately on mount (silent to bypass cache guard if already fetched)
+    fetchOrders(true);
+
+    // Set up polling for real-time updates
+    const interval = setInterval(() => {
+      fetchOrders(true);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [fetchOrders]);
   const toggleOrder = (id: number) => {
     setExpandedOrderId(expandedOrderId === id ? null : id);

@@ -55,6 +55,7 @@ export const useTickets = () => {
             const response = await axios.get<TicketListResponse>(`${baseURL}/api/ticket/list`, getHeaders());
             return response.data.tickets;
         },
+        refetchInterval: 5000, // Real-time polling for ticket list updates
     });
 };
 
@@ -66,6 +67,7 @@ export const useTicketDetails = (id: number | null) => {
             return response.data;
         },
         enabled: !!id,
+        refetchInterval: 3000, // Real-time polling
     });
 };
 

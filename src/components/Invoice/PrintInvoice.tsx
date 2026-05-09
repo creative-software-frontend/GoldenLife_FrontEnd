@@ -22,6 +22,7 @@ interface PrintInvoiceProps {
       quantity: number | string;
       price?: number | string;
       subtotal: number | string;
+      service_type?: string;
     }>;
     payment?: {
       payment_method: string;
@@ -251,7 +252,11 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
                   <td style={{ padding: '12px 14px 12px 0', verticalAlign: 'middle' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <img
-                        src={product.product_image?.startsWith('http') ? product.product_image : `${baseURL}/uploads/ecommarce/product_image/${product.product_image}`}
+                        src={product.product_image?.startsWith('http') ? product.product_image : (
+                          product.service_type === 'course' 
+                            ? `${baseURL}/uploads/course/course_image/${product.product_image}`
+                            : `${baseURL}/uploads/ecommarce/product_image/${product.product_image}`
+                        )}
                         alt={product.product_name}
                         style={{ width: '36px', height: '36px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #eee', flexShrink: 0 }}
                         onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/40?text=?'; }}

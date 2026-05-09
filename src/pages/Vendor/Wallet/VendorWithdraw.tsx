@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import SetPinModal from '@/pages/Wallet/SetPinModal/SetPinModal';
 import ConfirmWithdrawModal from '@/pages/Wallet/ConfirmWithdrawModal/ConfirmWithdrawModal';
 import { useAppStore } from '@/store/useAppStore';
+import { useTimedMessage } from '@/hooks/useTimedMessage';
 import type { Transaction } from '@/store/slices/walletSlice';
 
 
@@ -114,8 +115,13 @@ export default function VendorWithdraw() {
     });
 
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const {
+        successMessage,
+        errorMessage,
+        setSuccessMessage,
+        setErrorMessage,
+        clearMessages
+    } = useTimedMessage(5000);
 
     const presetAmounts: number[] = [500, 1000, 2000, 5000];
 
@@ -154,8 +160,7 @@ export default function VendorWithdraw() {
     // --- Validation & Open Modal ---
     const handleOpenConfirmation = (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        clearMessages();
 
         // 1. Amount Validation
         if (!amount || Number(amount) <= 0) {
@@ -226,24 +231,15 @@ export default function VendorWithdraw() {
             <SetPinModal
                 isOpen={isPinModalOpen}
                 onClose={() => setIsPinModalOpen(false)}
-                onSuccess={(msg) => {
-                    setSuccessMessage(msg);
-                    toast.success(msg);
-                }}
-                onError={(msg) => {
-                    setErrorMessage(msg);
-                    toast.error(msg);
-                }}
+                onSuccess={setSuccessMessage}
+                onError={setErrorMessage}
             />
 
             <ConfirmWithdrawModal
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 onSuccess={handleWithdrawSuccess}
-                onError={(msg) => {
-                    setErrorMessage(msg);
-                    toast.error(msg);
-                }}
+                onError={setErrorMessage}
                 amount={amount}
                 accountNumber={getFinalAccountDetails()}
                 paymentMethod={paymentMethod}
@@ -519,7 +515,7 @@ export default function VendorWithdraw() {
                                                 onChange={(e) => {
                                                     if (!isComingSoon) {
                                                         setPaymentMethod(e.target.value);
-                                                        setErrorMessage('');
+                                                        clearMessages();
                                                         setMfsNumber('');
                                                     }
                                                 }}

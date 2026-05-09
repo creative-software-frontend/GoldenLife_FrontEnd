@@ -30,6 +30,11 @@ const SupportTicketPage: React.FC = () => {
     const [message, setMessage] = useState('');
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const prevMsgCountRef = useRef(0);
+
+    useEffect(() => {
+        prevMsgCountRef.current = 0;
+    }, [selectedTicket?.id]);
 
     const currentUserId = useAppStore(state => state.studentProfile?.id || state.vendorProfile?.user?.id || 0);
 
@@ -42,7 +47,11 @@ const SupportTicketPage: React.FC = () => {
 
     useEffect(() => {
         if (details?.conversations) {
-            scrollToBottom();
+            const currentCount = details.conversations.length;
+            if (currentCount > prevMsgCountRef.current) {
+                setTimeout(scrollToBottom, 100); // small delay to ensure DOM update
+            }
+            prevMsgCountRef.current = currentCount;
         }
     }, [details?.conversations]);
 

@@ -41,24 +41,34 @@ export default function AllCoursesListView() {
 
     const debouncedSearch = useDebounce(searchQuery, 500);
 
-    // Fetch courses with API-side filtering
-    const { data: courses = [], isLoading } = useAllCoursesQuery({
+    const {
+        data,
+        isLoading,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage
+    } = useAllCoursesQuery({
         type: courseTypeFilter,
         search: debouncedSearch,
         category_id: categoryFilter
     });
     
+    // Flatten the paginated data from useInfiniteQuery
+    const courses = React.useMemo(() => {
+        if (!data || !data.pages) return [];
+        return data.pages.flatMap(page => page.data || []);
+    }, [data]);
+
     // Fetch categories from API
     const { data: apiCategories = [] } = useCourseCategoriesQuery();
     
-    const itemsPerPage = 8;
-
     // We still apply client-side search/category filtering as a fallback 
     // in case the API doesn't fully support all filter combinations
     const filteredCourses = React.useMemo(() => {
+        if (!Array.isArray(courses)) return [];
         return courses.filter(course => {
             const matchesSearch = 
-                course.course_title_english.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+                (course.course_title_english || "").toLowerCase().includes(debouncedSearch.toLowerCase()) ||
                 (course.category_name || "").toLowerCase().includes(debouncedSearch.toLowerCase()) ||
                 (course.instructor?.name || "").toLowerCase().includes(debouncedSearch.toLowerCase());
             
@@ -73,9 +83,25 @@ export default function AllCoursesListView() {
         });
     }, [courses, debouncedSearch, categoryFilter, courseTypeFilter]);
 
-    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedCourses = filteredCourses.slice(startIndex, startIndex + itemsPerPage);
+    // Infinite Scroll Intersection Observer
+    const loadMoreRef = React.useRef<HTMLDivElement>(null);
+    
+    React.useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (loadMoreRef.current) {
+            observer.observe(loadMoreRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const handleCourseSelect = (course: any) => {
         setSelectedCourseId(course.id.toString());
@@ -258,7 +284,7 @@ export default function AllCoursesListView() {
             {/* --- COURSES GRID --- */}
             <div className="container mx-auto px-4 md:px-6 mt-16 max-w-[1760px]">
                 <AnimatePresence mode="wait">
-                    {paginatedCourses.length > 0 ? (
+                    {filteredCourses.length > 0 ? (
                         <motion.div 
                             key="grid"
                             initial={{ opacity: 0, y: 20 }}
@@ -267,56 +293,31 @@ export default function AllCoursesListView() {
                             className="space-y-16"
                         >
                             <CourseGrid 
-                                courses={paginatedCourses as any} 
-                                title={`${filteredCourses.length} ${filteredCourses.length === 1 ? 'Curriculum' : 'Curricula'} Found`}
+                                courses={filteredCourses as any} 
+                                title={`${data?.pages?.[0]?.total || filteredCourses.length} ${filteredCourses.length === 1 ? 'Curriculum' : 'Curricula'} Found`}
                                 onSelect={handleCourseSelect}
                                 onAddToCart={handleAddToCart}
                             />
 
-                            {/* Premium Pagination */}
-                            {totalPages > 1 && (
-                                <div className="flex flex-col items-center gap-6">
-                                    <div className="flex items-center gap-2 bg-white p-1.5 rounded-[2rem] border border-slate-200/60 shadow-xl shadow-slate-200/20">
-                                        <Button
-                                            variant="ghost"
-                                            className="h-11 w-11 p-0 rounded-full hover:bg-emerald-50 hover:text-emerald-600 disabled:opacity-20 transition-all"
-                                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                            disabled={currentPage === 1}
-                                        >
-                                            <ChevronLeft className="h-5 w-5" strokeWidth={3} />
-                                        </Button>
-
-                                        <div className="flex items-center gap-1 px-1">
-                                            {[...Array(totalPages)].map((_, i) => (
-                                                <Button
-                                                    key={i + 1}
-                                                    variant="ghost"
-                                                    className={`h-11 w-11 p-0 rounded-full font-black text-sm transition-all ${
-                                                        currentPage === i + 1 
-                                                            ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-200" 
-                                                            : "text-slate-400 hover:bg-emerald-50 hover:text-emerald-600"
-                                                    }`}
-                                                    onClick={() => setCurrentPage(i + 1)}
-                                                >
-                                                    {i + 1}
-                                                </Button>
-                                            ))}
-                                        </div>
-
-                                        <Button
-                                            variant="ghost"
-                                            className="h-11 w-11 p-0 rounded-full hover:bg-emerald-50 hover:text-emerald-600 disabled:opacity-20 transition-all"
-                                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                            disabled={currentPage === totalPages}
-                                        >
-                                            <ChevronRight className="h-5 w-5" strokeWidth={3} />
-                                        </Button>
+                            {/* Infinite Scroll Loader */}
+                            <div ref={loadMoreRef} className="flex justify-center py-8">
+                                {isFetchingNextPage ? (
+                                    <div className="flex flex-col items-center gap-3">
+                                        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" strokeWidth={2} />
+                                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Loading more courses...</p>
                                     </div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                        Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of {filteredCourses.length}
-                                    </p>
-                                </div>
-                            )}
+                                ) : hasNextPage ? (
+                                    <Button 
+                                        variant="outline" 
+                                        onClick={() => fetchNextPage()}
+                                        className="rounded-full px-8 py-6 border-slate-200 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 font-bold"
+                                    >
+                                        Load More
+                                    </Button>
+                                ) : (
+                                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No more courses</p>
+                                )}
+                            </div>
                         </motion.div>
                     ) : (
                         <motion.div 

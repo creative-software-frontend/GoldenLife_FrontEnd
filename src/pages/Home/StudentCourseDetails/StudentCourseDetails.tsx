@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudentCourseDetailsQuery } from '@/hooks/useStudentCourses';
-import { Loader2, ArrowLeft, Clock, BookOpen, Star, Users, CheckCircle, ShieldCheck, PlayCircle, ShoppingCart } from 'lucide-react';
+import { Loader2, ArrowLeft, Clock, BookOpen, Star, Users, CheckCircle, ShieldCheck, PlayCircle, ShoppingCart, FileText, Calendar } from 'lucide-react';
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +32,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
         );
     }
 
-    if (isError || !data?.course) {
+    if (isError || !data?.data) {
         return (
             <div className="min-h-[50vh] flex flex-col items-center justify-center bg-slate-50 gap-4 w-full">
                 <h2 className="text-2xl font-bold text-slate-800">Course Not Found</h2>
@@ -47,7 +47,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
         );
     }
 
-    const { course } = data;
+    const course = data.data;
     const imageUrl = course.image?.startsWith('http') ? course.image : `${baseImageURL}${course.image}`;
 
     const handleAddToCart = () => {
@@ -113,7 +113,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             {course.course_type}
                         </Badge>
                         <Badge className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border-blue-500/30">
-                            Category {course.category}
+                            Category {course.category?.category_name || course.category}
                         </Badge>
                     </div>
 
@@ -141,10 +141,10 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
 
             {/* Main Content & Sidebar Container */}
             <div className="container mx-auto px-4 mt-8 md:mt-12">
-                <div className="flex flex-col lg:flex-row gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
                     {/* Left Column - Details */}
-                    <div className="w-full lg:w-2/3 space-y-8">
+                    <div className="lg:col-span-2 space-y-8">
                         
                         {/* Course Stats Cards */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -155,12 +155,14 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             </div>
                             <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2">
                                 <BookOpen className="w-6 h-6 text-blue-500" />
-                                <div className="text-2xl font-bold text-slate-800">12</div>
+                                <div className="text-2xl font-bold text-slate-800">{course.modules?.length || 0}</div>
                                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Modules</div>
                             </div>
                             <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2">
                                 <PlayCircle className="w-6 h-6 text-purple-500" />
-                                <div className="text-2xl font-bold text-slate-800">45+</div>
+                                <div className="text-2xl font-bold text-slate-800">
+                                    {course.modules?.reduce((acc: number, mod: any) => acc + (mod.lessons?.length || 0), 0) || 0}
+                                </div>
                                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Lessons</div>
                             </div>
                             <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2">
@@ -206,10 +208,108 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             </div>
                         </div>
 
+                        {/* Course Content (Modules & Lessons) */}
+                        {course.modules && course.modules.length > 0 && (
+                            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+                                <h2 className="text-2xl font-bold text-slate-900 mb-6">Course Content</h2>
+                                <div className="space-y-4">
+                                    {course.modules.map((module: any, idx: number) => (
+                                        <div key={module.id || idx} className="border border-slate-200 rounded-xl overflow-hidden">
+                                            <div className="bg-slate-50 p-4 flex items-center justify-between font-bold text-slate-800">
+                                                <span>Module {module.serial_number || idx + 1}: {module.module_title}</span>
+                                                <span className="text-sm font-medium text-slate-500">{module.lessons?.length || 0} lessons</span>
+                                            </div>
+                                            {module.lessons && module.lessons.length > 0 && (
+                                                <div className="p-4 space-y-3 bg-white border-t border-slate-100">
+                                                    {module.lessons.map((lesson: any, lIdx: number) => (
+                                                        <div key={lesson.id || lIdx} className="flex items-center gap-3 text-slate-600 text-sm">
+                                                            <PlayCircle className="w-4 h-4 text-emerald-500" />
+                                                            <span>{lesson.title || `Lesson ${lIdx + 1}`}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Quizzes */}
+                        {course.quizzes && course.quizzes.length > 0 && (
+                            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+                                <h2 className="text-2xl font-bold text-slate-900 mb-6">Quizzes</h2>
+                                <div className="space-y-3">
+                                    {course.quizzes.map((quiz: any, idx: number) => (
+                                        <div key={quiz.id || idx} className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                            <FileText className="w-5 h-5 text-blue-500" />
+                                            <span className="font-medium text-slate-800">{quiz.quiz_title || `Quiz ${idx + 1}`}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Instructor Profile */}
+                        {course.instructor && (
+                            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+                                <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Instructor</h2>
+                                <div className="flex flex-col md:flex-row gap-6 items-start">
+                                    <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-200 shrink-0 border-4 border-white shadow-lg">
+                                        <img 
+                                            src={course.instructor.image ? `https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image}` : '/placeholder.svg'} 
+                                            alt={course.instructor.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { (e.target as any).src = '/placeholder.svg' }}
+                                        />
+                                    </div>
+                                    <div className="flex-1 space-y-3">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-slate-900">{course.instructor.name}</h3>
+                                            <p className="text-emerald-600 font-medium">{course.instructor.designation} - {course.instructor.department}</p>
+                                        </div>
+                                        <p className="text-slate-600 text-sm leading-relaxed">
+                                            Qualification: <span className="font-medium">{course.instructor.qualification}</span><br/>
+                                            Experience: <span className="font-medium">{course.instructor.experience} Years</span>
+                                        </p>
+                                        <div className="flex flex-wrap gap-4 pt-2 text-sm">
+                                            {course.instructor.business_name && (
+                                                <div className="flex items-center gap-1.5 text-slate-500">
+                                                    <BookOpen className="w-4 h-4" />
+                                                    {course.instructor.business_name}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Additional Info */}
+                        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-6">Additional Information</h2>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8">
+                                <div className="flex items-center gap-3">
+                                    <Calendar className="w-5 h-5 text-slate-400" />
+                                    <div>
+                                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold">Validity</div>
+                                        <div className="text-slate-800 font-medium">{course.validity || 'Lifetime'}</div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <FileText className="w-5 h-5 text-slate-400" />
+                                    <div>
+                                        <div className="text-xs text-slate-500 uppercase tracking-wider font-bold">Course Code</div>
+                                        <div className="text-slate-800 font-medium">{course.course_code || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     {/* Right Column - Sticky Sidebar */}
-                    <div className="w-full lg:w-1/3">
+                    <div className="lg:col-span-1">
                         <div className="sticky top-24 bg-white rounded-3xl shadow-lg border border-slate-100 p-6 overflow-hidden">
                             
                             {/* Accent line at top */}

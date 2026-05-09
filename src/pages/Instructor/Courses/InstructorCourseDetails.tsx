@@ -124,7 +124,7 @@ const InstructorCourseDetails: React.FC = () => {
                       {course.course_type}
                     </Badge>
                     <Badge className="bg-emerald-500 text-white border-none font-bold px-4 py-2 rounded-xl text-[10px] shadow-lg shadow-emerald-500/20">
-                      {course.category}
+                      {typeof course.category === 'object' ? course.category?.category_name : course.category}
                     </Badge>
                   </div>
                 </div>

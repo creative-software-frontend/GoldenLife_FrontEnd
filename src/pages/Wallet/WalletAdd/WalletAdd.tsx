@@ -497,7 +497,7 @@ export default function WalletAdd() {
                 <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm min-h-[500px] w-full overflow-hidden">
                     <div className="flex items-center justify-between px-12 py-6 bg-slate-50/50 border-b border-slate-100">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 flex items-center gap-3">
-                            {t('transaction_history', 'Transaction History')}
+                            {t('transaction_history', 'Add money History')}
                             {!isWalletLoading && (
                                 <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[10px]">
                                     {transactions.filter(t => t.type === 'add').length} {t('records_found', 'Records Found')}
@@ -559,9 +559,9 @@ export default function WalletAdd() {
                                         )}>
                                             <Plus className="w-6 h-6" />
                                         </div>
-                                        <div>
-                                            <p className="text-2xl font-black text-slate-900 leading-none">৳{item.amount}</p>
-                                            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter">ID: {item.Transaction_ID || 'PENDING'}</p>
+                                        <div className="min-w-0 flex-1">
+                                            <p className="text-lg md:text-xl font-black text-slate-900 leading-none whitespace-nowrap tracking-tighter" title={`৳${item.amount}`}>৳{item.amount}</p>
+                                            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter truncate" title={item.Transaction_ID || 'PENDING'}>ID: {item.Transaction_ID || 'PENDING'}</p>
                                         </div>
                                     </div>
 

@@ -10,7 +10,7 @@ export interface StudentCourse {
     course_title_bangla: string;
     course_type: string;
     course_code: string;
-    category: string;
+    category: any;
     course_duration: string;
     seller_fee: string;
     regular_fee: string;
@@ -23,6 +23,9 @@ export interface StudentCourse {
     status: string;
     created_at: string;
     updated_at: string;
+    instructor?: any;
+    modules?: any[];
+    quizzes?: any[];
 }
 
 export interface StudentCoursesResponse {
@@ -31,9 +34,9 @@ export interface StudentCoursesResponse {
 }
 
 export interface StudentCourseDetailsResponse {
-    status: string;
-    course: StudentCourse;
-    gallery: any[];
+    status: boolean;
+    message: string;
+    data: StudentCourse;
 }
 
 
@@ -82,7 +85,7 @@ export const useStudentCourseDetailsQuery = (id: string | undefined) => {
                 headers['X-Auth-Token'] = `Bearer ${token}`;
             }
 
-            const response = await axios.get<StudentCourseDetailsResponse>(`${baseURL}/api/student/course?id=${id}`, {
+            const response = await axios.get<StudentCourseDetailsResponse>(`${baseURL}/api/course/details?id=${id}`, {
                 headers
             });
             return response.data;

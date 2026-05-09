@@ -11,6 +11,7 @@ import { Transaction } from '@/store/slices/walletSlice';
 import SetPinModal from '../SetPinModal/SetPinModal';
 import ConfirmTransferModal from '../ConfirmTransferModal/ConfirmTransferModal';
 import { toast } from 'react-toastify';
+import { useTimedMessage } from '@/hooks/useTimedMessage';
 
 // --- Interface for the Verified User ---
 interface VerifiedUserData {
@@ -50,8 +51,13 @@ export default function WalletSend() {
     const [imageFailed, setImageFailed] = useState<boolean>(false);
 
     // --- UI & Modals State ---
-    const [successMessage, setSuccessMessage] = useState<string>('');
-    const [errorMessage, setErrorMessage] = useState<string>('');
+    const {
+        successMessage,
+        errorMessage,
+        setSuccessMessage,
+        setErrorMessage,
+        clearMessages
+    } = useTimedMessage(5000);
     const [showSetPinModal, setShowSetPinModal] = useState<boolean>(false);
     const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
 
@@ -128,13 +134,11 @@ export default function WalletSend() {
 
     // --- 3. Modal Handlers ---
     const handleSuccess = (message: string) => {
-        setErrorMessage('');
         setSuccessMessage(message);
         toast.success(message);
     };
 
     const handleTransferSuccess = async (message: string) => {
-        setErrorMessage('');
         setSuccessMessage(message);
         setAmount('');
         setAffiliateId('');
@@ -142,7 +146,6 @@ export default function WalletSend() {
     };
 
     const handleError = (message: string) => {
-        setSuccessMessage('');
         setErrorMessage(message);
         toast.error(message);
     };

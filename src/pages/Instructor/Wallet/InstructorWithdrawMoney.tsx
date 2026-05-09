@@ -10,6 +10,7 @@ import SetPinModal from '@/pages/Wallet/SetPinModal/SetPinModal';
 import ConfirmWithdrawModal from '@/pages/Wallet/ConfirmWithdrawModal/ConfirmWithdrawModal';
 import { useInstructorWallet } from '@/hooks/useInstructorWallet';
 import { useAppStore } from '@/store/useAppStore';
+import { useTimedMessage } from '@/hooks/useTimedMessage';
 import { useEffect } from 'react';
 
 export default function InstructorWithdrawMoney() {
@@ -30,16 +31,20 @@ export default function InstructorWithdrawMoney() {
     
     const [isPinModalOpen, setIsPinModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const {
+        successMessage,
+        errorMessage,
+        setSuccessMessage,
+        setErrorMessage,
+        clearMessages
+    } = useTimedMessage(5000);
 
     const withdrawTransactions = transactions.filter((t: any) => t.type === 'withdraw');
     const presetAmounts = [500, 1000, 2000, 5000];
 
     const handleOpenConfirmation = (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        clearMessages();
 
         if (!amount || Number(amount) <= 0) {
             const msg = "Please enter a valid amount.";
@@ -87,24 +92,15 @@ export default function InstructorWithdrawMoney() {
             <SetPinModal
                 isOpen={isPinModalOpen}
                 onClose={() => setIsPinModalOpen(false)}
-                onSuccess={(msg) => {
-                    setSuccessMessage(msg);
-                    toast.success(msg);
-                }}
-                onError={(msg) => {
-                    setErrorMessage(msg);
-                    toast.error(msg);
-                }}
+                onSuccess={setSuccessMessage}
+                onError={setErrorMessage}
             />
 
             <ConfirmWithdrawModal
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 onSuccess={handleWithdrawSuccess}
-                onError={(msg) => {
-                    setErrorMessage(msg);
-                    toast.error(msg);
-                }}
+                onError={setErrorMessage}
                 amount={amount}
                 accountNumber={mfsNumber}
                 paymentMethod={paymentMethod}
