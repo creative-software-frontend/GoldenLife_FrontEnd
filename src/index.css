@@ -128,8 +128,16 @@
 
 /* Printing Optimization */
 @media print {
+
   /* Reset height/overflow for app layout containers to allow multi-page printing */
-  html, body, #root, [class*="h-screen"], [class*="overflow-hidden"], main, aside, nav {
+  html,
+  body,
+  #root,
+  [class*="h-screen"],
+  [class*="overflow-hidden"],
+  main,
+  aside,
+  nav {
     height: auto !important;
     overflow: visible !important;
     position: static !important;

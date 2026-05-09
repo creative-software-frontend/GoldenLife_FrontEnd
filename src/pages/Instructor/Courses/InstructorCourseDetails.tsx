@@ -98,8 +98,15 @@ const InstructorCourseDetails: React.FC = () => {
 
       <main className="max-w-7xl mx-auto px-6 py-10 space-y-10">
 
-        {/* ── Hero Section ── */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <AnimatePresence mode="wait">
+          {activeTab === 'overview' && (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-10"
+            >
           <div className="lg:col-span-2 space-y-8">
             <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-2xl shadow-gray-200/50 bg-white relative group">
               {course.image ? (
@@ -179,7 +186,7 @@ const InstructorCourseDetails: React.FC = () => {
             </div>
           </div>
         </motion.div>
-          )}
+        )}
 
         {activeTab === 'curriculum' && (
           <motion.div
