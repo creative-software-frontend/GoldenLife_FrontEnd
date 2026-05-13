@@ -41,10 +41,10 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     const navigate = useNavigate();
     const { balance, isBalanceLoading } = useInstructorWallet();
     const { instructorProfile, fetchProfile, profileLastUpdated } = useAppStore();
-    
+
     // Dynamic Profile Completion
     const { percentage: profilePercentage, isComplete: isProfileComplete } = useProfileCompletion(instructorProfile?.instructor, 'instructor');
-    
+
     const walletRefDesktop = useRef<HTMLDivElement>(null);
     const walletRefMobile = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
@@ -59,14 +59,35 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     const displayName = instructorInfo?.name || "Instructor";
     const instructorId = instructorInfo?.instructor_id || "INST-2026";
 
+    const [imageError, setImageError] = useState(false);
+
     // Add cache buster for avatar to ensure it updates visually after being changed
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
-    let avatarUrl = null;
-    if (instructorInfo?.image) {
-        avatarUrl = instructorInfo.image.startsWith('http')
-            ? instructorInfo.image
-            : `${baseURL}/uploads/instructor/image/${instructorInfo.image}?t=${profileLastUpdated}`;
-    }
+    
+    const getAvatarUrl = () => {
+        if (imageError) return null;
+        
+        const image = instructorInfo?.image || instructorInfo?.profile_image || userInfo?.image || userInfo?.profile_image;
+        if (!image || image === 'null' || image === 'undefined') return null;
+        
+        if (image.startsWith('http')) {
+            return `${image}${image.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
+        }
+        
+        // Handle case where image already contains the path
+        if (image.startsWith('uploads/')) {
+            return `${baseURL}/${image}${image.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
+        }
+        
+        // Try instructor path first
+        return `${baseURL}/uploads/instructor/image/${image}${image.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
+    };
+
+    const avatarUrl = getAvatarUrl();
+
+    useEffect(() => {
+        setImageError(false);
+    }, [instructorInfo?.image, userInfo?.image]);
 
     const isLoading = false;
 
@@ -225,12 +246,17 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                             <div className="relative flex-shrink-0">
                                 {avatarUrl ? (
                                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-indigo-200">
-                                        <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+                                        <img 
+                                            src={avatarUrl} 
+                                            alt={displayName} 
+                                            className="w-full h-full object-cover" 
+                                            onError={() => setImageError(true)}
+                                        />
                                     </div>
                                 ) : (
                                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-indigo-700">
                                         <span className="text-white font-bold text-xs sm:text-sm">
-                                            {displayName.charAt(0).toUpperCase()}
+                                            {displayName.split(' ').map(i => i[0]).join('').toUpperCase().slice(0, 2)}
                                         </span>
                                     </div>
                                 )}

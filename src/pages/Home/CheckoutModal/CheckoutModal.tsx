@@ -80,6 +80,15 @@ const CheckoutModal = () => {
         // CALL 2: Fetch Delivery Fee API 
         // ==========================================
         try {
+            // If all items are courses, skip the API call and set fee to 0
+            const allAreCourses = cartItems.every((item: any) => (item.type || item.service_type) === 'course');
+            
+            if (allAreCourses) {
+                console.log("🚚 [CheckoutModal] All items are courses, skipping delivery fee.");
+                setDeliveryFee(0);
+                return;
+            }
+
             const feeResponse = await axios.post(
                 `${baseURL}/api/getDeliveryCharge?address_id=${addr.id}`,
                 {},

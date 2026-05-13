@@ -3,6 +3,7 @@ import { getFallbackImage } from '@/utils/imageHelpers';
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useAppStore } from '@/store/useAppStore';
 
 interface ProfileHeaderProps {
   name: string;
@@ -27,6 +28,7 @@ export function ProfileHeader({
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { profileLastUpdated } = useAppStore();
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
 
   const getVendorToken = () => {
@@ -59,6 +61,11 @@ export function ProfileHeader({
   useEffect(() => {
     fetchBanner();
   }, []);
+
+  // Reset image error when imageUrl or profileLastUpdated changes
+  useEffect(() => {
+    setImageError(false);
+  }, [imageUrl, profileLastUpdated]);
 
   const handleBannerUpload = async (file: File) => {
     if (file.size > 2 * 1024 * 1024) {
@@ -137,7 +144,7 @@ export function ProfileHeader({
   };
 
   const hasBanner = !!banner;
-  const bannerUrl = banner ? `${baseURL}/uploads/vendor/banner/${banner}` : undefined;
+  const bannerUrl = banner ? `${baseURL}/uploads/vendor/banner/${banner}?t=${profileLastUpdated}` : undefined;
 
   // ✅ Scroll to edit form function
   const handleEditClick = () => {

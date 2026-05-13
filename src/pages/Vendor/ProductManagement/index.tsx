@@ -66,6 +66,16 @@ const Products: React.FC = () => {
     fetchCategories();
   }, [fetchCategories]);
 
+  // Auto-refresh products in background every 10 seconds to detect admin status changes
+  React.useEffect(() => {
+    const pollInterval = setInterval(() => {
+      console.log('🔄 [ProductManagement] Polling for product updates...');
+      fetchProducts(true); // Silent refresh
+    }, 10000);
+
+    return () => clearInterval(pollInterval);
+  }, [fetchProducts]);
+
   // Handle filters change
   const handleFiltersChange = useCallback((newFilters: ProductFiltersType) => {
     console.log('🔵 [ProductManagement.index] Filters changed:', newFilters);

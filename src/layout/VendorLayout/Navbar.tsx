@@ -45,11 +45,13 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
         notifications,
         unreadCount,
         vendorProfile: profile,
+        profileLastUpdated,
         fetchNavbarData,
         isNavbarLoading: isLoading
     } = useAppStore();
 
     const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
+    const [imageError, setImageError] = useState(false);
     const profileRef = useRef<HTMLDivElement>(null);
     const walletRefDesktop = useRef<HTMLDivElement>(null);
     const walletRefMobile = useRef<HTMLDivElement>(null);
@@ -77,6 +79,11 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
 
         return () => clearInterval(intervalId);
     }, [fetchNavbarData, fetchProfile]);
+
+    // Reset image error when profile data changes or timestamp updates
+    useEffect(() => {
+        setImageError(false);
+    }, [profile?.vendor?.image, profileLastUpdated]);
 
     // --- Close Menu on Click Outside ---
     useEffect(() => {
@@ -241,31 +248,24 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
                     <div className="relative" ref={profileRef}>
                         <div
                             onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                            className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-4 border-l border-border cursor-pointer group flex-shrink-0 hover:bg-muted/50 rounded-xl pr-3 py-2 transition-all"
+                            className="flex items-center gap-2 sm:gap-3 pl-4 sm:pl-6 border-l border-border cursor-pointer group flex-shrink-0 hover:bg-muted/50 rounded-2xl pr-3 py-2 transition-all"
                         >
                             {/* Avatar */}
                             <div className="relative flex-shrink-0">
                                 {isProfileLoading ? (
-                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-muted animate-pulse" />
-                                ) : getVendorAvatarUrl(profile) ? (
-                                    <img
-                                        src={getVendorAvatarUrl(profile)}
-                                        alt={getVendorDisplayName(profile)}
-                                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border-2 border-secondary/20"
-                                        onError={(e) => {
-                                            (e.target as HTMLImageElement).style.display = 'none';
-                                            const parent = (e.target as HTMLImageElement).parentElement;
-                                            if (parent && !parent.querySelector('.fallback-avatar')) {
-                                                const fallback = document.createElement('div');
-                                                fallback.className = 'fallback-avatar w-full h-full flex items-center justify-center bg-gradient-to-br from-primary-light to-primary-dark rounded-full';
-                                                fallback.innerHTML = `<span class="text-white font-bold text-xs sm:text-sm">${getVendorDisplayName(profile).charAt(0).toUpperCase()}</span>`;
-                                                parent.appendChild(fallback);
-                                            }
-                                        }}
-                                    />
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-muted animate-pulse" />
+                                ) : (getVendorAvatarUrl(profile, profileLastUpdated) && !imageError) ? (
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden border-2 border-indigo-100 shadow-sm">
+                                        <img
+                                            src={getVendorAvatarUrl(profile, profileLastUpdated)}
+                                            alt={getVendorDisplayName(profile)}
+                                            className="w-full h-full object-cover"
+                                            onError={() => setImageError(true)}
+                                        />
+                                    </div>
                                 ) : (
-                                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-primary-light to-primary-dark">
-                                        <span className="text-white font-bold text-xs sm:text-sm">
+                                    <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-[#FF8C00] via-[#A855F7] to-[#3B82F6] shadow-md transform group-hover:scale-105 transition-transform duration-300">
+                                        <span className="text-white font-black text-sm sm:text-lg">
                                             {getVendorDisplayName(profile).charAt(0).toUpperCase()}
                                         </span>
                                     </div>
@@ -273,16 +273,16 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
                             </div>
 
                             {/* Name - Desktop Only */}
-                            <div className="text-right hidden sm:block max-w-[120px] xl:max-w-none">
-                                <p className="text-sm xl:text-base font-bold text-foreground leading-none truncate">
+                            <div className="text-left hidden sm:block max-w-[120px] xl:max-w-none">
+                                <p className="text-[13px] xl:text-[15px] font-black text-foreground leading-none truncate">
                                     {getVendorDisplayName(profile)}
                                 </p>
-                                <p className="text-[11px] xl:text-xs text-secondary font-bold mt-1 uppercase tracking-wider">
+                                <p className="text-[10px] xl:text-[11px] text-[#10b981] font-black mt-1 uppercase tracking-wider">
                                     Available
                                 </p>
                             </div>
 
-                            <ChevronDown size={18} className="text-muted-foreground group-hover:text-foreground transition-colors hidden sm:block flex-shrink-0" />
+                            <ChevronDown size={16} className={`text-muted-foreground transition-all duration-300 ${isProfileMenuOpen ? 'rotate-180' : ''} group-hover:text-foreground hidden sm:block flex-shrink-0 ml-1`} />
                         </div>
 
                         {/* Profile Dropdown Menu */}

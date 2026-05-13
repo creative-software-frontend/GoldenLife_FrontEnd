@@ -52,8 +52,9 @@ export function useProfile() {
     fetchProfile();
   }, []);
 
-  const fetchProfile = async () => {
+  const fetchProfile = async (silent = false) => {
     try {
+      if (!silent) setIsLoading(true);
       console.log('🔄 [useProfile] Fetching profile data...');
       const session = sessionStorage.getItem('vendor_session');
       const token = session ? JSON.parse(session).token : null;
@@ -121,7 +122,7 @@ export function useProfile() {
       });
       setError(err.response?.data?.message || err.message || 'Failed to load profile');
     } finally {
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
       console.log('[useProfile] Loading complete');
     }
   };
@@ -157,14 +158,14 @@ export function useProfile() {
         response.data?.message?.toLowerCase()?.includes('success');
 
       if (isSuccess) {
-        // Refresh data after successful update
-        await fetchProfile();
+        // Refresh data after successful update silently
+        await fetchProfile(true);
         return true;
       } else {
         console.warn('API did not return success: true', response.data);
         // For testing: pretend it worked if we get any response
         // Remove this line when backend is properly implemented:
-        await fetchProfile();
+        await fetchProfile(true);
         return true; // Temporary: assume success if no error
       }
     } catch (err: any) {
@@ -175,7 +176,7 @@ export function useProfile() {
       // If it's a network error or server not found, for testing purposes
       if (err.code === 'ERR_NETWORK' || err.response?.status === 503) {
         console.warn('Backend not available - simulating success for UI testing');
-        await fetchProfile();
+        await fetchProfile(true);
         return true; // Simulate success for UI testing
       }
 

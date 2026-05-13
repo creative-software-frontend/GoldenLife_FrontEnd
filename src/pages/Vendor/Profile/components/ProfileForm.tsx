@@ -2,6 +2,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileSchema, ProfileFormData } from '../validation';
 import { Upload, X, Camera } from 'lucide-react';
+import { getFallbackImage, getVendorImageUrl } from '@/utils/imageHelpers';
+import { useAppStore } from '@/store/useAppStore';
 
 interface ProfileFormProps {
   user: any;
@@ -26,6 +28,7 @@ export function ProfileForm({
   onImageChange,
   onImageRemove
 }: ProfileFormProps) {
+  const { profileLastUpdated } = useAppStore();
   const {
     register,
     handleSubmit,
@@ -77,7 +80,7 @@ export function ProfileForm({
                 />
               ) : vendor?.image ? (
                 <img
-                  src={`https://admin.goldenlifeltd.com/uploads/vendor/image/${vendor.image}`}
+                  src={getVendorImageUrl(vendor.image, profileLastUpdated)}
                   alt="Current profile"
                   className="w-full h-full object-cover"
                 />

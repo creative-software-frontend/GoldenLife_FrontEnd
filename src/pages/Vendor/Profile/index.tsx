@@ -33,6 +33,7 @@ export default function VendorProfile() {
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
+  const { profileLastUpdated } = useAppStore();
   const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
 
   // Debug logging for data changes
@@ -131,24 +132,21 @@ export default function VendorProfile() {
       return '';
     }
 
-    // If already a full URL, return as-is
+    // If already a full URL, append timestamp and return
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      console.log('[getImageUrl] Already full URL:', imagePath);
-      return imagePath;
+      return `${imagePath}${imagePath.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
     }
 
     // If it's a relative path starting with /, prepend API base URL
+    let url = '';
     if (imagePath.startsWith('/')) {
-      const fullUrl = `${baseURL}${imagePath}`;
-      console.log('[getImageUrl] Relative path constructed:', fullUrl);
-      return fullUrl;
+      url = `${baseURL}${imagePath}`;
+    } else {
+      // Otherwise, assume it's just a filename and construct full URL
+      url = `${baseURL}/uploads/vendor/image/${imagePath}`;
     }
 
-    // Otherwise, assume it's just a filename and construct full URL
-    // Pattern: https://admin.goldenlifeltd.com/uploads/vendor/image/{filename}
-    const fullUrl = `${baseURL}/uploads/vendor/image/${imagePath}`;
-    console.log('[getImageUrl] Filename path constructed:', fullUrl);
-    return fullUrl;
+    return `${url}${url.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
   };
 
   const handleSubmit = async (formData: any) => {
@@ -179,7 +177,7 @@ export default function VendorProfile() {
         handleImageRemove();
 
         // Refresh full profile data to reflect changes immediately across all components (Navbar, Sidebar, etc.)
-        useAppStore.getState().fetchProfile(true);
+        await useAppStore.getState().fetchProfile(true);
 
         console.log('Profile updated successfully, data refreshed');
       } else {

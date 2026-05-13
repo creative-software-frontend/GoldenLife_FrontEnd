@@ -82,7 +82,7 @@ export default function InstructorProfile() {
         toast.success('Profile modernized successfully! ✨');
         setIsEditMode(false);
         handleImageRemove();
-        fetchProfile(true); // Update global Zustand store so Navbar syncs automatically
+        await fetchProfile(true); // Update global Zustand store so Navbar syncs automatically
       }
     } catch (err: any) {
       toast.error(err.message || 'Update failed');

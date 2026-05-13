@@ -100,11 +100,21 @@ export function InstructorHeader({
   }, [imageUrl]);
 
   const getFinalImageUrl = () => {
-    if (imageError || !imageUrl) return '/default-avatar.png';
-    if (imageUrl.startsWith('http')) return imageUrl;
+    if (imageError || !imageUrl || imageUrl === 'null' || imageUrl === 'undefined') return '';
+    if (imageUrl.startsWith('http')) return `${imageUrl}${imageUrl.includes('?') ? '&' : '?'}t=${refreshKey}`;
+    
+    // Handle case where image already contains the path
+    if (imageUrl.startsWith('uploads/')) {
+      return `${baseURL}/${imageUrl}${imageUrl.includes('?') ? '&' : '?'}t=${refreshKey}`;
+    }
     
     // Standard path for instructor images
-    return `${baseURL}/uploads/instructor/image/${imageUrl}?t=${refreshKey}`;
+    return `${baseURL}/uploads/instructor/image/${imageUrl}${imageUrl.includes('?') ? '&' : '?'}t=${refreshKey}`;
+  };
+
+  const getInitials = (n: string) => {
+    if (!n) return 'I';
+    return n.split(' ').map(i => i[0]).join('').toUpperCase().slice(0, 2);
   };
 
   const displayImageUrl = getFinalImageUrl();
@@ -172,13 +182,19 @@ export function InstructorHeader({
       {/* Profile Info Section */}
       <div className="relative px-6 pb-6 -mt-12 md:-mt-16 flex flex-col md:flex-row items-start md:items-end gap-6">
         <div className="relative group">
-          <div className="w-28 h-28 md:w-40 md:h-40 rounded-3xl border-4 border-white shadow-2xl overflow-hidden bg-white transform group-hover:scale-[1.02] transition-transform duration-300">
-            <img
-              src={displayImageUrl}
-              alt={displayName}
-              className="w-full h-full object-cover"
-              onError={() => setImageError(true)}
-            />
+          <div className="w-28 h-28 md:w-40 md:h-40 rounded-3xl border-4 border-white shadow-2xl overflow-hidden bg-indigo-50 flex items-center justify-center transform group-hover:scale-[1.02] transition-transform duration-300">
+            {displayImageUrl ? (
+              <img
+                src={displayImageUrl}
+                alt={displayName}
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-3xl md:text-5xl font-black">
+                {getInitials(displayName)}
+              </div>
+            )}
           </div>
           <div className="absolute -bottom-2 -right-2 bg-emerald-500 p-2 rounded-xl border-2 border-white shadow-lg">
             <Award size={16} className="text-white" />

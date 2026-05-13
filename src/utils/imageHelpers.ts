@@ -18,17 +18,19 @@ const FALLBACK_IMAGES = {
 /**
  * Get full URL for vendor profile/business image
  */
-export const getVendorImageUrl = (filename?: string | null): string => {
+export const getVendorImageUrl = (filename?: string | null, timestamp?: number): string => {
   if (!filename || filename === '') {
     return FALLBACK_IMAGES.VENDOR_PROFILE;
   }
 
   // If already a full URL, return as is
   if (filename.startsWith('http://') || filename.startsWith('https://')) {
-    return filename;
+    const buster = timestamp ? `${filename.includes('?') ? '&' : '?'}t=${timestamp}` : '';
+    return `${filename}${buster}`;
   }
 
-  return `${API_BASE_URL}${IMAGE_PATHS.VENDOR_PROFILE}/${filename}`;
+  const buster = timestamp ? `?t=${timestamp}` : '';
+  return `${API_BASE_URL}${IMAGE_PATHS.VENDOR_PROFILE}/${filename}${buster}`;
 };
 
 /**

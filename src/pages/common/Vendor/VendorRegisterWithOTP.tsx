@@ -78,13 +78,36 @@ const VendorRegisterWithOTP: React.FC = () => {
       );
 
       if (response.data?.success) {
-        setShowSuccess(true);
-        setStep('success');
+        // Fix: Capture token and perform auto-login
+        const token = response.data.data?.token || response.data.token;
+        
+        if (token) {
+          // 1. Save to SessionStorage (Sync with Login/Register)
+          sessionStorage.setItem("vendor_token", token);
+          sessionStorage.setItem("vendor_session", JSON.stringify({
+            token: token,
+            isVerified: true,
+            expiry: new Date().getTime() + 86400000 // 24 hours
+          }));
 
-        // Auto-redirect to login after 3 seconds
-        setTimeout(() => {
-          navigate('/vendor/login');
-        }, 3000);
+          // 2. Save to Browser Cookies
+          document.cookie = `vendor_token=${token}; path=/; max-age=86400; SameSite=Strict; Secure`;
+
+          setShowSuccess(true);
+          setStep('success');
+
+          // 3. Redirect to Dashboard
+          setTimeout(() => {
+            navigate('/vendor/dashboard');
+          }, 2000);
+        } else {
+          // Fallback if no token
+          setShowSuccess(true);
+          setStep('success');
+          setTimeout(() => {
+            navigate('/vendor/login');
+          }, 3000);
+        }
       } else {
         throw new Error(response.data?.message || 'OTP verification failed');
       }

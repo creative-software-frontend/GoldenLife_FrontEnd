@@ -48,7 +48,7 @@ const CheckoutSummaryView = ({
 
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [error, setError] = useState(false);
-    
+
     const { mutate: placeOrder, isPending: isPlacingOrder } = usePlaceOrder();
 
     // Convert string balance from store to number for calculations

@@ -31,7 +31,7 @@ export function useProducts() {
   };
 
   // Fetch products from API
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (silent = false) => {
     try {
       const token = getAuthToken();
 
@@ -42,10 +42,12 @@ export function useProducts() {
         return;
       }
 
-      setIsLoading(true);
-      setError(null);
+      if (!silent) {
+        setIsLoading(true);
+        setError(null);
+      }
 
-      console.log('🔄 [useProducts] Fetching products from API...');
+      console.log('🔄 [useProducts] Fetching products from API (silent:', silent, ')...');
       const response = await axios.get(`${baseURL}/api/vendor/product/list`, {
         headers: {
           'X-Auth-Token': `Bearer ${token}`,
@@ -98,24 +100,33 @@ export function useProducts() {
         } : null
       });
 
-      setProducts(productList);
-      setFilteredProducts(productList);
+      // Sort by date descending by default (newest first)
+      const sortedList = [...productList].sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateB - dateA;
+      });
+
+      setProducts(sortedList);
+      setFilteredProducts(sortedList);
       const newPageSize = 25;
       setPagination((prev: PaginationState) => ({
         ...prev,
-        totalItems: productList.length,
-        totalPages: Math.ceil(productList.length / prev.pageSize),
+        totalItems: sortedList.length,
+        totalPages: Math.ceil(sortedList.length / prev.pageSize),
       }));
 
-      console.log('✅ [useProducts] Initial state updated - ALL products shown:', {
-        productsSet: productList.length,
-        filteredProductsSet: productList.length,
-        totalItems: productList.length,
+      console.log('✅ [useProducts] Initial state updated - ALL products shown (Sorted by Date Desc):', {
+        productsSet: sortedList.length,
+        filteredProductsSet: sortedList.length,
+        totalItems: sortedList.length,
         pageSize: newPageSize,
         currentPage: 1
       });
 
-      toast.success(`Loaded ${productList.length} products`);
+      if (!silent) {
+        toast.success(`Loaded ${productList.length} products`);
+      }
     } catch (err: any) {
       console.error('❌ [useProducts] Failed to fetch products:', err);
       console.error('[useProducts] Error details:', {

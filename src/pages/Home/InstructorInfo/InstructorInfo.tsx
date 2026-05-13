@@ -33,7 +33,7 @@ export default function InstructorInfo() {
     const { addItem } = useCartStore();
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
     const baseImageURL = `${baseURL}/uploads/course/course_image/`;
 
@@ -105,13 +105,13 @@ export default function InstructorInfo() {
 
     return (
         <div className="bg-[#f8fafc] min-h-screen pb-20 w-full font-sans selection:bg-emerald-100 overflow-x-hidden">
-            
+
             {/* --- HERO / BANNER --- */}
             <div className="relative h-[250px] md:h-[400px] w-full overflow-hidden bg-slate-900">
                 {instructor.banner ? (
-                    <img 
-                        src={bannerImg} 
-                        alt="Instructor Banner" 
+                    <img
+                        src={bannerImg}
+                        alt="Instructor Banner"
                         className="w-full h-full object-cover opacity-60"
                         onError={(e) => {
                             (e.target as any).src = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2070';
@@ -132,19 +132,27 @@ export default function InstructorInfo() {
                     className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] border border-white p-6 md:p-10 shadow-[0_30px_60px_rgba(15,23,42,0.1)]"
                 >
                     <div className="flex flex-col xl:flex-row items-center xl:items-start justify-between gap-8">
-                        
+
                         {/* Left Section: Profile + Name */}
                         <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 w-full">
-                            
+
                             {/* Profile Image */}
-                            <div className="relative -mt-20 md:-mt-32 flex-shrink-0">
-                                <img
-                                    src={profileImg}
-                                    alt={instructor.name}
-                                    className="w-40 h-40 md:w-56 md:h-56 rounded-[2.5rem] object-cover border-[10px] border-white shadow-2xl bg-white"
-                                    onError={(e) => { (e.target as any).src = '/image/logo/logo.jpg' }}
-                                />
-                                <div className="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-3 rounded-2xl shadow-lg border-4 border-white">
+                            <div className="relative -mt-20 md:-mt-32 flex-shrink-0 group">
+                                <div className="w-40 h-40 md:w-56 md:h-56 rounded-[2.5rem] overflow-hidden border-[10px] border-white shadow-2xl bg-slate-50 flex items-center justify-center">
+                                    {profileImg && !profileImg.includes('undefined') && !profileImg.includes('null') ? (
+                                        <img
+                                            src={profileImg}
+                                            alt={instructor.name}
+                                            className="w-full h-full object-cover"
+                                            onError={(e) => { (e.target as any).src = ''; }}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-5xl md:text-7xl font-black">
+                                            {instructor.name?.split(' ').map(i => i[0]).join('').toUpperCase().slice(0, 2)}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="absolute -bottom-2 -right-2 bg-emerald-600 text-white p-3 rounded-2xl shadow-lg border-4 border-white group-hover:scale-110 transition-transform">
                                     <CheckCircle2 size={24} />
                                 </div>
                             </div>
@@ -227,10 +235,10 @@ export default function InstructorInfo() {
                         {/* Right Section: Quick Stats */}
                         <div className="grid grid-cols-2 gap-4 w-full xl:w-auto xl:min-w-[320px]">
                             {[
-                                { label: 'Courses', value: result?.course_count || courses.length, color: 'text-emerald-600', bg: 'bg-emerald-50/50', icon: <BookOpen size={18}/> },
-                                { label: 'Rating', value: '4.8/5.0', color: 'text-orange-500', bg: 'bg-orange-50/50', icon: <Star size={18}/> },
-                                { label: 'Students', value: '1.2k+', color: 'text-blue-600', bg: 'bg-blue-50/50', icon: <User size={18}/> },
-                                { label: 'Member Since', value: instructor.joining_date ? new Date(instructor.joining_date).getFullYear() : '2023', color: 'text-purple-600', bg: 'bg-purple-50/50', icon: <CheckCircle2 size={18}/> },
+                                { label: 'Courses', value: result?.course_count || courses.length, color: 'text-emerald-600', bg: 'bg-emerald-50/50', icon: <BookOpen size={18} /> },
+                                { label: 'Rating', value: '4.8/5.0', color: 'text-orange-500', bg: 'bg-orange-50/50', icon: <Star size={18} /> },
+                                { label: 'Students', value: '1.2k+', color: 'text-blue-600', bg: 'bg-blue-50/50', icon: <User size={18} /> },
+                                { label: 'Member Since', value: instructor.joining_date ? new Date(instructor.joining_date).getFullYear() : '2023', color: 'text-purple-600', bg: 'bg-purple-50/50', icon: <CheckCircle2 size={18} /> },
                             ].map((stat, i) => (
                                 <div key={i} className={`${stat.bg} p-5 rounded-3xl border border-white shadow-sm flex flex-col items-center xl:items-start transition-transform hover:-translate-y-1`}>
                                     <div className="flex items-center gap-2 mb-2">
@@ -252,9 +260,9 @@ export default function InstructorInfo() {
                     <h2 className="text-3xl font-black text-slate-900 mb-2">Instructor Courses</h2>
                     <p className="text-slate-500 font-medium">Browse all professional programs offered by {instructor.name}</p>
                 </div>
-                <CourseGrid 
-                    courses={courses} 
-                    title="" 
+                <CourseGrid
+                    courses={courses}
+                    title=""
                     onSelect={handleCourseSelect}
                     onAddToCart={handleAddToCart}
                 />

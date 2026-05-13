@@ -69,19 +69,19 @@ export const getVendorDisplayName = (profile: VendorProfile | null): string => {
 };
 
 // Helper to get avatar URL
-export const getVendorAvatarUrl = (profile: VendorProfile | null): string => {
+export const getVendorAvatarUrl = (profile: VendorProfile | null, timestamp?: number): string => {
   if (!profile) return '';
 
   // Try vendor image first
   const vendorImage = profile.vendor?.image;
-  if (vendorImage) {
-    return getVendorImageUrl(vendorImage);
+  if (vendorImage && vendorImage !== '') {
+    return getVendorImageUrl(vendorImage, timestamp);
   }
 
   // Fallback to user image
   const userImage = profile.user?.image;
-  if (userImage) {
-    return getVendorImageUrl(userImage);
+  if (userImage && userImage !== '') {
+    return getVendorImageUrl(userImage, timestamp);
   }
 
   return '';

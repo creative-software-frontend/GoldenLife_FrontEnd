@@ -9,6 +9,7 @@ import {
 import Logo from "../Logo";
 
 import { useTimedMessage } from "@/hooks/useTimedMessage";
+import { useAppStore } from "@/store/useAppStore";
 
 // Scroll Animation Variants
 const scrollVariant = {
@@ -141,7 +142,7 @@ const RegisterForm = () => {
     clearMessages();
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
       const endpoint = `${baseUrl}/api/vendor/register`;
 
       const response = await fetch(endpoint, {
@@ -224,7 +225,7 @@ const RegisterForm = () => {
   // --- RESEND OTP ---
   const handleResendOtp = async () => {
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
       const endpoint = `${baseUrl}/api/vendor/login/send-otp?mobile=${encodeURIComponent(formData.mobile)}`;
 
       console.log('🔵 [Register] Resending OTP to:', formData.mobile);
@@ -266,15 +267,16 @@ const RegisterForm = () => {
     setOtpError("");
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
 
       // Use user_id from state (captured during registration)
       if (!userId) {
         throw new Error("User ID not found. Please register again.");
       }
 
-      const endpoint = `${baseUrl}/api/vendor/login/verify-otp`;
-      const queryParams = `?mobile=${formData.mobile}&otp=${encodeURIComponent(otpCode)}`;
+      // Updated endpoint as per requirement
+      const endpoint = `${baseUrl}/api/vendor/verify-otp`;
+      const queryParams = `?user_id=${userId}&otp=${encodeURIComponent(otpCode)}`;
 
       console.log('🔵 [Register] Verifying OTP:', { userId, otp: otpCode });
       console.log('📍 [Register] Endpoint:', endpoint + queryParams);
@@ -293,16 +295,35 @@ const RegisterForm = () => {
         throw new Error(data.message || "Invalid OTP. Please try again.");
       }
 
-      if (data.success) {
-        setSuccessMessage("Account verified successfully! ");
+      // Check success and capture token from data.data.token
+      if (data.success && data.data?.token) {
+        const token = data.data.token;
+        setSuccessMessage("Account verified successfully! Logging you in...");
 
-        // DO NOT auto-login - redirect to login page
-        navigate("/vendor/dashboard", {
-          state: {
-            message: "Account verified! ",
-            mobile: formData.mobile
-          }
-        });
+        // 1. Save to SessionStorage (Sync with LoginForm)
+        // 1. Save to SessionStorage (Sync with LoginForm)
+        sessionStorage.setItem("vendor_token", token);
+        sessionStorage.setItem("vendor_session", JSON.stringify({
+          token: token,
+          isVerified: true,
+          expiry: new Date().getTime() + 86400000 // 24 hours
+        }));
+
+        // 2. Save to Browser Cookies
+        document.cookie = `vendor_token=${token}; path=/; max-age=86400; SameSite=Strict; Secure`;
+
+        // 3. Sync Store and Refresh Profile Data
+        await useAppStore.getState().fetchProfile(true);
+        // 3. Redirect to Dashboard
+        setTimeout(() => {
+          navigate("/vendor/dashboard");
+        }, 1500);
+      } else if (data.success) {
+        // Fallback if success but no token (standard registration flow)
+        setSuccessMessage("Account verified successfully!");
+        setTimeout(() => {
+          navigate("/vendor/login", { state: { message: "Account verified! Please login." } });
+        }, 1500);
       } else {
         throw new Error(data.message || "Verification failed");
       }
