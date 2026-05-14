@@ -65,7 +65,7 @@ export default function WalletSend() {
     
     const currentBalance = parseFloat(String(storeWalletBalance).replace(/[^0-9.-]/g, '')) || 0;
     const chargePercent = parseFloat(String(storeSendMoneyCharge).replace(/[^0-9.-]/g, '')) || 0;
-    const presetAmounts: number[] = [100, 500, 1000, 2000];
+    const presetAmounts: number[] = [500, 1000, 2000, 5000];
 
     useEffect(() => {
         fetchWallet();
@@ -155,6 +155,13 @@ export default function WalletSend() {
 
         const chargeAmount = Number(amount) * (chargePercent / 100);
         const totalDeduction = Number(amount) + chargeAmount;
+
+        if (Number(amount) < 500) {
+            const msg = "Minimum transfer amount is ৳500";
+            setErrorMessage(msg);
+            toast.error(msg);
+            return;
+        }
 
         if (totalDeduction > currentBalance) {
             const msg = `Insufficient funds! (Total including ${chargePercent}% fee: ৳${totalDeduction.toFixed(2)})`;
@@ -399,7 +406,10 @@ export default function WalletSend() {
                             {/* Amount Section */}
                             <div className="space-y-2 md:space-y-3 pt-2 md:pt-4">
                                 <div className="flex items-center justify-between px-1">
-                                    <label className="text-[10px] md:text-[11px] font-black text-muted-foreground uppercase tracking-widest">Transfer Amount</label>
+                                    <label className="text-[10px] md:text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                                        Transfer Amount
+                                        <span className="text-secondary normal-case tracking-normal">(Min. ৳500)</span>
+                                    </label>
                                     {Number(amount) > currentBalance && !isLoadingBalance && <span className="text-[10px] md:text-xs font-black text-destructive animate-pulse">Exceeds Balance</span>}
                                 </div>
                                 <div className="relative group">

@@ -9,6 +9,7 @@ import { Loader2, AlertCircle, ShieldCheck, Settings, LogOut, Key, Plus, FileTex
 import { useNavigate } from 'react-router-dom';
 import useModalStore from '@/store/modalStore';
 import { useAppStore } from '@/store/useAppStore';
+import InstructorForgotPasswordModal from '@/pages/common/Instructor/components/InstructorForgotPasswordModal';
 
 export default function InstructorProfile() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function InstructorProfile() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -151,14 +153,14 @@ export default function InstructorProfile() {
 
               <div className="space-y-4">
                 <button
-                  onClick={() => navigate('/instructor/dashboard/change-password')}
+                  onClick={() => setIsForgotModalOpen(true)}
                   className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-indigo-50 rounded-2xl group transition-all"
                 >
                   <div className="flex items-center gap-4">
                     <div className="p-2 bg-white rounded-xl shadow-sm text-indigo-600">
                       <Key size={18} />
                     </div>
-                    <span className="font-bold text-slate-700">Security & Credentials</span>
+                    <span className="font-bold text-slate-700">Change Password</span>
                   </div>
                   <ShieldCheck size={18} className="text-emerald-500" />
                 </button>
@@ -228,6 +230,11 @@ export default function InstructorProfile() {
           </div>
         </div>
       </div>
+      
+      <InstructorForgotPasswordModal 
+        isOpen={isForgotModalOpen}
+        onClose={() => setIsForgotModalOpen(false)}
+      />
     </div>
   );
 }
@@ -236,11 +243,10 @@ export default function InstructorProfile() {
 const QuickActionButton = ({ icon: Icon, label, onClick, variant = 'outline' }: any) => (
   <button
     onClick={onClick}
-    className={`flex flex-col items-center justify-center p-4 rounded-3xl transition-all active:scale-95 gap-2 border-2 ${
-      variant === 'primary' 
-        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700' 
+    className={`flex flex-col items-center justify-center p-4 rounded-3xl transition-all active:scale-95 gap-2 border-2 ${variant === 'primary'
+        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700'
         : 'bg-white border-slate-50 text-slate-600 hover:border-indigo-100 hover:bg-indigo-50/30'
-    }`}
+      }`}
   >
     <div className={`p-2 rounded-xl ${variant === 'primary' ? 'bg-white/20' : 'bg-slate-50 text-indigo-600'}`}>
       <Icon size={20} />

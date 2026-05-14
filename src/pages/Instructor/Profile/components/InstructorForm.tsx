@@ -100,19 +100,19 @@ export function InstructorForm({
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
-            <input type="text" {...register('name')} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-light outline-none" placeholder="Enter your full name" />
+            <input type="text" {...register('name')} readOnly className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl focus:ring-0 outline-none text-gray-500 cursor-not-allowed" placeholder="Enter your full name" />
             {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
-            <input type="email" {...register('email')} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-light outline-none" placeholder="example@email.com" />
+            <input type="email" {...register('email')} readOnly className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl focus:ring-0 outline-none text-gray-500 cursor-not-allowed" placeholder="example@email.com" />
             {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
           </div>
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">Mobile Number *</label>
-            <input type="tel" {...register('mobile')} className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-light outline-none" placeholder="01XXXXXXXXX" />
+            <input type="tel" {...register('mobile')} readOnly className="w-full px-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl focus:ring-0 outline-none text-gray-500 cursor-not-allowed" placeholder="01XXXXXXXXX" />
             {errors.mobile && <p className="mt-1 text-xs text-red-500">{errors.mobile.message}</p>}
           </div>
 

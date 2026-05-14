@@ -280,7 +280,14 @@ export default function InstructorWithdrawMoney() {
                                         </div>
                                         <div>
                                             <p className="text-xl font-black text-slate-900">৳{trx.amount}</p>
-                                            <p className="text-xs font-bold text-slate-400 uppercase">{trx.payment_method} • {trx.number}</p>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <p className="text-xs font-bold text-slate-400 uppercase">{trx.payment_method} • {trx.number}</p>
+                                                {trx.charge && parseFloat(trx.charge) > 0 && (
+                                                    <span className="text-[9px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-md uppercase">
+                                                        Charge: ৳{trx.charge}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="text-right">

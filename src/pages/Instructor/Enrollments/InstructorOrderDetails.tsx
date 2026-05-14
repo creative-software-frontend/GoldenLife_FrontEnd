@@ -216,7 +216,7 @@ export default function InstructorOrderDetails() {
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           </Button>
           <div className="space-y-1">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center flex-cols gap-3">
               <h1 className="text-3xl font-black text-gray-900 tracking-tight">Order {order.order_no}</h1>
               <div className={`px-4 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest border shadow-sm ${getStatusColor(order.status)}`}>
                 {order.status}
@@ -256,53 +256,15 @@ export default function InstructorOrderDetails() {
           >
             <Printer size={18} /> Print Invoice
           </Button>
-          <Button
+          {/* <Button
             onClick={() => setIsStatusModalOpen(true)}
             className="h-14 px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] uppercase shadow-xl shadow-emerald-600/20 active:scale-95 transition-all"
           >
             Update Lifecycle
-          </Button>
+          </Button> */}
         </div>
       </div>
 
-      {/* Order Progress Timeline */}
-      <Card className="screen-only border-none shadow-xl rounded-[2.5rem] bg-white overflow-hidden ring-1 ring-gray-100">
-        <CardContent className="p-8 sm:p-10">
-          <h3 className="font-black text-[10px] text-gray-400 uppercase tracking-[0.3em] mb-10">LOGISTICS PIPELINE</h3>
-          <div className="overflow-x-auto no-scrollbar pb-4">
-            <div className="flex items-center min-w-[1000px]">
-              {progressSteps.map((step, index) => {
-                const isCompleted = index < currentStepIndex || order.status === step;
-                const isActive = index === currentStepIndex;
-                return (
-                  <div key={step} className="flex-1 flex items-center">
-                    <div className="flex flex-col items-center gap-3 group cursor-default">
-                      <div
-                        className={`flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-700 shadow-lg ${isActive
-                          ? 'bg-emerald-600 text-white ring-8 ring-emerald-50 shadow-emerald-200 rotate-[-8deg] scale-110'
-                          : isCompleted
-                            ? 'bg-emerald-500 text-white shadow-emerald-100'
-                            : 'bg-gray-50 text-gray-200'
-                          }`}
-                      >
-                        {isCompleted ? <Check className="w-6 h-6" strokeWidth={4} /> : <Package className="w-6 h-6 opacity-40" />}
-                      </div>
-                      <span className={`text-[9px] font-black uppercase tracking-widest transition-colors duration-500 ${isActive ? 'text-emerald-600' : 'text-gray-400'}`}>
-                        {step}
-                      </span>
-                    </div>
-                    {index < progressSteps.length - 1 && (
-                      <div className="flex-1 px-4">
-                        <div className={`h-1.5 rounded-full transition-all duration-1000 min-w-[40px] ${index < currentStepIndex ? 'bg-emerald-500 shadow-sm shadow-emerald-200' : 'bg-gray-50'}`} />
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Order Details Content */}
       <div className="screen-only grid lg:grid-cols-3 gap-8">
@@ -322,7 +284,7 @@ export default function InstructorOrderDetails() {
                         src={product.product_image?.startsWith('http') ? product.product_image : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`}
                         alt={product.product_name}
                         className="w-full h-full object-contain"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Signal+Empty'; }}
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://admin.goldenlifeltd.com/uploads/course/course_image/6a046632f0db7.jfif'; }}
                       />
                     </div>
                     <div className="flex-1 space-y-2">
@@ -389,10 +351,7 @@ export default function InstructorOrderDetails() {
                   <span>Net Yield</span>
                   <span className="text-gray-900 font-black">৳{(parseFloat(order.total) - parseFloat(order.delivery_charge)).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between items-center text-xs font-bold text-gray-500 uppercase tracking-wider">
-                  <span>Logistics Fee</span>
-                  <span className="text-gray-900 font-black">৳{parseFloat(order.delivery_charge).toFixed(2)}</span>
-                </div>
+
                 <div className="pt-6 border-t border-gray-100">
                   <div className="flex justify-between items-end">
                     <div className="space-y-1">

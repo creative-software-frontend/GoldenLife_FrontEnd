@@ -65,15 +65,15 @@ const InstructorCourseDetails: React.FC = () => {
             <nav className="hidden md:flex items-center bg-gray-100 p-1 rounded-2xl">
               {[
                 { id: 'overview', label: 'Overview', icon: Info },
-                { id: 'curriculum', label: 'Curriculum', icon: Layout },
-                { id: 'assessments', label: 'Assessments', icon: FileText },
+                { id: 'curriculum', label: 'Modules and Lessons', icon: Layout },
+                { id: 'assessments', label: 'Quizzes', icon: FileText },
               ].map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === tab.id
-                      ? 'bg-white text-emerald-600 shadow-sm'
-                      : 'text-gray-400 hover:text-gray-600'
+                    ? 'bg-white text-emerald-600 shadow-sm'
+                    : 'text-gray-400 hover:text-gray-600'
                     }`}
                 >
                   <tab.icon size={14} strokeWidth={3} />
@@ -107,196 +107,196 @@ const InstructorCourseDetails: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               className="grid grid-cols-1 lg:grid-cols-3 gap-10"
             >
-          <div className="lg:col-span-2 space-y-8">
-            <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-2xl shadow-gray-200/50 bg-white relative group">
-              {course.image ? (
-                <img
-                  src={course.image.startsWith('http') ? course.image : `${baseImageURL}${course.image}`}
-                  alt={course.course_title_english}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300 font-black text-4xl italic">GL</div>
-              )}
-              <div className="absolute top-6 left-6 flex gap-2">
-                <Badge className="bg-white/90 backdrop-blur text-black border-none font-bold px-4 py-2 rounded-xl text-[10px] shadow-lg">
-                  {course.course_type}
-                </Badge>
-                <Badge className="bg-orange-500 text-white border-none font-bold px-4 py-2 rounded-xl text-[10px] shadow-lg shadow-orange-500/20">
-                  {course.category}
-                </Badge>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 shadow-sm space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">{course.course_title_english}</h2>
-                <p className="text-xl font-bold text-gray-400 italic">{course.course_title_bangla}</p>
-              </div>
-              <div className="h-px bg-gray-100 w-full" />
-              <div className="prose prose-sm max-w-none text-gray-600 font-medium leading-relaxed">
-                <h3 className="text-sm font-black text-gray-900 uppercase tracking-[0.2em] mb-4">Description</h3>
-                <p className="mb-6">{course.course_details_english}</p>
-                <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 border-l-4 border-l-emerald-500">
-                  <p className="text-gray-500 italic text-sm">{course.course_details_bangla}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-xl shadow-gray-100/30 space-y-8">
-              <div className="space-y-6">
-                {[
-                  { icon: Clock, label: 'Duration', value: course.course_duration },
-                  { icon: Tag, label: 'Course Code', value: course.course_code },
-                  { icon: Info, label: 'Validity', value: (course as any).validity || '90 Days' },
-                ].map((stat, i) => (
-                  <div key={i} className="flex items-center justify-between border-b border-gray-50 pb-6 last:border-0 last:pb-0">
-                    <div className="flex items-center gap-3 text-gray-400">
-                      <stat.icon size={18} strokeWidth={2.5} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">{stat.label}</span>
-                    </div>
-                    <span className="font-bold text-gray-900 text-sm">{stat.value}</span>
+              <div className="lg:col-span-2 space-y-8">
+                <div className="aspect-[21/9] rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-2xl shadow-gray-200/50 bg-white relative group">
+                  {course.image ? (
+                    <img
+                      src={course.image.startsWith('http') ? course.image : `${baseImageURL}${course.image}`}
+                      alt={course.course_title_english}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300 font-black text-4xl italic">GL</div>
+                  )}
+                  <div className="absolute top-6 left-6 flex gap-2">
+                    <Badge className="bg-white/90 backdrop-blur text-black border-none font-bold px-4 py-2 rounded-xl text-[10px] shadow-lg">
+                      {course.course_type}
+                    </Badge>
+                    <Badge className="bg-orange-500 text-white border-none font-bold px-4 py-2 rounded-xl text-[10px] shadow-lg shadow-orange-500/20">
+                      {typeof course.category === 'object' ? (course.category as any).category_name : course.category}
+                    </Badge>
                   </div>
-                ))}
-              </div>
-
-              <div className="bg-emerald-50 rounded-[2rem] p-6 border border-emerald-100 space-y-6">
-                <div className="space-y-1">
-                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Regular Price</span>
-                  <p className="text-lg font-bold text-emerald-800/40 line-through tracking-tighter italic">৳{course.offer_fee}</p>
                 </div>
-                <div className="space-y-1">
-                  <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Selling Price</span>
-                  <p className="text-4xl font-black text-emerald-600 tracking-tighter">৳{course.regular_fee}</p>
+
+                <div className="bg-white rounded-[2.5rem] border border-gray-100 p-10 shadow-sm space-y-8">
+                  <div className="space-y-4">
+                    <h2 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">{course.course_title_english}</h2>
+                    <p className="text-xl font-bold text-gray-400 italic">{course.course_title_bangla}</p>
+                  </div>
+                  <div className="h-px bg-gray-100 w-full" />
+                  <div className="prose prose-sm max-w-none text-gray-600 font-medium leading-relaxed">
+                    <h3 className="text-sm font-black text-gray-900 uppercase tracking-[0.2em] mb-4">Description</h3>
+                    <p className="mb-6">{course.course_details_english}</p>
+                    <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 border-l-4 border-l-emerald-500">
+                      <p className="text-gray-500 italic text-sm">{course.course_details_bangla}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-black rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden">
-                <div className="relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">Your Earning</p>
-                  <p className="text-3xl font-black tracking-tight">৳{course.seller_fee}</p>
-                  <p className="text-[10px] font-bold text-emerald-400 mt-2 flex items-center gap-1">
-                    <CheckCircle2 size={12} /> {course.earning_value}% Profit Margin
-                  </p>
-                </div>
-                <DollarSign className="absolute -right-4 -bottom-4 w-24 h-24 opacity-10 rotate-12" />
-              </div>
-            </div>
-          </div>
-        </motion.div>
-        )}
-
-        {activeTab === 'curriculum' && (
-          <motion.div
-            key="curriculum"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="max-w-4xl mx-auto space-y-10"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight">Course Content</h3>
-                <p className="text-sm font-bold text-gray-400">{course.modules?.length || 0} Modules • {course.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 0} Lessons</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {course.modules && course.modules.length > 0 ? (
-                course.modules.map((module, mIdx) => (
-                  <ModuleAccordion key={mIdx} module={module} index={mIdx} />
-                ))
-              ) : (
-                <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
-                  <Layout className="mx-auto text-gray-200 mb-4" size={48} strokeWidth={1} />
-                  <p className="text-gray-400 font-bold">No modules have been added yet.</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-
-        {activeTab === 'assessments' && (
-          <motion.div
-            key="assessments"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="max-w-4xl mx-auto space-y-10"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div>
-                <h3 className="text-2xl font-black text-gray-900 tracking-tight">Quizzes & Assessments</h3>
-                <p className="text-sm font-bold text-gray-400">{course.quizzes?.length || 0} Questions Total</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6">
-              {course.quizzes && course.quizzes.length > 0 ? (
-                course.quizzes.map((quiz, qIdx) => (
-                  <div key={quiz.id} className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm hover:shadow-xl transition-all group">
-                    <div className="flex items-start gap-6">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-lg shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                        {qIdx + 1}
-                      </div>
-                      <div className="space-y-6 flex-1">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-3">
-                            <Badge className="bg-gray-100 text-gray-400 border-none px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">Question</Badge>
-                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{quiz.points} POINTS</span>
-                          </div>
-                          <h4 className="text-xl font-black text-gray-900 leading-tight">{quiz.question}</h4>
+              <div className="space-y-6">
+                <div className="bg-white rounded-[2.5rem] border border-gray-100 p-8 shadow-xl shadow-gray-100/30 space-y-8">
+                  <div className="space-y-6">
+                    {[
+                      { icon: Clock, label: 'Duration', value: course.course_duration },
+                      { icon: Tag, label: 'Course Code', value: course.course_code },
+                      { icon: Info, label: 'Validity', value: (course as any).validity || '90 Days' },
+                    ].map((stat, i) => (
+                      <div key={i} className="flex items-center justify-between border-b border-gray-50 pb-6 last:border-0 last:pb-0">
+                        <div className="flex items-center gap-3 text-gray-400">
+                          <stat.icon size={18} strokeWidth={2.5} />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{stat.label}</span>
                         </div>
+                        <span className="font-bold text-gray-900 text-sm">{stat.value}</span>
+                      </div>
+                    ))}
+                  </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {[
-                            { label: 'A', value: quiz.option_a },
-                            { label: 'B', value: quiz.option_b },
-                            { label: 'C', value: quiz.option_c },
-                            { label: 'D', value: quiz.option_d },
-                          ].map((opt) => (
-                            <div
-                              key={opt.label}
-                              className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
+                  <div className="bg-emerald-50 rounded-[2rem] p-6 border border-emerald-100 space-y-6">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Regular Price</span>
+                      <p className="text-lg font-bold text-emerald-800/40 line-through tracking-tighter italic">৳{course.offer_fee}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em]">Selling Price</span>
+                      <p className="text-4xl font-black text-emerald-600 tracking-tighter">৳{course.regular_fee}</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-black rounded-2xl p-6 text-white shadow-2xl relative overflow-hidden">
+                    <div className="relative z-10">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-1">Your Earning</p>
+                      <p className="text-3xl font-black tracking-tight">৳{course.seller_fee}</p>
+                      <p className="text-[10px] font-bold text-emerald-400 mt-2 flex items-center gap-1">
+                        <CheckCircle2 size={12} /> {course.earning_value}% Profit Margin
+                      </p>
+                    </div>
+                    <DollarSign className="absolute -right-4 -bottom-4 w-24 h-24 opacity-10 rotate-12" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'curriculum' && (
+            <motion.div
+              key="curriculum"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-4xl mx-auto space-y-10"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="text-2xl font-black text-gray-900 tracking-tight">Course Content</h3>
+                  <p className="text-sm font-bold text-gray-400">{course.modules?.length || 0} Modules • {course.modules?.reduce((acc, m) => acc + (m.lessons?.length || 0), 0) || 0} Lessons</p>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {course.modules && course.modules.length > 0 ? (
+                  course.modules.map((module, mIdx) => (
+                    <ModuleAccordion key={mIdx} module={module} index={mIdx} />
+                  ))
+                ) : (
+                  <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+                    <Layout className="mx-auto text-gray-200 mb-4" size={48} strokeWidth={1} />
+                    <p className="text-gray-400 font-bold">No modules have been added yet.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'assessments' && (
+            <motion.div
+              key="assessments"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="max-w-4xl mx-auto space-y-10"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="text-2xl font-black text-gray-900 tracking-tight">Quizzes & Assessments</h3>
+                  <p className="text-sm font-bold text-gray-400">{course.quizzes?.length || 0} Questions Total</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6">
+                {course.quizzes && course.quizzes.length > 0 ? (
+                  course.quizzes.map((quiz, qIdx) => (
+                    <div key={quiz.id} className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm hover:shadow-xl transition-all group">
+                      <div className="flex items-start gap-6">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-lg shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                          {qIdx + 1}
+                        </div>
+                        <div className="space-y-6 flex-1">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-3">
+                              <Badge className="bg-gray-100 text-gray-400 border-none px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">Question</Badge>
+                              <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{quiz.points} POINTS</span>
+                            </div>
+                            <h4 className="text-xl font-black text-gray-900 leading-tight">{quiz.question}</h4>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {[
+                              { label: 'A', value: quiz.option_a },
+                              { label: 'B', value: quiz.option_b },
+                              { label: 'C', value: quiz.option_c },
+                              { label: 'D', value: quiz.option_d },
+                            ].map((opt) => (
+                              <div
+                                key={opt.label}
+                                className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
                                   ? 'bg-emerald-50 border-emerald-200 ring-2 ring-emerald-500/10'
                                   : 'bg-gray-50/50 border-gray-100'
-                                }`}
-                            >
-                              <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
+                                  }`}
+                              >
+                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
                                   ? 'bg-emerald-500 text-white'
                                   : 'bg-white text-gray-400 border border-gray-100'
-                                }`}>
-                                {opt.label}
-                              </div>
-                              <span className={`text-sm font-bold ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
+                                  }`}>
+                                  {opt.label}
+                                </div>
+                                <span className={`text-sm font-bold ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
                                   ? 'text-emerald-700'
                                   : 'text-gray-600'
-                                }`}>
-                                {opt.value}
-                              </span>
-                              {quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() && (
-                                <CheckCircle2 size={16} className="text-emerald-500 ml-auto" />
-                              )}
-                            </div>
-                          ))}
+                                  }`}>
+                                  {opt.value}
+                                </span>
+                                {quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() && (
+                                  <CheckCircle2 size={16} className="text-emerald-500 ml-auto" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+                    <FileText className="mx-auto text-gray-200 mb-4" size={48} strokeWidth={1} />
+                    <p className="text-gray-400 font-bold">No quizzes found for this course.</p>
                   </div>
-                ))
-              ) : (
-                <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
-                  <FileText className="mx-auto text-gray-200 mb-4" size={48} strokeWidth={1} />
-                  <p className="text-gray-400 font-bold">No quizzes found for this course.</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </main>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
     </motion.div >
   );
 };

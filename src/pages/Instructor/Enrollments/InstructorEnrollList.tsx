@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Search, 
+import {
+  Search,
   Calendar,
   Clock,
   UserCheck,
@@ -93,7 +93,7 @@ const InstructorEnrollList: React.FC = () => {
     if (currentFilters.status && currentFilters.status !== 'All') {
       if (currentFilters.status === 'today') {
         const today = new Date().toISOString().split('T')[0];
-        filtered = filtered.filter(order => 
+        filtered = filtered.filter(order =>
           new Date(order.created_at).toISOString().split('T')[0] === today
         );
       } else {
@@ -118,7 +118,7 @@ const InstructorEnrollList: React.FC = () => {
   useEffect(() => {
     loadOrders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.status]); 
+  }, [filters.status]);
 
   useEffect(() => {
     applyLocalFilters(orders, filters);
@@ -140,7 +140,7 @@ const InstructorEnrollList: React.FC = () => {
 
   const handleStatusUpdate = async (newStatus: OrderStatus) => {
     if (!selectedOrder) return;
-    
+
     const success = await updateOrderStatus(selectedOrder.id, newStatus);
     if (success) {
       await loadOrders();
@@ -163,23 +163,23 @@ const InstructorEnrollList: React.FC = () => {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="p-4 sm:p-6 md:p-8 max-w-[1760px] mx-auto space-y-10"
+      className="p-4 sm:p-6 md:p-8 pb-32 max-w-[1760px] mx-auto space-y-10"
     >
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <motion.div variants={itemVariants} className="space-y-1">
           <div className="flex items-center gap-4">
-             <div className="bg-emerald-600 p-2.5 rounded-2xl text-white shadow-xl shadow-emerald-600/20">
-                <Package size={28} strokeWidth={2.5} />
-             </div>
-             <div>
-                <h1 className="text-3xl font-black text-gray-900 tracking-tight">Order Management</h1>
-                <p className="text-gray-500 font-bold text-sm">Monitor course enrollments and product signals.</p>
-             </div>
+            <div className="bg-emerald-600 p-2.5 rounded-2xl text-white shadow-xl shadow-emerald-600/20">
+              <Package size={28} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight">Order Management</h1>
+              <p className="text-gray-500 font-bold text-sm">Monitor course enrollments and product signals.</p>
+            </div>
           </div>
         </motion.div>
         <motion.div variants={itemVariants} className="text-xs font-black text-gray-400 uppercase tracking-widest">
@@ -190,38 +190,38 @@ const InstructorEnrollList: React.FC = () => {
       {/* Stats Cards */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Card className="border-none shadow-sm bg-gray-900 text-white rounded-[2.5rem] overflow-hidden relative group">
-           <CardContent className="p-8 space-y-2 relative z-10">
-              <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px]">Total Orders</p>
-              <h2 className="text-4xl font-black tracking-tighter">{orders.length}</h2>
-              <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-black pt-2 uppercase">
-                 <TrendingUp size={14} /> Real-time Feed
-              </div>
-           </CardContent>
-           <UserCheck className="absolute right-[-10px] bottom-[-10px] w-36 h-36 text-white/[0.04] group-hover:scale-125 transition-transform duration-1000" />
+          <CardContent className="p-8 space-y-2 relative z-10">
+            <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px]">Total Orders</p>
+            <h2 className="text-4xl font-black tracking-tighter">{orders.length}</h2>
+            <div className="flex items-center gap-2 text-emerald-400 text-[11px] font-black pt-2 uppercase">
+              <TrendingUp size={14} /> Real-time Feed
+            </div>
+          </CardContent>
+          <UserCheck className="absolute right-[-10px] bottom-[-10px] w-36 h-36 text-white/[0.04] group-hover:scale-125 transition-transform duration-1000" />
         </Card>
 
         <Card className="border-none shadow-sm bg-white rounded-[2.5rem] overflow-hidden group ring-1 ring-gray-100">
-           <CardContent className="p-8 space-y-2 border-l-8 border-amber-500">
-              <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Processing Pipeline</p>
-              <h2 className="text-4xl font-black tracking-tighter text-amber-500">
-                {orders.filter(o => o.status === 'Processing' || o.status === 'Order Placed').length}
-              </h2>
-              <div className="flex items-center gap-2 text-gray-500 text-[11px] font-black pt-2 uppercase">
-                 <Clock size={14} className="text-amber-400" /> Action Required
-              </div>
-           </CardContent>
+          <CardContent className="p-8 space-y-2 border-l-8 border-amber-500">
+            <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Processing Pipeline</p>
+            <h2 className="text-4xl font-black tracking-tighter text-amber-500">
+              {orders.filter(o => o.status === 'Processing' || o.status === 'Order Placed').length}
+            </h2>
+            <div className="flex items-center gap-2 text-gray-500 text-[11px] font-black pt-2 uppercase">
+              <Clock size={14} className="text-amber-400" /> Action Required
+            </div>
+          </CardContent>
         </Card>
 
         <Card className="border-none shadow-sm bg-white rounded-[2.5rem] overflow-hidden group ring-1 ring-gray-100">
-           <CardContent className="p-8 space-y-2 border-l-8 border-emerald-500">
-              <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Current Balance</p>
-              <h2 className="text-4xl font-black tracking-tighter text-emerald-600">
-                {isNavbarLoading ? '...' : `৳${navbarData?.balance || '0.00'}`}
-              </h2>
-              <div className="flex items-center gap-2 text-gray-500 text-[11px] font-black pt-2 uppercase">
-                 <DollarSign size={14} className="text-emerald-500" /> Real-time Settlement
-              </div>
-           </CardContent>
+          <CardContent className="p-8 space-y-2 border-l-8 border-emerald-500">
+            <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Current Balance</p>
+            <h2 className="text-4xl font-black tracking-tighter text-emerald-600">
+              {isNavbarLoading ? '...' : `৳${navbarData?.balance || '0.00'}`}
+            </h2>
+            <div className="flex items-center gap-2 text-gray-500 text-[11px] font-black pt-2 uppercase">
+              <DollarSign size={14} className="text-emerald-500" /> Real-time Settlement
+            </div>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -229,33 +229,19 @@ const InstructorEnrollList: React.FC = () => {
       <motion.div variants={itemVariants} className="flex flex-col xl:flex-row items-center gap-6 bg-white p-5 rounded-[2.5rem] border border-gray-100 shadow-xl shadow-gray-200/10">
         <div className="relative flex-1 group w-full">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={20} strokeWidth={3} />
-          <Input 
-            placeholder="Search order number, customer identity, or course title..." 
+          <Input
+            placeholder="Search order number, customer identity, or course title..."
             className="pl-14 h-14 bg-gray-50/50 border-none focus:ring-4 focus:ring-emerald-500/5 rounded-[1.5rem] font-bold text-gray-700 transition-all text-base w-full max-w-4xl shadow-inner"
             value={filters.search}
             onChange={(e) => handleSearch(e.target.value)}
           />
         </div>
-        
-        <div className="flex items-center gap-4 w-full xl:w-auto">
-          <Select value={filters.status} onValueChange={handleStatusFilter}>
-             <SelectTrigger className="h-14 w-full xl:w-[180px] bg-gray-50/50 border-none rounded-2xl font-black text-gray-600 px-6 shadow-sm">
-                <SelectValue placeholder="Lifecycle" />
-             </SelectTrigger>
-             <SelectContent className="rounded-2xl border-none shadow-2xl">
-                <SelectItem value="All" className="font-bold">All Signals</SelectItem>
-                <SelectItem value="today" className="font-bold">Today's Traffic</SelectItem>
-                <SelectItem value="Order Placed" className="font-bold">Order Placed</SelectItem>
-                <SelectItem value="Pending" className="font-bold">Pending</SelectItem>
-                <SelectItem value="Processing" className="font-bold text-blue-600">Processing</SelectItem>
-                <SelectItem value="Packaging" className="font-bold text-indigo-600">Packaging</SelectItem>
-                <SelectItem value="Delivered" className="font-bold text-emerald-600">Delivered</SelectItem>
-                <SelectItem value="Returned" className="font-bold text-red-600">Returned</SelectItem>
-             </SelectContent>
-          </Select>
 
-          <Button 
-            variant="outline" 
+        <div className="flex items-center gap-4 w-full xl:w-auto">
+
+
+          <Button
+            variant="outline"
             onClick={() => setViewMode(viewMode === 'grid' ? 'table' : 'grid')}
             className="h-14 px-6 rounded-2xl border-gray-100 font-black text-[10px] uppercase gap-3 hover:bg-gray-900 hover:text-white transition-all shadow-sm active:scale-95"
           >
@@ -265,8 +251,8 @@ const InstructorEnrollList: React.FC = () => {
               <><LayoutGrid size={18} strokeWidth={3} /> Switch Mode</>
             )}
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={loadOrders}
             disabled={isLoading}
             className="h-14 w-14 p-0 rounded-2xl bg-gray-900 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-xl"
@@ -279,7 +265,7 @@ const InstructorEnrollList: React.FC = () => {
       {/* Content Area */}
       <AnimatePresence mode="wait">
         {isLoading ? (
-          <motion.div 
+          <motion.div
             key="loading"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -287,87 +273,80 @@ const InstructorEnrollList: React.FC = () => {
             className="flex items-center justify-center py-32"
           >
             <div className="flex flex-col items-center gap-4">
-               <RefreshCw size={48} className="animate-spin text-emerald-600" />
-               <p className="font-black text-gray-400 uppercase tracking-[0.3em] text-xs">Synchronizing API Feed...</p>
+              <RefreshCw size={48} className="animate-spin text-emerald-600" />
+              <p className="font-black text-gray-400 uppercase tracking-[0.3em] text-xs">Synchronizing API Feed...</p>
             </div>
           </motion.div>
         ) : viewMode === 'table' ? (
-          <motion.div 
-            key="table" 
-            initial={{ opacity: 0, x: -10 }} 
-            animate={{ opacity: 1, x: 0 }} 
+          <motion.div
+            key="table"
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             className="hidden lg:block bg-white rounded-[3rem] border border-gray-100 shadow-2xl overflow-hidden"
           >
             <div className="overflow-x-auto no-scrollbar">
               <Table className="min-w-[1000px]">
                 <TableHeader>
-                  <TableRow className="hover:bg-transparent border-b border-gray-50 uppercase tracking-[0.1em] text-[9px]">
-                    <TableHead className="h-20 font-black text-gray-400 px-6">Entry Token</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-6">Identity</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-6">Target Products</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-6">Yield</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-10 text-center">Lifecycle</TableHead>
-                    <TableHead className="h-20 font-black text-gray-400 px-6 text-right">Actions</TableHead>
+                  <TableRow className="hover:bg-transparent border-b border-gray-100 uppercase tracking-wider text-xs">
+                    <TableHead className="h-16 font-semibold text-gray-500 px-6">Entry Token</TableHead>
+                    <TableHead className="h-16 font-semibold text-gray-500 px-6">Identity</TableHead>
+                    <TableHead className="h-16 font-semibold text-gray-500 px-6">Target Products</TableHead>
+                    <TableHead className="h-16 font-semibold text-gray-500 px-6">Yield</TableHead>
+                    <TableHead className="h-16 font-semibold text-gray-500 px-10 text-center">Lifecycle</TableHead>
+                    <TableHead className="h-16 font-semibold text-gray-500 px-6 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredOrders.map((order) => (
                     <TableRow key={order.id} className="group hover:bg-emerald-50/[0.02] transition-colors border-b border-gray-50 last:border-0">
-                      <TableCell className="px-6 py-8">
-                         <div className="flex flex-col gap-0.5 whitespace-nowrap">
-                            <p className="font-black text-emerald-600 text-[10px] tracking-widest">{order.order_no}</p>
-                            <p className="text-[10px] font-black text-gray-400 flex items-center gap-1 uppercase">
-                               <Calendar size={10} strokeWidth={3} /> {new Date(order.created_at).toLocaleDateString()}
-                            </p>
-                         </div>
+                      <TableCell className="px-6 py-6">
+                        <div className="flex flex-col gap-1 whitespace-nowrap">
+                          <p className="font-bold text-emerald-600 text-sm tracking-wide">{order.order_no}</p>
+                          <p className="text-xs font-medium text-gray-500 flex items-center gap-1.5 uppercase">
+                            <Calendar size={12} strokeWidth={2.5} /> {new Date(order.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
                       </TableCell>
                       <TableCell className="px-6">
                         <div className="flex items-center gap-4">
-                          <Avatar className="h-10 w-10 border-2 border-white shadow-md ring-1 ring-gray-100">
-                            <AvatarFallback className="bg-emerald-50 text-emerald-600 font-black text-[10px]">{order.user_name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <div className="space-y-0.5">
-                            <p className="font-black text-gray-900 group-hover:text-emerald-600 transition-colors text-sm tracking-tight">{order.user_name}</p>
-                            <p className="text-[10px] text-gray-400 font-black flex items-center gap-1 lowercase">
-                               {order.user_phone}
+
+                          <div className="space-y-1">
+                            <p className="font-bold text-gray-900 group-hover:text-emerald-600 transition-colors text-sm">{order.user_name}</p>
+                            <p className="text-xs text-gray-500 font-medium">
+                              {order.user_phone}
                             </p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="px-6">
-                         <div className="space-y-1">
-                            {order.products.map((p, idx) => (
-                              <p key={idx} className="text-xs font-black text-gray-700 tracking-tight leading-tight line-clamp-1 max-w-[320px]">
-                                {p.product_name} <span className="text-gray-400 text-[10px]">x{p.quantity}</span>
-                              </p>
-                            ))}
-                         </div>
+                        <div className="space-y-1.5">
+                          {order.products.map((p, idx) => (
+                            <p key={idx} className="text-sm font-medium text-gray-700 leading-tight line-clamp-1 max-w-[320px]">
+                              {p.product_name} <span className="text-gray-400 text-xs ml-1">x{p.quantity}</span>
+                            </p>
+                          ))}
+                        </div>
                       </TableCell>
-                      <TableCell className="px-6 font-black text-gray-900 italic text-base">
+                      <TableCell className="px-6 font-bold text-gray-900 text-sm">
                         ৳{order.total}
                       </TableCell>
                       <TableCell className="px-10 text-center">
-                         <div className={`w-[110px] h-[36px] font-black rounded-xl text-[9px] uppercase flex items-center justify-center tracking-widest border shadow-sm mx-auto select-none ${getStatusColor(order.status)}`}>
+                        <div className={`w-[120px] h-[32px] font-bold rounded-lg text-[11px] uppercase flex items-center justify-center tracking-wider border shadow-sm mx-auto select-none ${getStatusColor(order.status)}`}>
                           {order.status}
                         </div>
                       </TableCell>
                       <TableCell className="px-6 text-right">
-                         <div className="flex items-center justify-end gap-2.5">
-                            <Button 
-                              variant="outline" 
-                              onClick={() => navigate(`/instructor/dashboard/orders/${order.order_no}`)}
-                              className="h-9 px-5 rounded-lg font-black text-[9px] text-gray-600 uppercase transition-all shadow-sm"
-                            >
-                                Track
-                            </Button>
-                            <Button 
-                              onClick={() => handleUpdateStatusClick(order)}
-                              className="h-9 px-5 rounded-lg font-black text-[9px] bg-gray-900 hover:bg-black text-white shadow-lg active:scale-95 transition-all"
-                            >
-                               Update
-                            </Button>
-                         </div>
+                        <div className="flex items-center justify-end gap-3">
+                          <Button
+                            variant="outline"
+                            onClick={() => navigate(`/instructor/dashboard/orders/${order.order_no}`)}
+                            className="h-9 px-5 rounded-lg font-bold text-xs text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
+                          >
+                            Track
+                          </Button>
+
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -376,8 +355,8 @@ const InstructorEnrollList: React.FC = () => {
             </div>
           </motion.div>
         ) : (
-          <motion.div 
-            key="grid" 
+          <motion.div
+            key="grid"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -386,55 +365,53 @@ const InstructorEnrollList: React.FC = () => {
             {filteredOrders.map((order) => (
               <motion.div key={order.id} variants={itemVariants}>
                 <Card className="border-none shadow-sm rounded-[2.5rem] overflow-hidden bg-white ring-1 ring-gray-100 group hover:shadow-2xl transition-all duration-700 flex flex-col h-full transform-gpu">
-                   <CardContent className="p-0 flex-1 flex flex-col">
-                      <div className="p-8 bg-gray-50/50 flex flex-col items-center text-center space-y-4 relative border-b border-gray-50">
-                          <Avatar className="h-20 w-20 border-4 border-white shadow-xl transform transition-all duration-700 group-hover:scale-110">
-                            <AvatarFallback className="bg-emerald-600 text-white font-black text-lg">{order.user_name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                          <div className="space-y-1">
-                            <p className="font-black text-lg text-gray-900 tracking-tight leading-none">{order.user_name}</p>
-                            <p className="text-[9px] font-black text-emerald-600 tracking-widest uppercase">{order.order_no}</p>
-                          </div>
-                      </div>
-                      
-                      <div className="p-7 space-y-7 flex-1 flex flex-col">
-                         <div className="space-y-2 text-center">
-                            {order.products.slice(0, 2).map((p, idx) => (
-                              <p key={idx} className="text-[10px] font-black text-gray-800 leading-snug line-clamp-1 px-1">{p.product_name}</p>
-                            ))}
-                            {order.products.length > 2 && (
-                              <p className="text-[8px] font-black text-gray-400">+{order.products.length - 2} more items</p>
-                            )}
-                         </div>
+                  <CardContent className="p-0 flex-1 flex flex-col">
+                    <div className="p-8 bg-gray-50/50 flex flex-col items-center text-center space-y-4 relative border-b border-gray-50">
 
-                         <div className="grid grid-cols-2 gap-4 py-5 border-y border-gray-50 mt-auto">
-                            <div className="space-y-0.5 text-center border-r border-gray-50">
-                               <p className="text-[8px] font-black text-gray-400 tracking-widest uppercase">Yield</p>
-                               <p className="text-base font-black text-emerald-600 italic tracking-tighter leading-none">৳{order.total}</p>
-                            </div>
-                            <div className="space-y-0.5 text-center">
-                               <p className="text-[8px] font-black text-gray-400 tracking-widest uppercase">Lifecycle</p>
-                               <p className={`text-[10px] font-black uppercase tracking-tighter leading-none ${getStatusColor(order.status).split(' ')[0]}`}>{order.status}</p>
-                            </div>
-                         </div>
-
-                         <div className="flex gap-3 pt-1">
-                            <Button 
-                              variant="outline" 
-                              onClick={() => navigate(`/instructor/dashboard/orders/${order.order_no}`)}
-                              className="flex-1 h-12 rounded-2xl border-gray-200 font-black text-[10px] text-gray-600 hover:bg-gray-900 hover:text-white transition-all uppercase"
-                            >
-                               Track
-                            </Button>
-                            <Button 
-                              onClick={() => handleUpdateStatusClick(order)}
-                              className="flex-1 h-12 rounded-2xl bg-gray-900 hover:bg-black text-white font-black text-[10px] shadow-xl active:scale-95 transition-all uppercase"
-                            >
-                               Update
-                            </Button>
-                         </div>
+                      <div className="space-y-1">
+                        <p className="font-black text-lg text-gray-900 tracking-tight leading-none">{order.user_name}</p>
+                        <p className="text-[9px] font-black text-emerald-600 tracking-widest uppercase">{order.order_no}</p>
                       </div>
-                   </CardContent>
+                    </div>
+
+                    <div className="p-7 space-y-7 flex-1 flex flex-col">
+                      <div className="space-y-2 text-center">
+                        {order.products.slice(0, 2).map((p, idx) => (
+                          <p key={idx} className="text-[10px] font-black text-gray-800 leading-snug line-clamp-1 px-1">{p.product_name}</p>
+                        ))}
+                        {order.products.length > 2 && (
+                          <p className="text-[8px] font-black text-gray-400">+{order.products.length - 2} more items</p>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 py-5 border-y border-gray-50 mt-auto">
+                        <div className="space-y-0.5 text-center border-r border-gray-50">
+                          <p className="text-[8px] font-black text-gray-400 tracking-widest uppercase">Yield</p>
+                          <p className="text-base font-black text-emerald-600 italic tracking-tighter leading-none">৳{order.total}</p>
+                        </div>
+                        <div className="space-y-0.5 text-center">
+                          <p className="text-[8px] font-black text-gray-400 tracking-widest uppercase">Lifecycle</p>
+                          <p className={`text-[10px] font-black uppercase tracking-tighter leading-none ${getStatusColor(order.status).split(' ')[0]}`}>{order.status}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 pt-1">
+                        <Button
+                          variant="outline"
+                          onClick={() => navigate(`/instructor/dashboard/orders/${order.order_no}`)}
+                          className="flex-1 h-12 rounded-2xl border-gray-200 font-black text-[10px] text-gray-600 hover:bg-gray-900 hover:text-white transition-all uppercase"
+                        >
+                          Track
+                        </Button>
+                        <Button
+                          onClick={() => handleUpdateStatusClick(order)}
+                          className="flex-1 h-12 rounded-2xl bg-gray-900 hover:bg-black text-white font-black text-[10px] shadow-xl active:scale-95 transition-all uppercase"
+                        >
+                          Update
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
                 </Card>
               </motion.div>
             ))}
@@ -445,26 +422,26 @@ const InstructorEnrollList: React.FC = () => {
       {/* Empty State Logic */}
       <AnimatePresence>
         {!isLoading && filteredOrders.length === 0 && (
-           <motion.div 
-             initial={{ opacity: 0, scale: 0.95 }}
-             animate={{ opacity: 1, scale: 1 }}
-             exit={{ opacity: 0 }}
-             className="py-32 text-center space-y-8 bg-gradient-to-br from-white to-gray-50/50 rounded-[4rem] border-2 border-dashed border-gray-200 shadow-inner flex flex-col items-center"
-           >
-              <div className="w-28 h-28 bg-white rounded-full shadow-2xl flex items-center justify-center text-orange-500">
-                 <SearchX size={54} strokeWidth={1} />
-              </div>
-              <div className="space-y-2">
-                 <h3 className="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">Signal Void.</h3>
-                 <p className="text-gray-500 font-bold max-w-sm mx-auto leading-relaxed px-10 text-sm">No signals detected on the current frequency. Resetting filters might re-establish connection.</p>
-              </div>
-              <Button 
-                onClick={() => setFilters({ search: '', status: 'All', page: 1, limit: 50 })} 
-                className="h-15 px-12 rounded-3xl bg-[#FF8A00] hover:bg-orange-600 text-white font-black gap-3 shadow-2xl shadow-orange-500/20 active:scale-95 transition-all"
-              >
-                 <RefreshCw size={18} strokeWidth={3} /> Re-Synchronize Channel
-              </Button>
-           </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="py-32 text-center space-y-8 bg-gradient-to-br from-white to-gray-50/50 rounded-[4rem] border-2 border-dashed border-gray-200 shadow-inner flex flex-col items-center"
+          >
+            <div className="w-28 h-28 bg-white rounded-full shadow-2xl flex items-center justify-center text-orange-500">
+              <SearchX size={54} strokeWidth={1} />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">Signal Void.</h3>
+              <p className="text-gray-500 font-bold max-w-sm mx-auto leading-relaxed px-10 text-sm">No signals detected on the current frequency. Resetting filters might re-establish connection.</p>
+            </div>
+            <Button
+              onClick={() => setFilters({ search: '', status: 'All', page: 1, limit: 50 })}
+              className="h-15 px-12 rounded-3xl bg-[#FF8A00] hover:bg-orange-600 text-white font-black gap-3 shadow-2xl shadow-orange-500/20 active:scale-95 transition-all"
+            >
+              <RefreshCw size={18} strokeWidth={3} /> Re-Synchronize Channel
+            </Button>
+          </motion.div>
         )}
       </AnimatePresence>
 

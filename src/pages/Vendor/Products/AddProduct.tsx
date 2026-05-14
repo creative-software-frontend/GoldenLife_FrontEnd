@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductForm } from './components/ProductForm';
 import { useProductMutation } from './hooks/useProductMutation';
@@ -119,21 +119,28 @@ export default function AddProduct() {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-[1600px] mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-            Add New Product
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Create a new product listing for your store
-          </p>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+        <div className="flex items-center gap-4">
+          <div className="h-14 w-14 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary shadow-sm">
+            <Plus className="w-7 h-7" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">
+              Add New Product
+            </h1>
+            <p className="text-[11px] font-bold text-slate-400 mt-2 uppercase tracking-widest">
+              Create a new premium listing for your store
+            </p>
+          </div>
         </div>
+        
         <Button
           variant="outline"
           onClick={() => navigate('/vendor/dashboard/products')}
-          className="hidden sm:flex items-center gap-2"
+          className="h-12 px-6 rounded-xl border-slate-200 hover:bg-slate-50 text-slate-600 font-bold transition-all active:scale-95 flex items-center gap-2 shadow-sm"
         >
-          Back to Products
+          <ArrowLeft size={18} />
+          <span>Back to Products</span>
         </Button>
       </div>
 

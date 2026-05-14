@@ -17,6 +17,8 @@ export interface Transaction {
     account?: string;
     date?: string;
     time?: string;
+    charge?: string;
+    attachment?: string | null;
 }
 
 export interface WalletSlice {
@@ -212,10 +214,21 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
             return { success: false, message: data.message || "Transfer failed." };
 
         } catch (error: any) {
-            // If Laravel returns validation errors, they are inside error.response.data
-            const backendMessage = error.response?.data?.errors?.receiver_type?.[0]
-                || error.response?.data?.message
-                || "Server Error";
+            console.error("DEBUG: Send Funds Validation Error:", error.response?.data);
+            
+            // If Laravel returns validation errors, they are inside error.response.data.errors
+            const errors = error.response?.data?.errors;
+            let backendMessage = error.response?.data?.message || "Transfer failed. Please try again.";
+
+            if (errors && typeof errors === 'object') {
+                // Collect the first error message from any field (amount, receiver_type, pin_code, etc.)
+                const firstField = Object.keys(errors)[0];
+                if (firstField && Array.isArray(errors[firstField]) && errors[firstField][0]) {
+                    backendMessage = errors[firstField][0];
+                }
+            } else if (error.response?.data?.message) {
+                backendMessage = error.response.data.message;
+            }
 
             return { success: false, message: backendMessage };
         }

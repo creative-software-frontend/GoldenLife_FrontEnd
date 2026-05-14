@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
     ArrowLeft, Wallet, Smartphone, ShieldCheck,
     Loader2, AlertCircle, History, Plus, Clock, Building2,
-    HelpCircle, X, CheckCircle2, Image as ImageIcon
+    HelpCircle, X, CheckCircle2, Image as ImageIcon, Paperclip
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -289,12 +289,15 @@ export default function WalletAdd() {
                                     <input
                                         type="number"
                                         min="1"
+                                        step="1"
                                         value={amount}
+                                        onKeyDown={(e) => {
+                                            // Block minus sign and 'e' (scientific notation)
+                                            if (e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault();
+                                        }}
                                         onChange={(e) => {
                                             const val = e.target.value;
-                                            // Prevents entering negative numbers or starting with multiple zeros
-                                            if (Number(val) < 0) return;
-                                            setAmount(val);
+                                            if (val === '' || Number(val) >= 0) setAmount(val);
                                         }}
                                         placeholder="0.00"
                                         className="w-full pl-12 pr-6 py-5 text-4xl font-bold bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-secondary outline-none transition-all"
@@ -494,8 +497,8 @@ export default function WalletAdd() {
                 </div>
             ) : (
                 /* History Tab */
-                <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm min-h-[500px] w-full overflow-hidden">
-                    <div className="flex items-center justify-between px-12 py-6 bg-slate-50/50 border-b border-slate-100">
+                <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm w-full overflow-hidden flex flex-col">
+                    <div className="flex items-center justify-between px-8 py-6 bg-slate-50/50 border-b border-slate-100 shrink-0">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 flex items-center gap-3">
                             {t('transaction_history', 'Add money History')}
                             {!isWalletLoading && (
@@ -506,94 +509,141 @@ export default function WalletAdd() {
                         </h3>
                     </div>
 
-                    <div className="hidden md:grid grid-cols-4 gap-4 px-12 py-4 border-b border-slate-100 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                    {/* Column Headers — 6 cols on desktop to include attachment */}
+                    <div className="hidden md:grid md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.2fr] gap-3 px-8 py-4 border-b border-slate-100 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 bg-slate-50/30 sticky top-0 z-10">
                         <div>{t('table_col_details', 'Details')}</div>
                         <div className="text-center">{t('table_col_method', 'Method')}</div>
+                        <div className="text-center">{t('table_col_charge', 'Charge')}</div>
+                        <div className="text-center">{t('table_col_attachment', 'Proof')}</div>
                         <div className="text-center">{t('table_col_status', 'Status')}</div>
                         <div className="text-right">{t('table_col_time', 'Timestamp')}</div>
                     </div>
 
-                    {isWalletLoading ? (
-                        <div className="p-4 md:p-8 space-y-3">
-                            {Array.from({ length: 4 }).map((_, i) => (
-                                <div key={i} className="group p-5 md:px-10 md:py-6 border border-slate-100 rounded-[2rem] grid grid-cols-1 md:grid-cols-4 items-center gap-4 bg-white shadow-sm">
-                                    <div className="flex items-center gap-5">
-                                        <Skeleton className="h-14 w-14 rounded-2xl shrink-0" />
-                                        <div className="flex flex-col gap-2">
-                                            <Skeleton className="h-6 w-24" />
-                                            <Skeleton className="h-3 w-32" />
+                    <div className="flex-1 overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                        {isWalletLoading ? (
+                            <div className="p-4 md:p-6 space-y-3">
+                                {Array.from({ length: 5 }).map((_, i) => (
+                                    <div key={i} className="grid md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.2fr] items-center gap-3 px-6 py-4 border border-slate-100 rounded-2xl bg-white shadow-sm">
+                                        <div className="flex items-center gap-3">
+                                            <Skeleton className="h-10 w-10 rounded-xl shrink-0" />
+                                            <div className="flex flex-col gap-1.5">
+                                                <Skeleton className="h-4 w-20" />
+                                                <Skeleton className="h-3 w-28" />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center"><Skeleton className="h-5 w-14 rounded-lg" /></div>
+                                        <div className="flex justify-center"><Skeleton className="h-5 w-12 rounded-lg" /></div>
+                                        <div className="flex justify-center"><Skeleton className="h-5 w-8 rounded-lg" /></div>
+                                        <div className="flex justify-center"><Skeleton className="h-6 w-18 rounded-full" /></div>
+                                        <div className="flex flex-col items-end gap-1.5">
+                                            <Skeleton className="h-3 w-20" />
+                                            <Skeleton className="h-3 w-14" />
                                         </div>
                                     </div>
-                                    <div className="flex flex-col md:items-center gap-2">
-                                        <Skeleton className="h-5 w-16 rounded-lg" />
-                                        <Skeleton className="h-3 w-28" />
-                                    </div>
-                                    <div className="flex md:justify-center">
-                                        <Skeleton className="h-6 w-20 rounded-full" />
-                                    </div>
-                                    <div className="flex flex-col items-end gap-2">
-                                        <Skeleton className="h-4 w-24" />
-                                        <Skeleton className="h-3 w-16" />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : transactions.filter(t => t.type === 'add').length === 0 ? (
-                        <div className="text-center py-32">
-                            <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <History className="w-12 h-12 text-slate-200" />
+                                ))}
                             </div>
-                            <p className="text-slate-400 font-bold uppercase text-sm">{t('no_records_found', 'No transaction records found')}</p>
-                        </div>
-                    ) : (
-                        <div className="p-4 md:p-8 space-y-3">
-                            {transactions.filter(t => t.type === 'add').map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="group p-5 md:px-10 md:py-6 border border-slate-100 rounded-[2rem] grid grid-cols-1 md:grid-cols-4 items-center gap-4 hover:border-secondary/30 hover:bg-slate-50/30 transition-all duration-300"
-                                >
-                                    <div className="flex items-center gap-5">
-                                        <div className={cn(
-                                            "h-14 w-14 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-colors",
-                                            item.status === 'approved' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'
-                                        )}>
-                                            <Plus className="w-6 h-6" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <p className="text-lg md:text-xl font-black text-slate-900 leading-none whitespace-nowrap tracking-tighter" title={`৳${item.amount}`}>৳{item.amount}</p>
-                                            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter truncate" title={item.Transaction_ID || 'PENDING'}>ID: {item.Transaction_ID || 'PENDING'}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-col md:items-center">
-                                        <span className="text-[10px] font-black text-slate-700 uppercase px-3 py-1 bg-slate-100 rounded-lg w-fit">
-                                            {item.payment_method}
-                                        </span>
-                                        <p className="text-[11px] font-medium text-slate-500 mt-1">{item.number}</p>
-                                    </div>
-
-                                    <div className="flex md:justify-center">
-                                        <span className={cn(
-                                            "px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm transition-all",
-                                            item.status === 'approved' ? "bg-green-500 text-white" : "bg-orange-400 text-white"
-                                        )}>
-                                            {item.status}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex flex-col items-end">
-                                        <p className="text-sm font-bold text-slate-800">
-                                            {new Date(item.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
-                                        </p>
-                                        <p className="text-[10px] font-medium text-slate-400 mt-1 flex items-center gap-1">
-                                            <Clock className="w-3 h-3" />
-                                            {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </p>
-                                    </div>
+                        ) : transactions.filter(t => t.type === 'add').length === 0 ? (
+                            <div className="text-center py-24">
+                                <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                                    <History className="w-10 h-10 text-slate-200" />
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                                <p className="text-slate-400 font-bold uppercase text-sm">{t('no_records_found', 'No transaction records found')}</p>
+                            </div>
+                        ) : (
+                            <div className="p-4 md:p-6 space-y-3">
+                                {transactions.filter(t => t.type === 'add').map((item) => {
+                                    const chargeVal = parseFloat(item.charge || '0');
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className="group grid grid-cols-2 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.2fr] items-center gap-x-3 gap-y-4 px-6 py-4 border border-slate-100 rounded-2xl bg-white hover:border-secondary/30 hover:bg-slate-50/30 transition-all duration-200 shadow-sm"
+                                        >
+                                            {/* 1. Details */}
+                                            <div className="order-1 flex items-center gap-3">
+                                                <div className={cn(
+                                                    "h-10 w-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm",
+                                                    item.status === 'approved' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                                                )}>
+                                                    <Plus className="w-5 h-5" />
+                                                </div>
+                                                <div className="min-w-0">
+                                                    <p className="text-base font-bold text-slate-900 leading-none tracking-tight">৳{parseFloat(item.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                                                    <p className="text-[11px] font-bold text-slate-400 mt-1.5 truncate uppercase tracking-wider" title={item.Transaction_ID || 'PENDING'}>
+                                                        {item.Transaction_ID || 'PENDING'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* 2. Method */}
+                                            <div className="order-3 md:order-2 flex flex-col items-start md:items-center">
+                                                <span className="text-[10px] font-black text-slate-600 uppercase px-2 py-1 bg-slate-100 rounded-md w-fit tracking-wider">
+                                                    {item.payment_method}
+                                                </span>
+                                                <p className="text-[10px] font-bold text-slate-400 mt-1">{item.number}</p>
+                                            </div>
+
+                                            {/* 3. Charge */}
+                                            <div className="order-4 md:order-3 flex items-center justify-start md:justify-center">
+                                                {chargeVal > 0 ? (
+                                                    <div className="flex flex-col items-center">
+                                                        <span className="text-xs font-bold text-rose-500">-৳{chargeVal.toFixed(2)}</span>
+                                                        <span className="text-[8px] font-black uppercase text-rose-300 tracking-tighter">Charge</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="text-xs font-bold text-slate-300">—</span>
+                                                )}
+                                            </div>
+
+                                            {/* 4. Attachment */}
+                                            <div className="order-6 md:order-4 flex items-center justify-center">
+                                                {item.attachment ? (
+                                                    <a 
+                                                        href={item.attachment} 
+                                                        target="_blank" 
+                                                        rel="noreferrer" 
+                                                        className="flex flex-col items-center gap-1 group/btn"
+                                                    >
+                                                        <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover/btn:bg-secondary group-hover/btn:text-white transition-all">
+                                                            <ImageIcon className="w-4 h-4" />
+                                                        </div>
+                                                        <span className="text-[8px] font-black uppercase text-secondary tracking-tighter">View Proof</span>
+                                                    </a>
+                                                ) : (
+                                                    <div className="flex flex-col items-center opacity-20">
+                                                        <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                                                            <ImageIcon className="w-4 h-4" />
+                                                        </div>
+                                                        <span className="text-[8px] font-black uppercase text-slate-400 tracking-tighter">No File</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* 5. Status */}
+                                            <div className="order-2 md:order-5 flex items-center justify-end md:justify-center">
+                                                <span className={cn(
+                                                    "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm",
+                                                    item.status === 'approved' ? "bg-emerald-500 text-white" : "bg-amber-400 text-white"
+                                                )}>
+                                                    {item.status}
+                                                </span>
+                                            </div>
+
+                                            {/* 6. Timestamp */}
+                                            <div className="order-5 md:order-6 flex flex-col items-end">
+                                                <p className="text-xs font-bold text-slate-700">
+                                                    {new Date(item.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                </p>
+                                                <p className="text-[10px] font-bold text-slate-400 mt-1 flex items-center gap-1">
+                                                    <Clock className="w-3 h-3" />
+                                                    {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 

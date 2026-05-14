@@ -7,14 +7,14 @@ interface InstructorStatsCardProps {
   rating?: number;
 }
 
-export function InstructorStatsCard({ 
-  balance, 
-  totalCourses = 0, 
-  totalStudents = 0, 
-  rating = 0 
+export function InstructorStatsCard({
+  balance,
+  totalCourses = 0,
+  totalStudents = 0,
+  rating = 0
 }: InstructorStatsCardProps) {
   const numericBalance = typeof balance === 'number' ? balance : parseFloat(balance) || 0;
-  
+
   const stats = [
     {
       icon: Wallet,
@@ -52,7 +52,7 @@ export function InstructorStatsCard({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      {stats.map((stat, index) => (
+      {/* {stats.map((stat, index) => (
         <div
           key={index}
           className="bg-white rounded-3xl shadow-sm hover:shadow-xl p-6 border border-gray-100 transition-all duration-300 hover:-translate-y-2 group"
@@ -73,7 +73,7 @@ export function InstructorStatsCard({
             {stat.label}
           </p>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 }

@@ -255,10 +255,10 @@ export function ProfileHeader({
                   <span>{displayEmail}</span>
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                {/* <div className="flex items-center gap-1.5">
                   <MapPin size={14} className="text-primary-light flex-shrink-0" />
                   <span>Dhaka, Bangladesh</span>
-                </div>
+                </div> */}
               </div>
             </div>
 

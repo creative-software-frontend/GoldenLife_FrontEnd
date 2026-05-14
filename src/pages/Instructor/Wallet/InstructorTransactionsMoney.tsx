@@ -107,7 +107,14 @@ export default function InstructorTransactionsMoney() {
                                         </div>
                                         <div>
                                             <p className="text-2xl font-black text-slate-900 leading-none">৳{tx.amount}</p>
-                                            <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tighter shrink-0">{tx.type} • ID: {tx.Transaction_ID || tx.invoice_number || 'N/A'}</p>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter shrink-0">{tx.type} • ID: {tx.Transaction_ID || tx.invoice_number || 'N/A'}</p>
+                                                {tx.charge && parseFloat(tx.charge) > 0 && (
+                                                    <span className="text-[9px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-md uppercase">
+                                                        Charge: ৳{tx.charge}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 

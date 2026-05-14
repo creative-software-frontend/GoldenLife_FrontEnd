@@ -111,7 +111,7 @@ const InstructorAddCourse: React.FC = () => {
     fd.append('course_title_english', form.titleEn);
     fd.append('course_title_bangla', form.titleBn);
     fd.append('course_type', form.courseType);
-    fd.append('category', form.category);
+    fd.append('category', (form.category && typeof form.category === 'object') ? (form.category as any).id : String(form.category || ''));
     fd.append('course_code', form.courseCode);
     fd.append('course_duration', form.duration);
     fd.append('seller_fee', form.sellerFee);
@@ -244,11 +244,11 @@ const InstructorAddCourse: React.FC = () => {
                 </div>
               </Field>
 
-              {form.courseType && (
-                <Field label={form.courseType === 'Live Class' ? "Live Class URL" : form.courseType === 'Ebook' ? "Ebook URL" : "Course video URL"}>
+              {(form.courseType === 'Live Class' || form.courseType === 'Ebook') && (
+                <Field label={form.courseType === 'Live Class' ? "Live Class URL" : "Ebook URL"}>
                   <Input 
                     className={inp} 
-                    placeholder={form.courseType === 'Live Class' ? "Enter Live Class URL" : form.courseType === 'Ebook' ? "Enter Ebook URL" : "Enter Course video URL"} 
+                    placeholder={form.courseType === 'Live Class' ? "Enter Live Class URL" : "Enter Ebook URL"} 
                     value={form.downloadUrl} 
                     onChange={set('downloadUrl')} 
                   />

@@ -22,7 +22,6 @@
     "allCategories": "All Categories",
     "allProducts": "All Products"
   },
-
   "label": {
     "Shopping": "Shopping",
     "Food": "Food",
@@ -174,7 +173,6 @@
     "JSC": "JSC",
     "PSC": "PSC"
   },
-
   "categories2": {
     "title": "Shopping",
     "title1": "Courses",
@@ -228,7 +226,6 @@
     "title6": "Notify Me",
     "title7": "Subscribe to receive updates and announcements."
   },
-
   "checkout": {
     "Name": "Name",
     "Address": "Address",
@@ -265,12 +262,10 @@
     "CloseCodeInput": "Close ",
     "GoButton": " Code"
   },
-
   "DecreaseQuantity": "Decrease quantity for {{itemName}}",
   "IncreaseQuantity": "Increase quantity for {{itemName}}",
   "Quantity": "{{quantity}}",
   "ItemTotal": "৳ {{price}} × {{quantity}} = ৳ {{total}}",
-
   "ITEMS": "ITEMS",
   "orderDetails": {
     "title": "Order Details",
@@ -305,7 +300,6 @@
     "paidBy": "Paid by",
     "paymentMethod": "cash"
   },
-
   "addressManager": {
     "form": {
       "name": "Name",
@@ -330,7 +324,6 @@
       "banani": "Banani"
     }
   },
-
   "checkoutModal": {
     "address": {
       "change": "Change",
@@ -386,30 +379,21 @@
   },
   "features": {
     "text1": "45 Example Video Lectures",
-
     "text2": "24/7 Support via Chatbot",
-
     "text3": "Live Q&A Classes",
-
     "text4": "Facebook Support Group"
   },
-
   "faqItems": {
     "question1": "Who is the 'Complete English Grammar Course' for?",
     "answer1": "Course content details here...",
-
     "question2": "What is the 'Complete English Grammar Course' details section (Earning Area)?",
     "answer2": "Course section details here...",
-
     "question3": "How long will the 'Complete English Grammar Course' be, and what can you do?",
     "answer3": "Course duration and activities details here...",
-
     "question4": "Why should you take the 'Complete English Grammar Course'?",
     "answer4": "Course benefits details here...",
-
     "question5": "What is the utility of the 'Complete English Grammar Course'?",
     "answer5": "Course utility details here...",
-
     "question6": "Final Words:",
     "answer6": "Concluding remarks here..."
   },
@@ -424,7 +408,6 @@
   },
   "Popular Courses": "Popular Courses",
   "All Courses": "All Courses",
-
   "buttons2": {
     "addToCart": "Add to Cart",
     "wishlist": "Add to Wishlist",
@@ -473,7 +456,6 @@
     "title": "Course 8.1",
     "description": "Taught by Professor Salma Begum. Total duration: 6 weeks. Basic level curriculum. Title: Physics."
   },
-
   "clickInfo": "Click on a course to know more details",
   "webDev": "Web Development",
   "dataSci": "Data Science",
@@ -509,7 +491,6 @@
     "ssc": "SSC Courses",
     "popular": "Popular Courses"
   },
-
   "lesson": {
     "type": {
       "hsc": "HSC Advanced Mathematics Part 1",
@@ -652,7 +633,6 @@
   "quick_links": "Quick Links",
   "create_bulk_delivery": "Create Bulk Delivery",
   "create_single_delivery": "Create Single Delivery",
-
   "logo_alt": "Courier Delivery Limited",
   "dashboard": "Dashboard",
   "deliveries": "Deliveries",
@@ -695,7 +675,6 @@
     "bn": "BN"
   },
   "copyright": "© {{year}} Golden Life Shopping.",
-
   "walletAdd": {
     "brands": {
       "bkash": "bKash",

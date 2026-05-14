@@ -63,22 +63,22 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
 
     // Add cache buster for avatar to ensure it updates visually after being changed
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
-    
+
     const getAvatarUrl = () => {
         if (imageError) return null;
-        
+
         const image = instructorInfo?.image || instructorInfo?.profile_image || userInfo?.image || userInfo?.profile_image;
         if (!image || image === 'null' || image === 'undefined') return null;
-        
+
         if (image.startsWith('http')) {
             return `${image}${image.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
         }
-        
+
         // Handle case where image already contains the path
         if (image.startsWith('uploads/')) {
             return `${baseURL}/${image}${image.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
         }
-        
+
         // Try instructor path first
         return `${baseURL}/uploads/instructor/image/${image}${image.includes('?') ? '&' : '?'}t=${profileLastUpdated}`;
     };
@@ -173,27 +173,9 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     );
 
     return (
-        <header className="w-full bg-background border-b border-border sticky top-0 z-30 transition-colors duration-300 flex flex-col relative">
+        <header className="w-full bg-background border-b border-border sticky top-0 z-[100] transition-colors duration-300 flex flex-col relative">
 
-            {isMobileSearchOpen && (
-                <div className={`absolute top-0 left-0 right-0 h-16 sm:h-20 bg-background z-50 flex items-center px-4 ${isOpen ? 'xl:hidden' : 'lg:hidden'} animate-in fade-in slide-in-from-top-2 duration-200 border-b border-border shadow-sm`}>
-                    <button
-                        onClick={() => setIsMobileSearchOpen(false)}
-                        className="p-2 mr-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-colors flex-shrink-0"
-                    >
-                        <ArrowLeft size={22} />
-                    </button>
-                    <div className="flex-1 flex items-center bg-muted/50 border border-border rounded-xl px-4 py-2.5 focus-within:ring-1 focus-within:ring-secondary focus-within:border-secondary transition-all">
-                        <Search size={20} className="text-muted-foreground flex-shrink-0" />
-                        <input
-                            type="text"
-                            autoFocus
-                            placeholder="Search courses, students..."
-                            className="bg-transparent border-none focus:ring-0 text-sm sm:text-base text-foreground ml-3 w-full placeholder:text-muted-foreground outline-none min-w-0"
-                        />
-                    </div>
-                </div>
-            )}
+
 
             <div className="flex items-center justify-between px-4 sm:px-6 h-16 sm:h-20 w-full min-w-0">
 
@@ -212,29 +194,17 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                         {renderWalletDropdown(false, walletRefDesktop)}
                     </div>
 
-                    <div className={`ml-4 xl:ml-8 hidden ${isOpen ? 'xl:flex' : 'lg:flex'} flex-1 items-center bg-muted/50 border border-border rounded-xl px-3 lg:px-4 py-2 lg:py-2.5 w-full max-w-2xl min-w-[200px] focus-within:ring-1 focus-within:ring-secondary transition-all shadow-sm`}>
-                        <Search size={20} className="text-muted-foreground flex-shrink-0" />
-                        <input
-                            type="text"
-                            placeholder="Search courses, students..."
-                            className="bg-transparent border-none focus:ring-0 text-sm lg:text-base text-foreground ml-2 lg:ml-3 w-full min-w-0 placeholder:text-muted-foreground outline-none text-ellipsis"
-                        />
-                    </div>
+
                 </div>
 
                 <div className="flex items-center gap-2 sm:gap-4 xl:gap-6 ml-auto flex-shrink-0">
 
-                    <button
-                        onClick={() => setIsMobileSearchOpen(true)}
-                        className={`${isOpen ? 'xl:hidden' : 'lg:hidden'} p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-colors flex-shrink-0`}
-                    >
-                        <Search size={20} className="sm:w-[22px] sm:h-[22px]" />
-                    </button>
 
-                    <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group">
+
+                    {/* <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group">
                         <MapPin size={20} className="text-muted-foreground group-hover:text-foreground transition-colors" />
                         <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">Dhaka</span>
-                    </div>
+                    </div> */}
 
                     <InstructorNotificationBell />
 
@@ -246,10 +216,10 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
                             <div className="relative flex-shrink-0">
                                 {avatarUrl ? (
                                     <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-indigo-200">
-                                        <img 
-                                            src={avatarUrl} 
-                                            alt={displayName} 
-                                            className="w-full h-full object-cover" 
+                                        <img
+                                            src={avatarUrl}
+                                            alt={displayName}
+                                            className="w-full h-full object-cover"
                                             onError={() => setImageError(true)}
                                         />
                                     </div>

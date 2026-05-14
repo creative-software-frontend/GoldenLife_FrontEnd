@@ -75,14 +75,28 @@ export const useInstructorNotifications = () => {
             });
             return data;
         },
-        onSuccess: (data) => {
-            if (data?.status) {
-                queryClient.invalidateQueries({ queryKey: ['instructor-notifications'] });
-                queryClient.invalidateQueries({ queryKey: ['instructor-unread-count'] });
-            }
+        onMutate: async (id) => {
+            await queryClient.cancelQueries({ queryKey: ['instructor-notifications'] });
+            await queryClient.cancelQueries({ queryKey: ['instructor-unread-count'] });
+
+            const previousNotifications = queryClient.getQueryData(['instructor-notifications']);
+            const previousCount = queryClient.getQueryData(['instructor-unread-count']);
+
+            queryClient.setQueryData(['instructor-notifications'], (old: any) => 
+                old?.map((n: any) => n.id === id ? { ...n, read_at: new Date().toISOString() } : n)
+            );
+            queryClient.setQueryData(['instructor-unread-count'], (old: any) => Math.max(0, (old || 0) - 1));
+
+            return { previousNotifications, previousCount };
         },
-        onError: (error: any) => {
-            console.error('Mark as read failed:', error);
+        onError: (err, newTodo, context: any) => {
+            queryClient.setQueryData(['instructor-notifications'], context.previousNotifications);
+            queryClient.setQueryData(['instructor-unread-count'], context.previousCount);
+            console.error('Mark as read failed:', err);
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['instructor-notifications'] });
+            queryClient.invalidateQueries({ queryKey: ['instructor-unread-count'] });
         }
     });
 
@@ -95,17 +109,36 @@ export const useInstructorNotifications = () => {
             });
             return data;
         },
+        onMutate: async () => {
+            await queryClient.cancelQueries({ queryKey: ['instructor-notifications'] });
+            await queryClient.cancelQueries({ queryKey: ['instructor-unread-count'] });
+
+            const previousNotifications = queryClient.getQueryData(['instructor-notifications']);
+            const previousCount = queryClient.getQueryData(['instructor-unread-count']);
+
+            const now = new Date().toISOString();
+            queryClient.setQueryData(['instructor-notifications'], (old: any) => 
+                old?.map((n: any) => ({ ...n, read_at: n.read_at || now }))
+            );
+            queryClient.setQueryData(['instructor-unread-count'], 0);
+
+            return { previousNotifications, previousCount };
+        },
+        onError: (err, variables, context: any) => {
+            queryClient.setQueryData(['instructor-notifications'], context.previousNotifications);
+            queryClient.setQueryData(['instructor-unread-count'], context.previousCount);
+            toast.error("Failed to mark all as read.");
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ['instructor-notifications'] });
+            queryClient.invalidateQueries({ queryKey: ['instructor-unread-count'] });
+        },
         onSuccess: (data) => {
             if (data?.status) {
                 toast.success(data.message || "All notifications marked as read");
-                queryClient.invalidateQueries({ queryKey: ['instructor-notifications'] });
-                queryClient.invalidateQueries({ queryKey: ['instructor-unread-count'] });
             } else {
                 toast.error(data?.message || "Failed to mark all as read");
             }
-        },
-        onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Internal server error.");
         }
     });
 

@@ -13,15 +13,20 @@ import {
   Play,
   Layers,
   Save,
-  Clock
+  Clock,
+  AlertCircle
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  useInstructorCourseDetailsQuery, 
-  useAddModuleMutation, 
-  useAddLessonMutation 
+import {
+  useInstructorCourseDetailsQuery,
+  useAddModuleMutation,
+  useAddLessonMutation,
+  useUpdateModuleMutation,
+  useDeleteModuleMutation,
+  useUpdateLessonMutation,
+  useDeleteLessonMutation
 } from '@/hooks/useInstructorAuth';
 import { toast } from 'react-toastify';
 
@@ -70,11 +75,11 @@ const InstructorCourseCurriculum: React.FC = () => {
               <ArrowLeft size={20} />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 leading-none mb-1">Curriculum Management</h1>
+              <h1 className="text-xl font-bold text-gray-900 leading-none mb-1">Module and Lesson</h1>
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">{course?.course_title_english}</p>
             </div>
           </div>
-          <Button 
+          <Button
             onClick={() => setIsAddingModule(true)}
             className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs px-6 h-11 gap-2 shadow-lg shadow-emerald-500/20"
           >
@@ -101,15 +106,15 @@ const InstructorCourseCurriculum: React.FC = () => {
                   placeholder="Enter module title..."
                   className="bg-white border-none h-14 rounded-2xl font-bold shadow-inner"
                 />
-                <Button 
+                <Button
                   onClick={handleAddModule}
                   disabled={addModuleMutation.isPending}
                   className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl h-14 px-8 font-black shrink-0"
                 >
                   {addModuleMutation.isPending ? 'Saving...' : 'SAVE MODULE'}
                 </Button>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   onClick={() => setIsAddingModule(false)}
                   className="rounded-2xl h-14 px-6 font-black text-emerald-600 hover:bg-emerald-100"
                 >
@@ -131,7 +136,7 @@ const InstructorCourseCurriculum: React.FC = () => {
               <Layers className="mx-auto text-gray-200 mb-6" size={64} strokeWidth={1} />
               <h3 className="text-xl font-black text-gray-900 mb-2">No Content Yet</h3>
               <p className="text-gray-400 font-medium mb-8">Start building your course by adding your first module.</p>
-              <Button 
+              <Button
                 onClick={() => setIsAddingModule(true)}
                 className="bg-black text-white rounded-2xl px-10 h-14 font-black transition-all hover:scale-105"
               >
@@ -147,10 +152,21 @@ const InstructorCourseCurriculum: React.FC = () => {
 
 const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index }) => {
   const [isOpen, setIsOpen] = useState(index === 0);
+  
+  const [isEditingModule, setIsEditingModule] = useState(false);
+  const [editModuleTitle, setEditModuleTitle] = useState(module.module_title);
+
   const [isAddingLesson, setIsAddingLesson] = useState(false);
+  const [editingLessonId, setEditingLessonId] = useState<number | null>(null);
   const [lessonForm, setLessonForm] = useState({ lesson_title: '', serial_number: 1, videos: [''] });
+  
   const { id: courseId } = useParams<{ id: string }>();
+  
   const addLessonMutation = useAddLessonMutation();
+  const updateModuleMutation = useUpdateModuleMutation();
+  const deleteModuleMutation = useDeleteModuleMutation();
+  const updateLessonMutation = useUpdateLessonMutation();
+  const deleteLessonMutation = useDeleteLessonMutation();
 
   const addVideoField = () => setLessonForm(f => ({ ...f, videos: [...f.videos, ''] }));
   const removeVideoField = (idx: number) => setLessonForm(f => ({ ...f, videos: f.videos.filter((_, i) => i !== idx) }));
@@ -161,43 +177,167 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
     if (!lessonForm.lesson_title.trim() || !courseId) return;
     const validVideos = lessonForm.videos.filter(v => v.trim() !== '');
     try {
-      await addLessonMutation.mutateAsync({
+      if (editingLessonId) {
+        await updateLessonMutation.mutateAsync({
+          lessonId: editingLessonId,
+          courseId,
+          data: {
+            lesson_title: lessonForm.lesson_title,
+            serial_number: lessonForm.serial_number,
+            videos: validVideos,
+          }
+        });
+        toast.success('Lesson updated successfully');
+      } else {
+        await addLessonMutation.mutateAsync({
+          moduleId: module.id,
+          courseId,
+          data: {
+            lesson_title: lessonForm.lesson_title,
+            serial_number: (module.lessons?.length || 0) + 1,
+            videos: validVideos,
+          }
+        });
+        toast.success('Lesson added successfully');
+      }
+      
+      setLessonForm({ lesson_title: '', serial_number: 1, videos: [''] });
+      setIsAddingLesson(false);
+      setEditingLessonId(null);
+    } catch (err) {
+      toast.error(editingLessonId ? 'Failed to update lesson' : 'Failed to add lesson');
+    }
+  };
+
+  const handleEditLessonClick = (lesson: any) => {
+    setIsAddingLesson(true);
+    setIsOpen(true);
+    setEditingLessonId(lesson.id);
+    setLessonForm({
+      lesson_title: lesson.lesson_title,
+      serial_number: lesson.serial_number,
+      videos: lesson.videos?.length ? lesson.videos.map((v: any) => v.video_url || v.url || v) : ['']
+    });
+  };
+
+  const handleDeleteLesson = (lessonId: number) => {
+    if (!courseId) return;
+    const toastId = toast(
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2 text-gray-900">
+          <AlertCircle size={20} className="text-red-500" />
+          <p className="font-bold">Delete this lesson?</p>
+        </div>
+        <div className="flex justify-end gap-2 mt-2">
+          <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg text-xs font-bold" onClick={() => toast.dismiss(toastId)}>Cancel</Button>
+          <Button 
+            size="sm" 
+            className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold" 
+            onClick={async () => { 
+              toast.dismiss(toastId); 
+              try {
+                await deleteLessonMutation.mutateAsync({ lessonId, courseId });
+                toast.success('Lesson deleted successfully');
+              } catch (err) {
+                toast.error('Failed to delete lesson');
+              }
+            }}
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>,
+      { autoClose: false, closeOnClick: false, draggable: false }
+    );
+  };
+
+  const handleUpdateModule = async () => {
+    if (!editModuleTitle.trim() || !courseId) return;
+    try {
+      await updateModuleMutation.mutateAsync({
         moduleId: module.id,
         courseId,
         data: {
-          lesson_title: lessonForm.lesson_title,
-          serial_number: (module.lessons?.length || 0) + 1,
-          videos: validVideos,
+          module_title: editModuleTitle,
+          serial_number: module.serial_number
         }
       });
-      setLessonForm({ lesson_title: '', serial_number: 1, videos: [''] });
-      setIsAddingLesson(false);
-      toast.success('Lesson added successfully');
+      setIsEditingModule(false);
+      toast.success('Module updated successfully');
     } catch (err) {
-      toast.error('Failed to add lesson');
+      toast.error('Failed to update module');
     }
+  };
+
+  const handleDeleteModule = () => {
+    if (!courseId) return;
+    const toastId = toast(
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2 text-gray-900">
+          <AlertCircle size={20} className="text-red-500" />
+          <p className="font-bold">Delete this module?</p>
+        </div>
+        <p className="text-xs text-gray-500 font-medium">All lessons within will be lost.</p>
+        <div className="flex justify-end gap-2 mt-2">
+          <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg text-xs font-bold" onClick={() => toast.dismiss(toastId)}>Cancel</Button>
+          <Button 
+            size="sm" 
+            className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold" 
+            onClick={async () => { 
+              toast.dismiss(toastId); 
+              try {
+                await deleteModuleMutation.mutateAsync({ moduleId: module.id, courseId });
+                toast.success('Module deleted successfully');
+              } catch (err) {
+                toast.error('Failed to delete module');
+              }
+            }}
+          >
+            Confirm
+          </Button>
+        </div>
+      </div>,
+      { autoClose: false, closeOnClick: false, draggable: false }
+    );
   };
 
   return (
     <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
       <div className={`p-8 flex items-center justify-between transition-colors ${isOpen ? 'bg-gray-50/50' : ''}`}>
-        <div className="flex items-center gap-6">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-xl">
+        <div className="flex items-center gap-6 flex-1 pr-6">
+          <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-xl shrink-0">
             {index + 1}
           </div>
-          <div>
-            <h3 className="text-xl font-black text-gray-900 tracking-tight">{module.module_title}</h3>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{module.lessons?.length || 0} Lessons • Order: {module.serial_number || index + 1}</p>
-          </div>
+          {isEditingModule ? (
+            <div className="flex-1 flex gap-3">
+              <Input
+                value={editModuleTitle}
+                onChange={(e) => setEditModuleTitle(e.target.value)}
+                className="bg-white border border-gray-200 h-12 rounded-xl font-bold shadow-inner w-full"
+                autoFocus
+              />
+              <Button onClick={handleUpdateModule} disabled={updateModuleMutation.isPending} className="h-12 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700">Save</Button>
+              <Button onClick={() => setIsEditingModule(false)} variant="ghost" className="h-12 rounded-xl text-gray-500">Cancel</Button>
+            </div>
+          ) : (
+            <div>
+              <h3 className="text-xl font-black text-gray-900 tracking-tight">{module.module_title}</h3>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{module.lessons?.length || 0} Lessons • Order: {module.serial_number || index + 1}</p>
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="rounded-xl text-gray-400 hover:text-emerald-500 hover:bg-emerald-50">
-            <Edit2 size={18} />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50">
-            <Trash2 size={18} />
-          </Button>
-          <div className="w-px h-6 bg-gray-100 mx-2" />
+        <div className="flex items-center gap-3 shrink-0">
+          {!isEditingModule && (
+            <>
+              <Button onClick={() => setIsEditingModule(true)} variant="ghost" size="icon" className="rounded-xl text-gray-400 hover:text-emerald-500 hover:bg-emerald-50">
+                <Edit2 size={18} />
+              </Button>
+              <Button onClick={handleDeleteModule} disabled={deleteModuleMutation.isPending} variant="ghost" size="icon" className="rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50">
+                <Trash2 size={18} />
+              </Button>
+              <div className="w-px h-6 bg-gray-100 mx-2" />
+            </>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -219,7 +359,7 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
           >
             <div className="p-8 pt-0 space-y-6">
               <div className="h-px bg-gray-100 -mx-8 mb-8" />
-              
+
               <div className="space-y-4">
                 {module.lessons?.map((lesson: any, lIdx: number) => (
                   <div key={lIdx} className="space-y-4">
@@ -234,8 +374,8 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-emerald-500">Edit</Button>
-                        <Button variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-red-500">Delete</Button>
+                        <Button onClick={() => handleEditLessonClick(lesson)} variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-emerald-500">Edit</Button>
+                        <Button onClick={() => handleDeleteLesson(lesson.id)} disabled={deleteLessonMutation.isPending} variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-red-500">Delete</Button>
                       </div>
                     </div>
 
@@ -270,8 +410,8 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
                       className="p-8 bg-gray-50 rounded-3xl border border-gray-100 space-y-6 overflow-hidden"
                     >
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-black text-gray-700 uppercase tracking-widest">New Lesson</h4>
-                        <button onClick={() => setIsAddingLesson(false)} className="text-gray-400 hover:text-gray-600 font-black text-xs">CANCEL</button>
+                        <h4 className="text-sm font-black text-gray-700 uppercase tracking-widest">{editingLessonId ? 'Edit Lesson' : 'New Lesson'}</h4>
+                        <button onClick={() => { setIsAddingLesson(false); setEditingLessonId(null); }} className="text-gray-400 hover:text-gray-600 font-black text-xs">CANCEL</button>
                       </div>
 
                       {/* Lesson Title */}

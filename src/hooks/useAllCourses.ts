@@ -56,8 +56,8 @@ export const useAllCoursesQuery = (filters: CourseFilters = {}) => {
 
             const response = await axios.get<AllCoursesResponse>(`${baseURL}/api/course/list`, {
                 params
-            });
-            
+            })
+
             if (response.data.status && response.data.data) {
                 return response.data.data;
             }

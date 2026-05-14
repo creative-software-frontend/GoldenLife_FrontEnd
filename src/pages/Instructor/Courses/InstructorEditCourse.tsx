@@ -93,7 +93,7 @@ const InstructorEditCourse: React.FC = () => {
       courseType: course.course_type || '',
       videoUrl: course.video_url || course.download_url || '',
       courseCode: course.course_code || '',
-      category: course.category || '',
+      category: (course.category && typeof course.category === 'object') ? String((course.category as any).id) : String(course.category || ''),
       duration: course.course_duration || '',
       sellerFee: String(course.seller_fee || ''),
       regularFee: String(course.regular_fee || ''),
@@ -118,7 +118,7 @@ const InstructorEditCourse: React.FC = () => {
     fd.append('course_title_english', form.titleEn);
     fd.append('course_title_bangla', form.titleBn);
     fd.append('course_type', form.courseType);
-    fd.append('category', form.category);
+    fd.append('category', (form.category && typeof form.category === 'object') ? (form.category as any).id : String(form.category || ''));
     fd.append('course_code', form.courseCode);
     fd.append('course_duration', form.duration);
     fd.append('seller_fee', form.sellerFee);
@@ -140,13 +140,11 @@ const InstructorEditCourse: React.FC = () => {
   // ── Helpers for dynamic URL field ──
   const getUrlLabel = () => {
     if (form.courseType === 'Live Class') return "Live Class URL";
-    if (form.courseType === 'Ebook') return "Ebook URL";
-    return "Course video URL";
+    return "Ebook URL";
   };
   const getUrlPlaceholder = () => {
     if (form.courseType === 'Live Class') return "Enter Live Class URL";
-    if (form.courseType === 'Ebook') return "Enter Ebook URL";
-    return "Enter Course video URL";
+    return "Enter Ebook URL";
   };
 
   // ── Loading / Error states ──────────────────────────────────────────────────
@@ -217,7 +215,7 @@ const InstructorEditCourse: React.FC = () => {
                 </div>
               </Field>
 
-              {form.courseType && (
+              {(form.courseType === 'Live Class' || form.courseType === 'Ebook') && (
                 <Field label={getUrlLabel()} req>
                   <Input
                     className={inp}

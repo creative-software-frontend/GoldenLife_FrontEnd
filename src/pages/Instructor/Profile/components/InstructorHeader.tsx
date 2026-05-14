@@ -102,12 +102,12 @@ export function InstructorHeader({
   const getFinalImageUrl = () => {
     if (imageError || !imageUrl || imageUrl === 'null' || imageUrl === 'undefined') return '';
     if (imageUrl.startsWith('http')) return `${imageUrl}${imageUrl.includes('?') ? '&' : '?'}t=${refreshKey}`;
-    
+
     // Handle case where image already contains the path
     if (imageUrl.startsWith('uploads/')) {
       return `${baseURL}/${imageUrl}${imageUrl.includes('?') ? '&' : '?'}t=${refreshKey}`;
     }
-    
+
     // Standard path for instructor images
     return `${baseURL}/uploads/instructor/image/${imageUrl}${imageUrl.includes('?') ? '&' : '?'}t=${refreshKey}`;
   };
@@ -222,10 +222,10 @@ export function InstructorHeader({
                 <span>ID: {instructorId}</span>
               </div>
             )}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <MapPin size={16} className="text-indigo-500" />
               <span>Dhaka, Bangladesh</span>
-            </div>
+            </div> */}
           </div>
         </div>
 

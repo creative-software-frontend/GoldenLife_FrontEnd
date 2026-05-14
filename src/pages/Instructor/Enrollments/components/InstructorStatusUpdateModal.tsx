@@ -32,7 +32,6 @@ const statusOptions: { value: OrderStatus; label: string; icon: any; color: stri
   { value: 'Order Placed', label: 'Order Placed', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
   { value: 'Processing', label: 'Processing', icon: RotateCcw, color: 'text-blue-600', bg: 'bg-blue-50' },
   { value: 'Packaging', label: 'Packaging', icon: PackageCheck, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-
 ];
 
 export const InstructorStatusUpdateModal: React.FC<Props> = ({

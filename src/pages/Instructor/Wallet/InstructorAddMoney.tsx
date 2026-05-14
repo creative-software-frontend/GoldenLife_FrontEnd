@@ -252,7 +252,14 @@ export default function InstructorAddMoney() {
                                         </div>
                                         <div>
                                             <p className="text-xl font-black text-slate-900">৳{item.amount}</p>
-                                            <p className="text-xs font-bold text-slate-400 uppercase">{item.payment_method} • {item.number}</p>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <p className="text-xs font-bold text-slate-400 uppercase">{item.payment_method} • {item.number}</p>
+                                                {item.charge && parseFloat(item.charge) > 0 && (
+                                                    <span className="text-[9px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-md uppercase">
+                                                        Charge: ৳{item.charge}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="text-right">

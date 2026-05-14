@@ -431,15 +431,16 @@ export default function WalletWithdraw() {
                                 <input
                                     type="number"
                                     value={amount}
+                                    onKeyDown={(e) => {
+                                        if (e.key === '-' || e.key === 'e' || e.key === 'E') e.preventDefault();
+                                    }}
                                     onChange={(e) => {
                                         const val = e.target.value;
-                                        // Allow empty string (for clearing) or numbers 0 and above
-                                        if (val === "" || Number(val) >= 0) {
-                                            setAmount(val);
-                                        }
+                                        if (val === '' || Number(val) >= 0) setAmount(val);
                                     }}
                                     placeholder="0.00"
-                                    min="0" /* Prevents browser step arrows from going below 0 */
+                                    min="0"
+                                    step="any"
                                     className="w-full pl-14 pr-6 py-6 text-5xl font-bold bg-slate-50 border-2 border-transparent rounded-3xl focus:bg-white outline-none focus:border-secondary transition-all"
                                     required
                                 />
@@ -602,7 +603,7 @@ export default function WalletWithdraw() {
 
                 {/* --- History Tab Content --- */}
                 {activeTab === 'history' && (
-                    <div className="animate-in fade-in slide-in-from-left-4 duration-300 w-full">
+                    <div className="animate-in fade-in slide-in-from-left-4 duration-300 w-full flex flex-col">
                         {isWalletLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                                 <Loader2 className="w-8 h-8 animate-spin mb-4" />
@@ -614,78 +615,94 @@ export default function WalletWithdraw() {
                                 <p className="text-sm font-medium">No transactions found.</p>
                             </div>
                         ) : (
-                            <div className="bg-white rounded-[24px] md:rounded-3xl border border-slate-100 overflow-hidden shadow-sm">
+                            <div className="bg-white rounded-[24px] md:rounded-3xl border border-slate-100 overflow-hidden shadow-sm flex flex-col">
 
                                 {/* Header Section */}
-                                <div className="flex flex-row items-center justify-between md:justify-start gap-4 px-5 py-5 md:px-8 md:py-6 border-b border-slate-100">
+                                <div className="flex flex-row items-center justify-between md:justify-start gap-4 px-8 py-6 border-b border-slate-100 bg-slate-50/30">
                                     <h2 className="text-sm font-black text-slate-600 tracking-wider uppercase">Withdrawal History</h2>
-                                    <span className="px-3 py-1 bg-[#eef7f2] text-[#6cb28d] text-[10px] font-bold rounded-full tracking-wider uppercase shrink-0">
+                                    <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-full tracking-wider uppercase shrink-0">
                                         {transactions.filter(t => t.type === 'withdraw').length} Records
                                     </span>
                                 </div>
 
-                                {/* Table Column Headers - Hidden on Mobile */}
-                                <div className="hidden md:grid grid-cols-4 gap-4 px-8 py-4 border-b border-slate-100 bg-white text-[11px] font-bold text-slate-400 tracking-wider uppercase">
+                                {/* Table Column Headers — 5 cols on desktop */}
+                                <div className="hidden md:grid md:grid-cols-[1.8fr_1fr_1fr_1fr_1.2fr] gap-3 px-8 py-4 border-b border-slate-100 bg-white text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase sticky top-0 z-10">
                                     <div>Details</div>
                                     <div className="text-center">Method</div>
+                                    <div className="text-center">Charge</div>
                                     <div className="text-center">Status</div>
                                     <div className="text-right">Timestamp</div>
                                 </div>
 
-                                {/* Transactions List */}
-                                <div className="p-4 md:p-6 space-y-3 md:space-y-4 bg-[#f8fafc]">
-                                    {transactions.filter(t => t.type === 'withdraw').map((trx, idx) => (
-                                        <div key={trx.id || idx} className="grid grid-cols-2 md:grid-cols-4 items-center gap-y-4 gap-x-2 md:gap-4 p-4 border border-slate-100 rounded-[20px] bg-white shadow-sm hover:shadow-md transition-shadow">
+                                {/* Transactions List with Scrollbar */}
+                                <div className="p-4 md:p-6 space-y-3 bg-[#f8fafc]/50 overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                                    {transactions.filter(t => t.type === 'withdraw').map((trx, idx) => {
+                                        const chargeVal = parseFloat(trx.charge || '0');
+                                        return (
+                                            <div key={trx.id || idx} className="grid grid-cols-2 md:grid-cols-[1.8fr_1fr_1fr_1fr_1.2fr] items-center gap-x-3 gap-y-4 px-6 py-4 border border-slate-100 rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-200 hover:border-amber-200">
 
-                                            {/* 1. Details Column (Top Left on Mobile) */}
-                                            <div className="order-1 flex items-center gap-3 md:gap-4">
-                                                <div className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-[14px] md:rounded-2xl bg-[#fff4eb] flex items-center justify-center text-[#f48120]">
-                                                    <Minus className="w-4 h-4 md:w-5 md:h-5 stroke-[3]" />
+                                                {/* 1. Details (Top Left) */}
+                                                <div className="order-1 flex items-center gap-3">
+                                                    <div className="w-10 h-10 shrink-0 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 shadow-sm">
+                                                        <Minus className="w-5 h-5 stroke-[3]" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-base font-bold text-slate-900 leading-none tracking-tight">
+                                                            ৳{parseFloat(trx.amount as string).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                                        </p>
+                                                        <p className="text-[11px] font-bold text-slate-400 uppercase truncate mt-1.5 tracking-wider">
+                                                            {trx.invoice_number || `WTD-${String(trx.id).padStart(6, '0')}`}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="min-w-0 flex-1">
-                                                    <p className="text-base md:text-lg font-black text-[#0f172a] leading-none mb-1 md:mb-1.5 whitespace-nowrap tracking-tighter" title={`৳${Number(trx.amount).toFixed(2)}`}>
-                                                        ৳{Number(trx.amount).toFixed(2)}
+
+                                                {/* 2. Status — top-right on mobile */}
+                                                <div className="order-2 md:order-4 flex items-center justify-end md:justify-center">
+                                                    <span className={cn(
+                                                        "px-3 py-1 text-[10px] font-black text-white rounded-full uppercase tracking-widest shadow-sm",
+                                                        trx.status === 'completed' || trx.status === 'success' || trx.status === 'approved' ? "bg-emerald-500" :
+                                                            trx.status === 'pending' ? "bg-amber-400" : "bg-rose-500"
+                                                    )}>
+                                                        {trx.status}
+                                                    </span>
+                                                </div>
+
+                                                {/* 3. Method */}
+                                                <div className="order-3 md:order-2 flex flex-col items-start md:items-center">
+                                                    <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-black rounded-md uppercase tracking-wider">
+                                                        {trx.payment_method}
+                                                    </span>
+                                                    <span className="text-[10px] font-bold text-slate-400 truncate mt-1">
+                                                        {trx.number || 'N/A'}
+                                                    </span>
+                                                </div>
+
+                                                {/* 4. Charge */}
+                                                <div className="order-4 md:order-3 flex items-center justify-start md:justify-center">
+                                                    {chargeVal > 0 ? (
+                                                        <div className="flex flex-col items-center">
+                                                            <span className="text-xs font-bold text-rose-500">-৳{chargeVal.toFixed(2)}</span>
+                                                            <span className="text-[8px] font-black uppercase text-rose-300 tracking-tighter">Fee</span>
+                                                        </div>
+                                                    ) : (
+                                                        <span className="text-xs font-bold text-slate-300">—</span>
+                                                    )}
+                                                </div>
+
+                                                {/* 5. Timestamp */}
+                                                <div className="order-5 flex flex-col items-end text-right col-span-2 md:col-span-1">
+                                                    <p className="text-xs font-bold text-slate-700">
+                                                        {new Date(trx.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
                                                     </p>
-                                                    <p className="text-[10px] md:text-[11px] font-medium text-slate-400 uppercase truncate" title={`ID: ${trx.invoice_number || `WTD${idx.toString().padStart(3, '0')}`}`}>
-                                                        ID: {trx.invoice_number || `WTD${idx.toString().padStart(3, '0')}`}
-                                                    </p>
+                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 mt-1">
+                                                        <Clock className="w-3 h-3" />
+                                                        {new Date(trx.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            {/* 3. Status Column (Moved to Top Right on Mobile via order-2) */}
-                                            <div className="order-2 md:order-3 flex items-center justify-end md:justify-center">
-                                                <span className={cn(
-                                                    "px-3 py-1 md:px-4 md:py-1.5 text-[10px] font-bold text-white rounded-full uppercase tracking-wider",
-                                                    trx.status === 'completed' || trx.status === 'success' ? "bg-[#10b981]" :
-                                                        trx.status === 'pending' ? "bg-[#f48120]" : "bg-[#ef4444]"
-                                                )}>
-                                                    {trx.status}
-                                                </span>
                                             </div>
-
-                                            {/* 2. Method Column (Moved to Bottom Left on Mobile via order-3) */}
-                                            <div className="order-3 md:order-2 flex flex-col items-start md:items-center justify-center">
-                                                <span className="px-2.5 py-1 bg-[#f1f5f9] text-[#334155] text-[10px] font-bold rounded-md uppercase mb-1 md:mb-1.5">
-                                                    {trx.payment_method}
-                                                </span>
-                                                <span className="text-[11px] md:text-[12px] font-medium text-[#64748b] truncate max-w-full">
-                                                    {trx.number || 'N/A'}
-                                                </span>
-                                            </div>
-
-                                            {/* 4. Timestamp Column (Bottom Right on Mobile) */}
-                                            <div className="order-4 flex flex-col items-end text-right">
-                                                <p className="text-[13px] md:text-sm font-bold text-[#0f172a] mb-1 md:mb-1.5">
-                                                    {new Date(trx.created_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
-                                                </p>
-                                                <div className="flex items-center gap-1 md:gap-1.5 text-[11px] md:text-[12px] font-medium text-slate-400">
-                                                    <Clock className="w-3 h-3 md:w-3.5 md:h-3.5" />
-                                                    {new Date(trx.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
 
                             </div>

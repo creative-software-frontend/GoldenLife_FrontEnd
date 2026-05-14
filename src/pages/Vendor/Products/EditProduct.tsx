@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EditProductForm } from './components/EditProductForm';
 import { useProductMutation } from './hooks/useProductMutation';
@@ -301,18 +301,28 @@ export default function EditProduct() {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-[1600px] mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-            Edit Product
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Update product information and images
-          </p>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+        <div className="flex items-center gap-4">
+          <div className="h-14 w-14 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 shadow-sm">
+            <Sparkles className="w-7 h-7" />
+          </div>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-none">
+              Edit Product
+            </h1>
+            <p className="text-[11px] font-bold text-slate-400 mt-2 uppercase tracking-widest">
+              Update information for your listed product
+            </p>
+          </div>
         </div>
-        <Button variant="outline" onClick={handleCancel} className="hidden sm:flex items-center gap-2">
-          <ArrowLeft size={16} />
-          Back to Products
+        
+        <Button
+          variant="outline"
+          onClick={handleCancel}
+          className="h-12 px-6 rounded-xl border-slate-200 hover:bg-slate-50 text-slate-600 font-bold transition-all active:scale-95 flex items-center gap-2 shadow-sm"
+        >
+          <ArrowLeft size={18} />
+          <span>Back to Products</span>
         </Button>
       </div>
 

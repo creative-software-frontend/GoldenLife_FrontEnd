@@ -13,11 +13,36 @@ const storeInstructorSession = (token: string, user?: any) => {
 };
 
 /** Extract a readable error message from an axios error */
-const extractError = (err: any): string =>
-  err?.response?.data?.message ||
-  err?.response?.data?.error ||
-  err?.message ||
-  'An unexpected error occurred.';
+const extractError = (err: any): string => {
+  const data = err?.response?.data;
+  
+  if (!data) return err?.message || 'An unexpected error occurred.';
+
+  // 1. Check for 'message' field
+  if (data.message) {
+    if (typeof data.message === 'string') return data.message;
+    if (typeof data.message === 'object') {
+      // If it's an object, try to get the first value
+      const firstKey = Object.keys(data.message)[0];
+      const firstVal = data.message[firstKey];
+      return Array.isArray(firstVal) ? firstVal[0] : String(firstVal);
+    }
+  }
+
+  // 2. Check for 'error' field
+  if (data.error) {
+    return typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+  }
+
+  // 3. Check for 'errors' validation object (common in Laravel)
+  if (data.errors && typeof data.errors === 'object') {
+    const firstKey = Object.keys(data.errors)[0];
+    const firstVal = data.errors[firstKey];
+    return Array.isArray(firstVal) ? firstVal[0] : String(firstVal);
+  }
+
+  return err?.message || 'An unexpected error occurred.';
+};
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -115,17 +140,18 @@ export interface ResetPasswordResponse {
 export const useInstructorLoginMutation = () =>
   useMutation<LoginResponse, Error, LoginPayload>({
     mutationFn: async (payload) => {
-      const response = await axios.post<LoginResponse>(`${baseURL}/api/instructor/login`, payload, {
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      });
-      const data = response.data;
-      if (!data.token) throw new Error('No token received from server.');
-      storeInstructorSession(data.token, data.user);
-      return data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+      try {
+        const response = await axios.post<LoginResponse>(`${baseURL}/api/instructor/login`, payload, {
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        });
+        const data = response.data;
+        if (!data.token) throw new Error('No token received from server.');
+        storeInstructorSession(data.token, data.user);
+        return data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
+      }
+    }
   });
 
 /**
@@ -136,21 +162,22 @@ export const useInstructorLoginMutation = () =>
 export const useSendLoginOtpMutation = () =>
   useMutation<SendLoginOtpResponse, Error, SendLoginOtpPayload>({
     mutationFn: async ({ mobile }) => {
-      const formData = new FormData();
-      formData.append('mobile', mobile);
-      const response = await axios.post<SendLoginOtpResponse>(
-        `${baseURL}/api/instructor/login-otp-send`,
-        formData,
-        { headers: { Accept: 'application/json' } }
-      );
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Failed to send OTP.');
+      try {
+        const formData = new FormData();
+        formData.append('mobile', mobile);
+        const response = await axios.post<SendLoginOtpResponse>(
+          `${baseURL}/api/instructor/login-otp-send`,
+          formData,
+          { headers: { Accept: 'application/json' } }
+        );
+        if (!response.data.success) {
+          throw new Error(response.data.message || 'Failed to send OTP.');
+        }
+        return response.data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
       }
-      return response.data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+    }
   });
 
 /**
@@ -161,24 +188,25 @@ export const useSendLoginOtpMutation = () =>
 export const useVerifyLoginOtpMutation = () =>
   useMutation<VerifyLoginOtpResponse, Error, VerifyLoginOtpPayload>({
     mutationFn: async ({ mobile, otp }) => {
-      const formData = new FormData();
-      formData.append('mobile', mobile);
-      formData.append('otp', otp);
-      const response = await axios.post<VerifyLoginOtpResponse>(
-        `${baseURL}/api/instructor/login-otp-verify`,
-        formData,
-        { headers: { Accept: 'application/json' } }
-      );
-      const data = response.data;
-      if (!data.success || !data.token) {
-        throw new Error(data.message || 'Invalid OTP or no token received.');
+      try {
+        const formData = new FormData();
+        formData.append('mobile', mobile);
+        formData.append('otp', otp);
+        const response = await axios.post<VerifyLoginOtpResponse>(
+          `${baseURL}/api/instructor/login-otp-verify`,
+          formData,
+          { headers: { Accept: 'application/json' } }
+        );
+        const data = response.data;
+        if (!data.success || !data.token) {
+          throw new Error(data.message || 'Invalid OTP or no token received.');
+        }
+        storeInstructorSession(data.token, data.user);
+        return data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
       }
-      storeInstructorSession(data.token, data.user);
-      return data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+    }
   });
 
 /**
@@ -189,20 +217,21 @@ export const useVerifyLoginOtpMutation = () =>
 export const useInstructorRegisterMutation = () =>
   useMutation<RegisterResponse, Error, RegisterPayload>({
     mutationFn: async (payload) => {
-      const formData = new FormData();
-      Object.entries(payload).forEach(([key, value]) => {
-        if (value !== undefined && value !== '') formData.append(key, value as string);
-      });
-      const response = await axios.post<RegisterResponse>(
-        `${baseURL}/api/instructor/register`,
-        formData,
-        { headers: { Accept: 'application/json' } }
-      );
-      return response.data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+      try {
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== '') formData.append(key, value as string);
+        });
+        const response = await axios.post<RegisterResponse>(
+          `${baseURL}/api/instructor/register`,
+          formData,
+          { headers: { Accept: 'application/json' } }
+        );
+        return response.data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
+      }
+    }
   });
 
 /**
@@ -213,27 +242,28 @@ export const useInstructorRegisterMutation = () =>
 export const useVerifyRegisterOtpMutation = () =>
   useMutation<VerifyRegisterOtpResponse, Error, VerifyRegisterOtpPayload>({
     mutationFn: async ({ user_id, otp }) => {
-      const response = await axios.post<VerifyRegisterOtpResponse>(
-        `${baseURL}/api/instructor/verify-otp`,
-        null,
-        {
-          params: { user_id, otp },
-          headers: { Accept: 'application/json' },
+      try {
+        const response = await axios.post<VerifyRegisterOtpResponse>(
+          `${baseURL}/api/instructor/verify-otp`,
+          null,
+          {
+            params: { user_id, otp },
+            headers: { Accept: 'application/json' },
+          }
+        );
+        const data = response.data;
+        if (!data.success) {
+          throw new Error(data.message || 'OTP verification failed.');
         }
-      );
-      const data = response.data;
-      if (!data.success) {
-        throw new Error(data.message || 'OTP verification failed.');
+        // The verify-otp endpoint returns a token → store session immediately
+        if (data.token) {
+          storeInstructorSession(data.token, data.user);
+        }
+        return data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
       }
-      // The verify-otp endpoint returns a token → store session immediately
-      if (data.token) {
-        storeInstructorSession(data.token, data.user);
-      }
-      return data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+    }
   });
 
 // ─── Dashboard Query ─────────────────────────────────────────────────────────
@@ -253,7 +283,6 @@ export interface InstructorDashboardData {
     month: { highest: number; lowest: number; performance: { date_label: string; total_sales: string }[] };
     year: { highest: number; lowest: number; performance: { date_label: string; total_sales: string }[] };
   };
-  inventory: { low_stock_count: number };
   recent_orders: {
     id: number;
     order_no: string;
@@ -287,7 +316,7 @@ export const useInstructorDashboardQuery = () => {
     queryFn: async () => {
       const token = getToken();
       const response = await axios.get<{ status: boolean; data: InstructorDashboardData }>(
-        `${baseURL}/api/instructor/dashboard`,
+        `${baseURL}/api/instructor/WebDashboard`,
         {
           headers: { 'X-Auth-Token': `Bearer ${token}`, Accept: 'application/json' }
         }
@@ -308,21 +337,22 @@ export const useInstructorDashboardQuery = () => {
 export const useForgotPasswordMutation = () =>
   useMutation<ForgotPasswordResponse, Error, ForgotPasswordPayload>({
     mutationFn: async ({ mobile }) => {
-      const formData = new FormData();
-      formData.append('mobile', mobile);
-      const response = await axios.post<ForgotPasswordResponse>(
-        `${baseURL}/api/password/forgot`,
-        formData,
-        { headers: { Accept: 'application/json' } }
-      );
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Failed to send OTP.');
+      try {
+        const formData = new FormData();
+        formData.append('mobile', mobile);
+        const response = await axios.post<ForgotPasswordResponse>(
+          `${baseURL}/api/password/forgot`,
+          formData,
+          { headers: { Accept: 'application/json' } }
+        );
+        if (!response.data.success) {
+          throw new Error(response.data.message || 'Failed to send OTP.');
+        }
+        return response.data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
       }
-      return response.data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+    }
   });
 
 /**
@@ -333,24 +363,25 @@ export const useForgotPasswordMutation = () =>
 export const useResetPasswordMutation = () =>
   useMutation<ResetPasswordResponse, Error, ResetPasswordPayload>({
     mutationFn: async ({ mobile, otp, password, password_confirmation }) => {
-      const formData = new FormData();
-      formData.append('mobile', mobile);
-      formData.append('otp', otp);
-      formData.append('password', password);
-      formData.append('password_confirmation', password_confirmation);
-      const response = await axios.post<ResetPasswordResponse>(
-        `${baseURL}/api/password/reset`,
-        formData,
-        { headers: { Accept: 'application/json' } }
-      );
-      if (!response.data.success) {
-        throw new Error(response.data.message || 'Failed to reset password.');
+      try {
+        const formData = new FormData();
+        formData.append('mobile', mobile);
+        formData.append('otp', otp);
+        formData.append('password', password);
+        formData.append('password_confirmation', password_confirmation);
+        const response = await axios.post<ResetPasswordResponse>(
+          `${baseURL}/api/password/reset`,
+          formData,
+          { headers: { Accept: 'application/json' } }
+        );
+        if (!response.data.success) {
+          throw new Error(response.data.message || 'Failed to reset password.');
+        }
+        return response.data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
       }
-      return response.data;
-    },
-    onError: (err: any) => {
-      throw new Error(extractError(err));
-    },
+    }
   });
 
 // ─── Course Helpers ───────────────────────────────────────────────────────────
@@ -486,6 +517,9 @@ export const useUpdateCourseMutation = (id: string | undefined) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['instructorCourses'] });
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(id)] });
+      }
     },
     onError: (err: any) => { throw new Error(extractError(err)); },
   });
@@ -500,7 +534,9 @@ export const useUpdateCourseMutation = (id: string | undefined) => {
 export const useInstructorCoursesQuery = (type?: string) =>
   useQuery<CourseData[]>({
     queryKey: ['instructorCourses', type],
-    staleTime: 60 * 1000,
+    staleTime: 30 * 1000, // 30 seconds
+    refetchInterval: 60 * 1000, // Auto-refresh every 60 seconds
+    refetchOnWindowFocus: true, // Refresh when user returns to the tab
     queryFn: async () => {
       const token = getInstructorToken();
       const response = await axios.get(
@@ -586,6 +622,40 @@ export const useAddModuleMutation = () => {
   });
 };
 
+export const useUpdateModuleMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ moduleId, courseId, data }: { moduleId: string | number; courseId: string | number; data: any }) => {
+      const response = await axios.put(`${baseURL}/api/modules/${moduleId}`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
+export const useDeleteModuleMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ moduleId, courseId }: { moduleId: string | number; courseId: string | number }) => {
+      const response = await axios.delete(`${baseURL}/api/modules/${moduleId}`, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
 // ─── Lessons ───────────────────────────────────────────────────────────────
 export const useAddLessonMutation = () => {
   const queryClient = useQueryClient();
@@ -604,6 +674,39 @@ export const useAddLessonMutation = () => {
   });
 };
 
+export const useUpdateLessonMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ lessonId, courseId, data }: { lessonId: string | number; courseId: string | number; data: any }) => {
+      const response = await axios.put(`${baseURL}/api/lessons/${lessonId}`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
+export const useDeleteLessonMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ lessonId, courseId }: { lessonId: string | number; courseId: string | number }) => {
+      const response = await axios.delete(`${baseURL}/api/lessons/${lessonId}`, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
 // ─── Quizzes ───────────────────────────────────────────────────────────────
 export const useAddQuizMutation = () => {
   const queryClient = useQueryClient();
@@ -612,6 +715,40 @@ export const useAddQuizMutation = () => {
   return useMutation({
     mutationFn: async ({ courseId, data }: { courseId: string | number; data: any }) => {
       const response = await axios.post(`${baseURL}/api/courses/${courseId}/quizzes`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
+export const useUpdateQuizMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ quizId, courseId, data }: { quizId: string | number; courseId: string | number; data: any }) => {
+      const response = await axios.put(`${baseURL}/api/quizzes/${quizId}`, data, {
+        headers: { 'X-Auth-Token': `Bearer ${token}` },
+      });
+      return response.data;
+    },
+    onSuccess: (_, { courseId }) => {
+      queryClient.invalidateQueries({ queryKey: ['instructorCourseDetails', String(courseId)] });
+    },
+  });
+};
+
+export const useDeleteQuizMutation = () => {
+  const queryClient = useQueryClient();
+  const token = getInstructorToken();
+
+  return useMutation({
+    mutationFn: async ({ quizId, courseId }: { quizId: string | number; courseId: string | number }) => {
+      const response = await axios.delete(`${baseURL}/api/quizzes/${quizId}`, {
         headers: { 'X-Auth-Token': `Bearer ${token}` },
       });
       return response.data;

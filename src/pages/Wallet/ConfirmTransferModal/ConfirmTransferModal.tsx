@@ -11,6 +11,7 @@ interface ConfirmTransferModalProps {
     amount: number;
     receiver_type: string;
     affiliate_id: string;
+    receiver_phone?: string;
     type: string;
     chargePercentage?: number;
     currentBalance: number;
@@ -24,6 +25,7 @@ export default function ConfirmTransferModal({
     amount,
     receiver_type,
     affiliate_id,
+    receiver_phone,
     type,
     chargePercentage = 0,
     currentBalance
@@ -54,7 +56,11 @@ export default function ConfirmTransferModal({
             formData.append('amount', String(amount));
             formData.append('receiver_type', receiver_type);
             formData.append('affiliate_id', affiliate_id);
+            formData.append('receiver_id', affiliate_id);
+            formData.append('id', affiliate_id);
+            if (receiver_phone) formData.append('receiver_number', receiver_phone); // Alias for backend
             formData.append('pin_code', pinCode);
+            formData.append('password', pinCode);          // Alias for backend compatibility
             // Inform backend of the charge to be deducted from the sender's wallet
             formData.append('charge', String(chargeAmount.toFixed(2))); 
 
@@ -79,6 +85,7 @@ export default function ConfirmTransferModal({
                 onError?.(message || "Transfer failed.");
             }
         } catch (error: any) {
+            console.error("Send Money API Error Detail:", error.response?.data);
             const msg = error.response?.data?.message || "Transfer failed. Please try again.";
             toast.error(msg);
             onError?.(msg);

@@ -88,7 +88,6 @@ const InstructorHome: React.FC = () => {
     const total_revenue = dashboardData?.total_revenue ?? 0;
     const active_orders = dashboardData?.active_orders ?? 0;
     const store_rating = dashboardData?.store_rating ?? 0;
-    const inventory = dashboardData?.inventory ?? { low_stock_count: 0 };
     const recentOrders = dashboardData?.recent_orders ?? [];
 
     return (
@@ -350,32 +349,7 @@ const InstructorHome: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Course Status / Inventory */}
-                    <div className="bg-card rounded-xl p-5 shadow-sm border">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="font-semibold text-lg text-foreground">Course Status</h3>
-                            <AlertCircle className={`w-5 h-5 ${inventory.low_stock_count > 0 ? 'text-yellow-500' : 'text-green-500'}`} />
-                        </div>
-                        <div className="space-y-3">
-                            {inventory.low_stock_count > 0 ? (
-                                <div className="flex items-center justify-between p-3 rounded-lg border bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800">
-                                    <div>
-                                        <p className="text-sm font-semibold text-yellow-700 dark:text-yellow-400">Low Stock Courses</p>
-                                        <p className="text-xs text-yellow-500">Needs attention</p>
-                                    </div>
-                                    <p className="text-xl font-bold text-yellow-600 dark:text-yellow-400">{inventory.low_stock_count}</p>
-                                </div>
-                            ) : (
-                                <div className="flex items-center justify-between p-3 rounded-lg border bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                                    <div>
-                                        <p className="text-sm font-semibold text-green-700 dark:text-green-400">All Courses Active</p>
-                                        <p className="text-xs text-green-500">No pending issues</p>
-                                    </div>
-                                    <p className="text-xl font-bold text-green-600 dark:text-green-400">0</p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+
 
                     {/* Recent Orders */}
                     <div className="bg-card rounded-xl p-5 shadow-sm border">
