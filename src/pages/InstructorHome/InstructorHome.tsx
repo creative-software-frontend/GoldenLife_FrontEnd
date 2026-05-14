@@ -240,7 +240,7 @@ const InstructorHome: React.FC = () => {
                 <div className="lg:col-span-2 space-y-6">
 
                     {/* Top Stats Cards (3 in a row) */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="bg-card rounded-xl p-5 shadow-sm border hover:shadow-md transition-all duration-200 group">
                             <div className="flex justify-between items-start">
                                 <div>

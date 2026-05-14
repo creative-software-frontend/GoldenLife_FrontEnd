@@ -59,8 +59,8 @@ export function InstructorForm({
       {/* Profile Image Upload */}
       <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
         <h3 className="text-lg font-bold text-gray-900 mb-4">Profile Picture</h3>
-        <div className="flex items-center gap-6">
-          <div className="relative group">
+        <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="relative group shrink-0">
             <div className="w-32 h-32 rounded-2xl border-2 border-dashed border-primary-light overflow-hidden bg-gray-50 flex items-center justify-center">
               {imagePreview ? (
                 <img src={imagePreview} alt="Profile preview" className="w-full h-full object-cover" />
@@ -80,9 +80,9 @@ export function InstructorForm({
               </button>
             )}
           </div>
-          <div className="flex-1">
-            <label className="cursor-pointer inline-block">
-              <div className="px-6 py-3 bg-primary-light hover:bg-primary-dark text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg">
+          <div className="flex-1 text-center sm:text-left w-full">
+            <label className="cursor-pointer inline-block w-full sm:w-auto">
+              <div className="px-6 py-3 bg-primary-light hover:bg-primary-dark text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg text-center">
                 Choose Image
               </div>
               <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
@@ -209,11 +209,11 @@ export function InstructorForm({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center gap-4 pt-4">
-        <button type="submit" disabled={isSubmitting} className="flex-1 sm:flex-none px-12 py-4 bg-primary-light hover:bg-primary-dark text-white font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-primary-light/30 hover:shadow-primary-dark/30 disabled:opacity-50">
+      <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+        <button type="submit" disabled={isSubmitting} className="w-full sm:flex-none px-12 py-4 bg-primary-light hover:bg-primary-dark text-white font-bold rounded-2xl transition-all duration-300 shadow-lg shadow-primary-light/30 hover:shadow-primary-dark/30 disabled:opacity-50">
           {isSubmitting ? 'Saving...' : 'Save Changes'}
         </button>
-        <button type="button" onClick={onCancel} className="px-12 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl transition-all duration-300">
+        <button type="button" onClick={onCancel} className="w-full sm:flex-none px-12 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl transition-all duration-300">
           Cancel
         </button>
       </div>

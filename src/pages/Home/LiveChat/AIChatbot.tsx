@@ -145,7 +145,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose, mode = 'student'
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="fixed top-0 right-0 z-[60] h-full w-full max-w-md bg-white shadow-2xl flex flex-col no-print border-l border-slate-200"
+          className="fixed top-0 right-0 z-[150] h-full w-full max-w-md bg-white shadow-2xl flex flex-col no-print border-l border-slate-200"
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-[#67AC79] to-[#589668] p-4 text-white flex items-center justify-between shadow-lg">

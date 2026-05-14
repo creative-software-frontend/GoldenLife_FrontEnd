@@ -162,7 +162,7 @@ export default function InstructorOrderDetails() {
               <p className="text-gray-500 font-bold max-w-xs mx-auto">The requested order signal could not be established. It may have been decommissioned or moved.</p>
             </div>
             <Button
-              onClick={() => navigate('/instructor/dashboard/orders')}
+              onClick={() => navigate('/instructor/dashboard/enrollments')}
               className="h-14 px-10 rounded-2xl bg-gray-900 hover:bg-black text-white font-black uppercase shadow-xl active:scale-95 transition-all"
             >
               Back to Command Center
@@ -209,7 +209,7 @@ export default function InstructorOrderDetails() {
       <div className="screen-only flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => navigate('/instructor/dashboard/orders')}
+            onClick={() => navigate('/instructor/dashboard/enrollments')}
             variant="outline"
             className="w-12 h-12 p-0 rounded-2xl border-gray-100 hover:bg-gray-900 hover:text-white transition-all shadow-sm group"
           >

@@ -167,7 +167,7 @@ const InstructorEnrollList: React.FC = () => {
       initial="hidden"
       animate="visible"
       variants={containerVariants}
-      className="p-4 sm:p-6 md:p-8 pb-32 max-w-[1760px] mx-auto space-y-10"
+      className="p-4 sm:p-6 md:p-8 pb-48 max-w-[1760px] mx-auto space-y-10"
     >
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -188,7 +188,7 @@ const InstructorEnrollList: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="border-none shadow-sm bg-gray-900 text-white rounded-[2.5rem] overflow-hidden relative group">
           <CardContent className="p-8 space-y-2 relative z-10">
             <p className="text-white/40 font-black uppercase tracking-[0.2em] text-[9px]">Total Orders</p>
@@ -237,7 +237,7 @@ const InstructorEnrollList: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-4 w-full xl:w-auto">
+        <div className="flex flex-wrap items-center gap-4 w-full xl:w-auto">
 
 
           <Button
@@ -403,12 +403,12 @@ const InstructorEnrollList: React.FC = () => {
                         >
                           Track
                         </Button>
-                        <Button
+                        {/* <Button
                           onClick={() => handleUpdateStatusClick(order)}
                           className="flex-1 h-12 rounded-2xl bg-gray-900 hover:bg-black text-white font-black text-[10px] shadow-xl active:scale-95 transition-all uppercase"
                         >
                           Update
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
                   </CardContent>

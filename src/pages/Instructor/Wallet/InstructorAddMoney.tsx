@@ -245,31 +245,31 @@ export default function InstructorAddMoney() {
                             <div className="text-center py-20 text-slate-400">No add money records found.</div>
                         ) : (
                             addTransactions.map((item: any) => (
-                                <div key={item.id} className="p-6 border border-slate-100 rounded-3xl flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-12 w-12 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center">
-                                            <Plus className="w-6 h-6" />
+                                <div key={item.id} className="p-4 sm:p-6 border border-slate-100 rounded-3xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
+                                            <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                                         </div>
-                                        <div>
-                                            <p className="text-xl font-black text-slate-900">৳{item.amount}</p>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <p className="text-xs font-bold text-slate-400 uppercase">{item.payment_method} • {item.number}</p>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-lg sm:text-xl font-black text-slate-900 truncate">৳{item.amount}</p>
+                                            <div className="flex flex-wrap items-center gap-2 mt-1">
+                                                <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">{item.payment_method} • {item.number}</p>
                                                 {item.charge && parseFloat(item.charge) > 0 && (
-                                                    <span className="text-[9px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-md uppercase">
+                                                    <span className="text-[8px] sm:text-[9px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-md uppercase">
                                                         Charge: ৳{item.charge}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="text-right">
+                                    <div className="text-left sm:text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between items-center sm:items-end border-t sm:border-0 pt-3 sm:pt-0">
                                         <span className={cn(
-                                            "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest",
+                                            "px-4 py-1.5 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest",
                                             item.status === 'approved' ? "bg-green-500 text-white" : "bg-orange-400 text-white"
                                         )}>
                                             {item.status}
                                         </span>
-                                        <p className="text-xs font-medium text-slate-400 mt-2">{new Date(item.created_at).toLocaleDateString()}</p>
+                                        <p className="text-[10px] sm:text-xs font-medium text-slate-400 mt-2 sm:mt-2">{new Date(item.created_at).toLocaleDateString()}</p>
                                     </div>
                                 </div>
                             ))

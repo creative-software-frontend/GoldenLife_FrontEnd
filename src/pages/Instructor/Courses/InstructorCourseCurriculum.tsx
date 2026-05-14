@@ -152,16 +152,16 @@ const InstructorCourseCurriculum: React.FC = () => {
 
 const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index }) => {
   const [isOpen, setIsOpen] = useState(index === 0);
-  
+
   const [isEditingModule, setIsEditingModule] = useState(false);
   const [editModuleTitle, setEditModuleTitle] = useState(module.module_title);
 
   const [isAddingLesson, setIsAddingLesson] = useState(false);
   const [editingLessonId, setEditingLessonId] = useState<number | null>(null);
   const [lessonForm, setLessonForm] = useState({ lesson_title: '', serial_number: 1, videos: [''] });
-  
+
   const { id: courseId } = useParams<{ id: string }>();
-  
+
   const addLessonMutation = useAddLessonMutation();
   const updateModuleMutation = useUpdateModuleMutation();
   const deleteModuleMutation = useDeleteModuleMutation();
@@ -200,7 +200,7 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
         });
         toast.success('Lesson added successfully');
       }
-      
+
       setLessonForm({ lesson_title: '', serial_number: 1, videos: [''] });
       setIsAddingLesson(false);
       setEditingLessonId(null);
@@ -230,11 +230,11 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
         </div>
         <div className="flex justify-end gap-2 mt-2">
           <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg text-xs font-bold" onClick={() => toast.dismiss(toastId)}>Cancel</Button>
-          <Button 
-            size="sm" 
-            className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold" 
-            onClick={async () => { 
-              toast.dismiss(toastId); 
+          <Button
+            size="sm"
+            className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
+            onClick={async () => {
+              toast.dismiss(toastId);
               try {
                 await deleteLessonMutation.mutateAsync({ lessonId, courseId });
                 toast.success('Lesson deleted successfully');
@@ -280,11 +280,11 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
         <p className="text-xs text-gray-500 font-medium">All lessons within will be lost.</p>
         <div className="flex justify-end gap-2 mt-2">
           <Button size="sm" variant="ghost" className="h-8 px-3 rounded-lg text-xs font-bold" onClick={() => toast.dismiss(toastId)}>Cancel</Button>
-          <Button 
-            size="sm" 
-            className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold" 
-            onClick={async () => { 
-              toast.dismiss(toastId); 
+          <Button
+            size="sm"
+            className="h-8 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold"
+            onClick={async () => {
+              toast.dismiss(toastId);
               try {
                 await deleteModuleMutation.mutateAsync({ moduleId: module.id, courseId });
                 toast.success('Module deleted successfully');
@@ -387,12 +387,12 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
                             <Play size={14} className="text-gray-300 group-hover/video:text-emerald-500" />
                             <span className="text-sm font-bold text-gray-500 group-hover/video:text-emerald-700">{video.video_title || `Video ${vIdx + 1}`}</span>
                           </div>
-                          <div className="flex items-center gap-4">
+                          {/* <div className="flex items-center gap-4">
                             <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{video.duration || '—'}</span>
                             <Button variant="ghost" size="icon" className="h-6 w-6 rounded-md opacity-0 group-hover/video:opacity-100 transition-opacity">
                               <Trash2 size={12} className="text-red-400" />
                             </Button>
-                          </div>
+                          </div> */}
                         </div>
                       ))}
                     </div>

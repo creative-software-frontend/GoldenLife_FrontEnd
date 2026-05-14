@@ -197,7 +197,7 @@ const InstructorEditCourse: React.FC = () => {
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="rounded-xl border border-gray-100 bg-white p-8 space-y-12 shadow-sm">
 
             {/* Fields Grid */}
-            <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
               <Field label="Course Title (English)" req>
                 <Input className={inp} placeholder="Enter English Title" value={form.titleEn} onChange={set('titleEn')} />
               </Field>
@@ -289,7 +289,7 @@ const InstructorEditCourse: React.FC = () => {
             {/* Image & Details */}
             <div className="space-y-8 pt-4 border-t border-gray-50">
               <Field label="Featured Image">
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center gap-6">
                   <div className="w-24 h-16 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex-shrink-0">
                     {img ? (
                       <img src={URL.createObjectURL(img)} alt="New Preview" className="w-full h-full object-cover" />

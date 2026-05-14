@@ -168,10 +168,10 @@ const InstrutorCourseList: React.FC = () => {
           <p className="text-gray-500 font-bold tracking-normal text-sm">Manage, filter, and evolve your educational assets.</p>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="w-full xl:w-auto">
           <Button
             onClick={() => navigate('add')}
-            className="bg-gray-900 hover:bg-black text-white shadow-2xl shadow-black/10 px-8 py-6 rounded-2xl font-black gap-3 transition-all hover:scale-[1.02] active:scale-95 h-auto group border-none"
+            className="w-full xl:w-auto bg-gray-900 hover:bg-black text-white shadow-2xl shadow-black/10 px-8 py-6 rounded-2xl font-black gap-3 transition-all hover:scale-[1.02] active:scale-95 h-auto group border-none"
           >
             <Plus size={18} strokeWidth={4} />
             Add New Course
@@ -180,7 +180,7 @@ const InstrutorCourseList: React.FC = () => {
       </div>
 
       {/* Stats Grid */}
-      <motion.div variants={itemVariants} className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+      <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {[
           { label: 'Total Courses', value: String(courses.length), icon: BookOpen, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           // { label: 'Published', value: String(courses.filter(c => c.status === '1' || c.status === 'published').length), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
@@ -202,7 +202,7 @@ const InstrutorCourseList: React.FC = () => {
       </motion.div>
 
       {/* Filters */}
-      <motion.div variants={itemVariants} className="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/20 flex flex-col xl:flex-row gap-5 sticky top-4 z-40">
+      <motion.div variants={itemVariants} className="bg-white p-5 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/20 flex flex-col xl:flex-row gap-5 sticky top-4 z-30">
         <div className="relative flex-1 group">
           <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" size={20} strokeWidth={3} />
           <Input

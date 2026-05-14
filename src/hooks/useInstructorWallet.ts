@@ -28,7 +28,9 @@ export const useInstructorWallet = () => {
             });
             return data?.data || { balance: "0.00" };
         },
-        enabled: !!token
+        enabled: !!token,
+        refetchInterval: 30000, // Auto-refresh every 30 seconds to catch admin approvals
+        refetchOnWindowFocus: true, // Refresh when user returns to the tab
     });
 
     // 2. Fetch Transaction History
@@ -42,7 +44,9 @@ export const useInstructorWallet = () => {
             // Based on user input, it might be data.transactions
             return data?.transactions || [];
         },
-        enabled: !!token
+        enabled: !!token,
+        refetchInterval: 30000, // Background refresh every 30s to catch admin approvals
+        refetchOnWindowFocus: true,
     });
 
     // 3. Add Money Mutation

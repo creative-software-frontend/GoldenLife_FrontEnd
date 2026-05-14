@@ -48,14 +48,14 @@ const InstructorSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) =>
     return (
         <>
             <div
-                className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+                className={`fixed inset-0 bg-black/50 z-[190] md:hidden transition-opacity duration-300 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
                     }`}
                 onClick={toggleSidebar}
             />
 
             <aside
                 className={`
-                    fixed md:relative top-0 left-0 z-50 flex flex-col h-full
+                    fixed md:relative top-0 left-0 z-[200] flex flex-col h-full
                     bg-secondary text-secondary-foreground
                     border-r border-border shadow-2xl
                     transition-all duration-300 ease-in-out overflow-hidden
@@ -65,13 +65,13 @@ const InstructorSidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) =>
                     }
                 `}
             >
-                <div className="px-6 py-4 border-b border-secondary-foreground/20 bg-white whitespace-nowrap overflow-hidden">
+                <div className="h-16 sm:h-20 px-4 sm:px-6 border-b border-secondary-foreground/20 bg-white whitespace-nowrap overflow-hidden flex items-center shrink-0">
                     <div className="flex flex-col items-start gap-1">
                         {!isOpen ? (
                             <img
                                 src="/image/logo/icon.png"
                                 alt="Icon"
-                                className="h-8 w-8 mx-auto"
+                                className="h-8 w-8 object-contain"
                             />
                         ) : (
                             <Logo />
