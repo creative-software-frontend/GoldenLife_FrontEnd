@@ -23,6 +23,7 @@ import { formatBDT } from '@/utils/currencyFormatter';
 import { cn } from "@/lib/utils";
 import useModalStore from '@/store/modalStore';
 import { useInstructorDashboardQuery } from '@/hooks/useInstructorAuth';
+import { useAppStore } from '@/store/useAppStore';
 
 // Quick Action Button Component
 const QuickActionButton = ({ icon: Icon, label, onClick, variant = 'primary' }: any) => {
@@ -72,6 +73,8 @@ const InstructorHome: React.FC = () => {
     const [chartTimeframe, setChartTimeframe] = useState<'week' | 'month' | 'year'>('week');
 
     const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
+    const { instructor_session } = useAppStore();
+    const instructorName = instructor_session?.user?.name || 'Instructor';
 
     const tabs: ('Today' | 'Weekly' | 'Monthly' | 'Yearly')[] = ['Today', 'Weekly', 'Monthly', 'Yearly'];
 
@@ -97,7 +100,7 @@ const InstructorHome: React.FC = () => {
             <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-                        Welcome back, <span className="text-primary">Instructor</span>!
+                        Welcome back, <span className="text-primary">{instructorName}</span>!
                     </h1>
                     <p className="text-sm text-muted-foreground mt-1">
                         {isLoading ? 'Loading dashboard...' : isError ? 'Could not load data — showing cached values.' : `Live dashboard · ${activeTab.toLowerCase()} view`}

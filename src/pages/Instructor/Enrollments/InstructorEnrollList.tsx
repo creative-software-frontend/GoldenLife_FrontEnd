@@ -202,7 +202,7 @@ const InstructorEnrollList: React.FC = () => {
 
         <Card className="border-none shadow-sm bg-white rounded-[2.5rem] overflow-hidden group ring-1 ring-gray-100">
           <CardContent className="p-8 space-y-2 border-l-8 border-amber-500">
-            <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">Processing Pipeline</p>
+            <p className="text-gray-400 font-black uppercase tracking-[0.2em] text-[10px]">status</p>
             <h2 className="text-4xl font-black tracking-tighter text-amber-500">
               {orders.filter(o => o.status === 'Processing' || o.status === 'Order Placed').length}
             </h2>
