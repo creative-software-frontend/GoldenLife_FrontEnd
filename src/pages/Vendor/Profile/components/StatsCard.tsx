@@ -7,15 +7,15 @@ interface StatsCardProps {
   totalProducts?: number;
 }
 
-export function StatsCard({ 
-  balance, 
-  totalOrders = 0, 
-  rating = 0, 
-  totalProducts = 0 
+export function StatsCard({
+  balance,
+  totalOrders = 0,
+  rating = 0,
+  totalProducts = 0
 }: StatsCardProps) {
   // Convert balance to number and handle undefined/null
   const numericBalance = typeof balance === 'number' ? balance : parseFloat(balance) || 0;
-  
+
   const stats = [
     {
       icon: Wallet,
@@ -49,7 +49,7 @@ export function StatsCard({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      {stats.map((stat, index) => (
+      {/* {stats.map((stat, index) => (
         <div
           key={index}
           className="bg-white rounded-2xl shadow-md p-5 border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
@@ -72,7 +72,7 @@ export function StatsCard({
             {stat.label}
           </p>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 }

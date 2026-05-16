@@ -11,10 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Sparkles, TrendingUp, Percent, Loader2, Upload, X, 
-  Youtube, Link2, Info, Package, Image as ImageIcon, 
-  DollarSign, FileText, ChevronRight, CheckCircle2 
+import {
+  Sparkles, TrendingUp, Percent, Loader2, Upload, X,
+  Youtube, Link2, Info, Package, Image as ImageIcon,
+  DollarSign, FileText, ChevronRight, CheckCircle2
 } from 'lucide-react';
 import { generateSKU, calculateProfitMargin, calculateDiscount } from '../utils/helpers';
 import { FormMode } from '../types/product.types';
@@ -137,12 +137,12 @@ export function ProductForm({
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
+
       <div className="grid lg:grid-cols-[1fr_350px] gap-8">
-        
+
         {/* Left Column: Main Form */}
         <div className="space-y-8">
-          
+
           {/* Section: Basic Information */}
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
             <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center gap-3">
@@ -267,7 +267,7 @@ export function ProductForm({
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="seller_price" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Cost Price (৳) <span className="text-rose-500">*</span>
+                    Seller Price (৳) <span className="text-rose-500">*</span>
                   </Label>
                   <Input
                     id="seller_price"
@@ -287,7 +287,7 @@ export function ProductForm({
 
                 <div className="space-y-2">
                   <Label htmlFor="regular_price" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Selling Price (৳)
+                    Offer Price (৳)
                   </Label>
                   <div className="relative">
                     <Input
@@ -307,7 +307,7 @@ export function ProductForm({
 
                 <div className="space-y-2">
                   <Label htmlFor="offer_price" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    MRP Price (৳)
+                    Regular Price (৳)
                   </Label>
                   <div className="relative">
                     <Input
@@ -478,7 +478,7 @@ export function ProductForm({
 
         {/* Right Column: Media & Actions */}
         <div className="space-y-8">
-          
+
           {/* Section: Main Image */}
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden sticky top-8">
             <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
@@ -489,7 +489,7 @@ export function ProductForm({
             </div>
 
             <div className="p-8 space-y-6">
-              <div 
+              <div
                 className={cn(
                   "relative aspect-square rounded-[2rem] border-4 border-dashed transition-all flex flex-col items-center justify-center text-center overflow-hidden group cursor-pointer",
                   mainImage || initialData?.existing_images?.[0] ? "border-secondary/20" : "border-slate-100 bg-slate-50 hover:bg-slate-100/80"
@@ -499,7 +499,7 @@ export function ProductForm({
                 {mainImage ? (
                   <img src={URL.createObjectURL(mainImage)} alt="Main product" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : initialData?.existing_images?.[0] ? (
-                  <img src={initialData.existing_images[0].startsWith('http') ? initialData.existing_images[0] : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${initialData.existing_images[0]}`} alt="Current" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={initialData.existing_images[0] && initialData.existing_images[0].toString().startsWith('http') ? initialData.existing_images[0] : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${initialData.existing_images[0]}`} alt="Current" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 ) : (
                   <div className="p-6">
                     <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4 shadow-sm group-hover:scale-110 transition-all group-hover:text-secondary group-hover:shadow-secondary/20">
@@ -509,7 +509,7 @@ export function ProductForm({
                     <p className="text-[8px] font-bold text-slate-300 uppercase mt-1 tracking-tighter">Click to browse files</p>
                   </div>
                 )}
-                
+
                 {(mainImage || initialData?.existing_images?.[0]) && (
                   <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
                     <div className="bg-white p-3 rounded-xl text-slate-900 shadow-xl flex items-center gap-2">
@@ -519,12 +519,12 @@ export function ProductForm({
                   </div>
                 )}
               </div>
-              
-              <input 
-                id="main-image-upload" 
-                type="file" 
-                accept="image/*" 
-                className="hidden" 
+
+              <input
+                id="main-image-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) handleMainImageChange(file);
@@ -535,7 +535,7 @@ export function ProductForm({
               <div className="space-y-4 pt-4 border-t border-slate-100">
                 <div className="flex items-center justify-between px-1">
                   <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Gallery Items</h4>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => document.getElementById('gallery-upload')?.click()}
                     className="p-1.5 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-white transition-all shadow-sm"
@@ -545,14 +545,30 @@ export function ProductForm({
                 </div>
 
                 <div className="grid grid-cols-4 gap-2">
-                  {existingGalleryImages.map((imgUrl, index) => (
-                    <div key={`existing-${index}`} className="relative aspect-square rounded-lg overflow-hidden border border-slate-100 group shadow-sm">
-                      <img src={imgUrl.startsWith('http') ? imgUrl : `https://admin.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgUrl}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                      <button type="button" onClick={() => handleExistingGalleryImageRemove(index)} className="absolute top-1 right-1 h-5 w-5 bg-rose-500 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-rose-600 shadow-md">
-                        <X size={10} />
-                      </button>
-                    </div>
-                  ))}
+                  {existingGalleryImages.map((imgObj, index) => {
+                    let imgName = '';
+                    if (typeof imgObj === 'string') {
+                      imgName = imgObj;
+                    } else if (imgObj) {
+                      imgName = (imgObj as any).gal_img || (imgObj as any).image || (imgObj as any).product_gal_img || (imgObj as any).name || String(imgObj);
+                    }
+                    if (imgName === '[object Object]' && typeof imgObj === 'object') {
+                       const possibleImg = Object.values(imgObj).find(val => typeof val === 'string' && (val.endsWith('.jpg') || val.endsWith('.png') || val.endsWith('.jpeg') || val.endsWith('.webp')));
+                       if (possibleImg) imgName = possibleImg as string;
+                    }
+                    const srcUrl = imgName && imgName.toString().startsWith('http') 
+                      ? imgName 
+                      : `https://admin.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgName}`;
+
+                    return (
+                      <div key={`existing-${index}`} className="relative aspect-square rounded-lg overflow-hidden border border-slate-100 group shadow-sm">
+                        <img src={srcUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-gallery.jpg'; }} />
+                        <button type="button" onClick={() => handleExistingGalleryImageRemove(index)} className="absolute top-1 right-1 h-5 w-5 bg-rose-500 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hover:bg-rose-600 shadow-md">
+                          <X size={10} />
+                        </button>
+                      </div>
+                    );
+                  })}
                   {galleryImages.map((file, index) => (
                     <div key={`new-${index}`} className="relative aspect-square rounded-lg overflow-hidden border border-emerald-100 bg-emerald-50 group shadow-sm">
                       <img src={URL.createObjectURL(file)} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
@@ -562,7 +578,7 @@ export function ProductForm({
                     </div>
                   ))}
                   {(existingGalleryImages.length + galleryImages.length < 5) && (
-                    <button 
+                    <button
                       type="button"
                       onClick={() => document.getElementById('gallery-upload')?.click()}
                       className="aspect-square rounded-lg border-2 border-dashed border-slate-100 flex flex-col items-center justify-center text-slate-200 hover:bg-slate-50 hover:border-secondary/20 hover:text-secondary transition-all"
@@ -596,7 +612,7 @@ export function ProductForm({
                     </>
                   )}
                 </Button>
-                
+
                 <Button
                   type="button"
                   variant="outline"
@@ -609,7 +625,7 @@ export function ProductForm({
               </div>
             </div>
           </div>
-          
+
           {/* Security / Tips Card */}
           <div className="p-8 bg-blue-50 rounded-[2.5rem] border border-blue-100 space-y-4">
             <div className="flex items-center gap-3 text-blue-600">
@@ -639,15 +655,15 @@ export function ProductForm({
 // Add Plus icon for gallery add button
 function Plus({ size, className }: { size?: number; className?: string }) {
   return (
-    <svg 
-      width={size || 24} 
-      height={size || 24} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      width={size || 24}
+      height={size || 24}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
       <line x1="12" y1="5" x2="12" y2="19"></line>

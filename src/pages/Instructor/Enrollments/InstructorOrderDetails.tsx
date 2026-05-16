@@ -281,10 +281,15 @@ export default function InstructorOrderDetails() {
                   <div key={product.id} className="flex flex-col sm:flex-row sm:items-center gap-6 p-6 bg-gray-50/50 rounded-[2rem] border border-transparent hover:border-emerald-100 hover:bg-white hover:shadow-2xl transition-all duration-700 group">
                     <div className="w-24 h-24 rounded-2xl overflow-hidden bg-white flex-shrink-0 border border-gray-100 p-3 shadow-md group-hover:scale-105 transition-transform duration-700">
                       <img
-                        src={product.product_image?.startsWith('http') ? product.product_image : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`}
+                        src={product.product_image?.startsWith('http') 
+                          ? product.product_image 
+                          : product.service_type === 'product' || product.service_type === 'ecommarce'
+                            ? `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`
+                            : `https://admin.goldenlifeltd.com/uploads/course/course_image/${product.product_image}`
+                        }
                         alt={product.product_name}
                         className="w-full h-full object-contain"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://admin.goldenlifeltd.com/uploads/course/course_image/6a046632f0db7.jfif'; }}
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/150?text=Course+Image'; }}
                       />
                     </div>
                     <div className="flex-1 space-y-2">

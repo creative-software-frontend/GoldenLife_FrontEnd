@@ -201,7 +201,7 @@ export function ImageUpload({
               className="relative group aspect-square rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200"
             >
               <img
-                src={imageUrl.startsWith('http') ? imageUrl : `${baseURL}${imageUrl}`}
+                src={imageUrl && imageUrl.toString().startsWith('http') ? imageUrl : `${baseURL}${imageUrl}`}
                 alt={`Existing product ${index + 1}`}
                 className="w-full h-full object-cover"
               />

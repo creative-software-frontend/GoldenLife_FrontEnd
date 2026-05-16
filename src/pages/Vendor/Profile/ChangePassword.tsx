@@ -12,6 +12,7 @@ export default function ChangePassword() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [formData, setFormData] = useState({
     old_password: '',
     password: '',
@@ -32,10 +33,12 @@ export default function ChangePassword() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    if (successMessage) setSuccessMessage('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSuccessMessage('');
 
     if (formData.password !== formData.confirm_password) {
       toast.error("New passwords do not match!");
@@ -67,8 +70,9 @@ export default function ChangePassword() {
         }
       );
 
-      if (response.data?.success) {
-        toast.success("Password updated successfully!");
+      if (response.data?.success === true || response.data?.status === true || response.data?.status === "success") {
+        setSuccessMessage("Password updated successfully! Your account is secure.");
+        toast.success(response.data?.message || "Password updated successfully!");
         setFormData({ old_password: '', password: '', confirm_password: '' });
         setTimeout(() => navigate('/vendor/dashboard/profile'), 2000);
       } else {
@@ -126,6 +130,20 @@ export default function ChangePassword() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+            {/* Success Message */}
+            {successMessage && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center gap-3 text-emerald-700 shadow-sm"
+              >
+                <div className="p-1.5 bg-emerald-100 rounded-full text-emerald-600 shrink-0">
+                  <ShieldCheck size={18} />
+                </div>
+                <p className="text-sm font-bold tracking-wide">{successMessage}</p>
+              </motion.div>
+            )}
+
             {/* Current Password */}
             <div className="space-y-2 group/field">
               <label className="text-[11px] font-black text-slate-400 p-2 uppercase tracking-widest ml-1 block">

@@ -9,12 +9,12 @@ import { ProductGrid } from './components/ProductGrid';
 import { BulkActionsBar } from './components/BulkActionsBar';
 import { Pagination } from './components/Pagination';
 import { useProducts } from './hooks/useProducts';
-import { useCategories } from '../Products/hooks/useCategories';
+import { useProductCategories } from '../Products/hooks/useProductCategories';
 import { Product, ProductFilters as ProductFiltersType, ViewMode, PaginationState } from './types';
 
 const Products: React.FC = () => {
   const navigate = useNavigate();
-  
+
   // State
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
@@ -57,14 +57,8 @@ const Products: React.FC = () => {
   // Load categories for category name lookup
   const {
     categories,
-    fetchCategories,
-  } = useCategories();
-
-  // Fetch categories on mount
-  React.useEffect(() => {
-    console.log('🚀 [ProductManagement] Component mounted, fetching categories...');
-    fetchCategories();
-  }, [fetchCategories]);
+    isLoadingCategories,
+  } = useProductCategories();
 
   // Auto-refresh products in background every 10 seconds to detect admin status changes
   React.useEffect(() => {
@@ -209,7 +203,7 @@ const Products: React.FC = () => {
         </>
       )}
 
-          {/* Bulk Actions Bar */}
+      {/* Bulk Actions Bar */}
       {selectedProducts.length > 0 && (
         <BulkActionsBar
           selectedCount={selectedProducts.length}

@@ -38,7 +38,7 @@ export function useProducts() {
       if (!token) {
         setError('Authentication required. Please log in again.');
         setIsLoading(false);
-        toast.error('Please log in to view products');
+        // Error is handled by state
         return;
       }
 
@@ -124,9 +124,7 @@ export function useProducts() {
         currentPage: 1
       });
 
-      if (!silent) {
-        toast.success(`Loaded ${productList.length} products`);
-      }
+      // No toast on success for list fetching to avoid spamming the user
     } catch (err: any) {
       console.error('❌ [useProducts] Failed to fetch products:', err);
       console.error('[useProducts] Error details:', {

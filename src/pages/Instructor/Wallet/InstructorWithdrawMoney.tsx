@@ -49,7 +49,6 @@ export default function InstructorWithdrawMoney() {
         if (!amount || Number(amount) <= 0) {
             const msg = "Please enter a valid amount.";
             setErrorMessage(msg);
-            toast.error(msg);
             return;
         }
 
@@ -60,7 +59,6 @@ export default function InstructorWithdrawMoney() {
         if (totalDeduction > Number(balance)) {
             const msg = `Insufficient funds! (Total including ${chargePercent}% fee: ৳${totalDeduction.toFixed(2)})`;
             setErrorMessage(msg);
-            toast.error(msg);
             return;
         }
 
@@ -69,7 +67,6 @@ export default function InstructorWithdrawMoney() {
             if (!mfsRegex.test(mfsNumber)) {
                 const msg = `Please enter a valid ${paymentMethod === 'rocket' ? '11 or 12' : '11'}-digit ${paymentMethod.toUpperCase()} number.`;
                 setErrorMessage(msg);
-                toast.error(msg);
                 return;
             }
         }
@@ -79,7 +76,6 @@ export default function InstructorWithdrawMoney() {
 
     const handleWithdrawSuccess = (msg: string) => {
         setSuccessMessage(msg);
-        toast.success(msg);
         setAmount('');
         setMfsNumber('');
         refetchBalance();

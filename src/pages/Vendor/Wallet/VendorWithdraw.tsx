@@ -205,7 +205,6 @@ export default function VendorWithdraw() {
 
     const handleWithdrawSuccess = async (msg: string) => {
         setSuccessMessage(msg);
-        toast.success(msg);
         setAmount('');
         setMfsNumber('');
 

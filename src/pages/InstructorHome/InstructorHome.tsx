@@ -73,8 +73,14 @@ const InstructorHome: React.FC = () => {
     const [chartTimeframe, setChartTimeframe] = useState<'week' | 'month' | 'year'>('week');
 
     const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
-    const { instructor_session } = useAppStore();
-    const instructorName = instructor_session?.user?.name || 'Instructor';
+    const { instructor_session, instructorProfile, fetchProfile } = useAppStore();
+    
+    // Auto refresh profile data when dashboard loads
+    React.useEffect(() => {
+        fetchProfile(true);
+    }, [fetchProfile]);
+
+    const instructorName = instructorProfile?.user?.name || instructorProfile?.instructor?.name || instructor_session?.user?.name || 'Instructor';
 
     const tabs: ('Today' | 'Weekly' | 'Monthly' | 'Yearly')[] = ['Today', 'Weekly', 'Monthly', 'Yearly'];
 

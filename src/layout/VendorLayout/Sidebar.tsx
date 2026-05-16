@@ -56,14 +56,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
                     }
                 `}
             >
-                <div className="px-6 py-4 border-b border-secondary-foreground/20 bg-white whitespace-nowrap overflow-hidden">
+                <div className="h-16 sm:h-20 px-4 sm:px-6 border-b border-secondary-foreground/20 bg-white whitespace-nowrap overflow-hidden flex items-center shrink-0">
                     <div className="flex flex-col items-start gap-1">
                         {!isOpen ? (
                             // Collapsed state - only icon
                             <img
                                 src="/image/logo/icon.png"
                                 alt="Icon"
-                                className="h-8 w-8 mx-auto"
+                                className="h-8 w-8 mx-auto object-contain"
                             />
                         ) : (
                             // Expanded state - full logo

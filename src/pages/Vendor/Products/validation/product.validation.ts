@@ -3,8 +3,8 @@ import { z } from 'zod';
 export const productSchema = z.object({
   product_title_english: z.string().min(3, 'English title must be at least 3 characters'),
   product_title_bangla: z.string().min(3, 'Bangla title must be at least 3 characters'),
-  category_id: z.number().min(1, 'Category is required'),
-  subcategory_id: z.number().min(1, 'Subcategory is required'),
+  category_id: z.coerce.number().min(1, 'Category is required'),
+  subcategory_id: z.coerce.number().min(1, 'Subcategory is required'),
   short_description_english: z.string()
     .max(200, 'Short description (English) must not exceed 200 characters')
     .optional()

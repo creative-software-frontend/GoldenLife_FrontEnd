@@ -9,8 +9,8 @@ interface ProfileInfoProps {
   };
   vendor: {
     owner_name: string;
-    businee_name?: string;   
-    business_name?: string;  
+    businee_name?: string;
+    business_name?: string;
     mobile?: string;
     country?: string;
     district?: string;
@@ -26,7 +26,7 @@ export function ProfileInfo({ user, vendor }: ProfileInfoProps) {
   // Safety defaults
   const safeUser = user || {};
   const safeVendor = vendor || {};
-  
+
   // Debug logging
   console.log('📋 [ProfileInfo] Received data:', {
     hasUser: !!user,
@@ -36,7 +36,7 @@ export function ProfileInfo({ user, vendor }: ProfileInfoProps) {
     userName: user?.name,
     businessName: vendor?.business_name || vendor?.businee_name
   });
-  
+
   const infoSections = [
     {
       title: 'Personal Information',
@@ -114,9 +114,9 @@ export function ProfileInfo({ user, vendor }: ProfileInfoProps) {
           icon: Globe,
           label: 'Website',
           value: safeVendor.website ? (
-            <a 
-              href={safeVendor.website} 
-              target="_blank" 
+            <a
+              href={safeVendor.website}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-primary-dark hover:underline"
             >
@@ -129,9 +129,9 @@ export function ProfileInfo({ user, vendor }: ProfileInfoProps) {
           icon: Facebook,
           label: 'Facebook',
           value: safeVendor.facebook ? (
-            <a 
-              href={safeVendor.facebook} 
-              target="_blank" 
+            <a
+              href={safeVendor.facebook}
+              target="_blank"
               rel="noopener noreferrer"
               className="text-[#1877F2] hover:underline"
             >
@@ -159,18 +159,18 @@ export function ProfileInfo({ user, vendor }: ProfileInfoProps) {
   return (
     <div className="space-y-6">
       {infoSections.map((section, sectionIdx) => (
-        <div 
+        <div
           key={sectionIdx}
           className="bg-white rounded-2xl shadow-md p-6 border border-gray-100 hover:shadow-lg transition-shadow duration-300"
         >
           <h3 className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b-2 border-primary-light/20">
             {section.title}
           </h3>
-          
+
           <div className="grid md:grid-cols-2 gap-4">
             {section.items.map((item, idx) => (
               <div key={idx} className="flex items-start gap-3">
-                <div 
+                <div
                   className="p-2.5 rounded-xl flex-shrink-0"
                   style={{ backgroundColor: `${item.color}15` }}
                 >

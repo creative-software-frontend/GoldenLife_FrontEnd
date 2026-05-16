@@ -84,12 +84,12 @@ export default function ProductDetails() {
 
   const getProductImageUrl = (filename: string | null | undefined): string => {
     if (!filename) return '/assets/default-vendor.png';
-    return filename.startsWith('http') ? filename : `${baseURL}/uploads/ecommarce/product_image/${filename}`;
+    return filename.toString().startsWith('http') ? filename : `${baseURL}/uploads/ecommarce/product_image/${filename}`;
   };
 
   const getGalleryImageUrl = (filename: string | null | undefined): string => {
     if (!filename) return '/assets/default-vendor.png';
-    return filename.startsWith('http') ? filename : `${baseURL}/uploads/ecommarce/gal_img/${filename}`;
+    return filename.toString().startsWith('http') ? filename : `${baseURL}/uploads/ecommarce/gal_img/${filename}`;
   };
 
   // Lightbox handlers

@@ -203,7 +203,7 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
                         {renderWalletDropdown(false, walletRefDesktop)}
                     </div>
 
-                    {/* DESKTOP SEARCH BOX */}
+                    {/* DESKTOP SEARCH BOX
                     <div className={`ml-4 xl:ml-8 hidden ${isOpen ? 'xl:flex' : 'lg:flex'} flex-1 items-center bg-muted/50 border border-border rounded-xl px-3 lg:px-4 py-2 lg:py-2.5 w-full max-w-2xl min-w-[200px] focus-within:ring-1 focus-within:ring-secondary focus-within:border-secondary transition-all shadow-sm`}>
                         <Search size={20} className="text-muted-foreground flex-shrink-0" />
                         <input
@@ -218,7 +218,7 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
                         >
                             <Camera size={20} className="text-gray-700 hover:text-yellow-600 transition" />
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* RIGHT SIDE ICONS */}
@@ -233,10 +233,10 @@ const Navbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }> = ({ togg
                     </button>
 
                     {/* Location Icon - Desktop Only */}
-                    <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group">
+                    {/* <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group">
                         <MapPin size={20} className="text-muted-foreground group-hover:text-foreground transition-colors" />
                         <span className="text-sm font-medium text-muted-foreground group-hover:text-foreground">Dhaka</span>
-                    </div>
+                    </div> */}
 
                     {/* Notification Bell */}
                     <VendorNotificationBell

@@ -91,15 +91,12 @@ export const useInstructorWallet = () => {
         },
         onSuccess: (data) => {
             if (data?.status === 'success' || data?.success) {
-                toast.success(data.message || "Withdrawal request submitted!");
                 queryClient.invalidateQueries({ queryKey: ['instructor-wallet-balance'] });
                 queryClient.invalidateQueries({ queryKey: ['instructor-transactions'] });
-            } else {
-                toast.error(data?.message || "Withdrawal failed.");
             }
         },
         onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Internal server error.");
+            // Error handling is managed by the caller
         }
     });
 

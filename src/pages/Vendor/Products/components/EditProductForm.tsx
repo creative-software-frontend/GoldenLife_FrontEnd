@@ -12,10 +12,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
-import { 
-  Sparkles, TrendingUp, Percent, Loader2, Upload, X, 
-  Youtube, Link2, Info, Package, Image as ImageIcon, 
-  DollarSign, FileText, CheckCircle2, RotateCcw 
+import {
+  Sparkles, TrendingUp, Percent, Loader2, Upload, X,
+  Youtube, Link2, Info, Package, Image as ImageIcon,
+  DollarSign, FileText, CheckCircle2, RotateCcw
 } from 'lucide-react';
 import { generateSKU, calculateProfitMargin, calculateDiscount } from '../utils/helpers';
 import { cn } from '@/lib/utils';
@@ -93,10 +93,11 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
   useEffect(() => {
     if (dirtyFields.seller_price && sellerPrice && sellerPrice > 0) {
       const seller = Number(sellerPrice);
-      const offerVal = seller + (seller * 0.30);
-      const regularVal = offerVal + (offerVal * 0.20);
-      setValue('offer_price', parseFloat(offerVal.toFixed(2)), { shouldValidate: true });
-      setValue('regular_price', parseFloat(regularVal.toFixed(2)), { shouldValidate: true });
+      const regular = seller + (seller * 0.30);
+      const offer = regular + (regular * 0.20);
+
+      setValue('offer_price', Math.round(regular), { shouldValidate: true });
+      setValue('regular_price', Math.round(offer), { shouldValidate: true });
     }
   }, [sellerPrice, dirtyFields.seller_price, setValue]);
 
@@ -158,12 +159,12 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-10 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      
+
       <div className="grid lg:grid-cols-[1fr_350px] gap-8">
-        
+
         {/* Left Column */}
         <div className="space-y-8">
-          
+
           {/* Section: Basic Information */}
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
             <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center gap-3">
@@ -288,7 +289,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="seller_price" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Cost Price (৳) <span className="text-rose-500">*</span>
+                    Seller Price (৳) <span className="text-rose-500">*</span>
                   </Label>
                   <Input
                     id="seller_price"
@@ -308,7 +309,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
 
                 <div className="space-y-2">
                   <Label htmlFor="regular_price" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    Selling Price (৳)
+                    Regular Price (৳)
                   </Label>
                   <div className="relative">
                     <Input
@@ -328,7 +329,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
 
                 <div className="space-y-2">
                   <Label htmlFor="offer_price" className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">
-                    MRP Price (৳)
+                    Offer Price (৳)
                   </Label>
                   <div className="relative">
                     <Input
@@ -402,7 +403,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-primary-light/5 border border-primary-light/10 rounded-2xl">
+                {/* <div className="flex items-center justify-between p-4 bg-primary-light/5 border border-primary-light/10 rounded-2xl">
                   <div className="space-y-0.5">
                     <Label className="text-[10px] font-black uppercase tracking-widest text-slate-900">E-book Product</Label>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Digital file delivery</p>
@@ -415,7 +416,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                     }}
                     className="data-[state=checked]:bg-secondary"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -495,7 +496,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
 
         {/* Right Column */}
         <div className="space-y-8">
-          
+
           {/* Section: Main Image */}
           <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden sticky top-8">
             <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
@@ -506,7 +507,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
             </div>
 
             <div className="p-8 space-y-6">
-              <div 
+              <div
                 className={cn(
                   "relative aspect-square rounded-[2rem] border-4 border-dashed transition-all flex flex-col items-center justify-center text-center overflow-hidden group cursor-pointer",
                   mainImage || initialData?.existing_images?.[0] ? "border-amber-500/20" : "border-slate-100 bg-slate-50 hover:bg-slate-100/80"
@@ -516,14 +517,14 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                 {mainImage ? (
                   <img src={URL.createObjectURL(mainImage)} alt="Main product" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 ) : initialData?.existing_images?.[0] ? (
-                  <img src={`https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${initialData.existing_images[0]}`} alt="Current" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={initialData.existing_images[0] && initialData.existing_images[0].toString().startsWith('http') ? initialData.existing_images[0] : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${initialData.existing_images[0]}`} alt="Current" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 ) : (
                   <div className="p-6">
                     <Upload className="w-8 h-8 text-slate-300 mx-auto mb-4" />
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Upload cover</p>
                   </div>
                 )}
-                
+
                 <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
                   <div className="bg-white p-3 rounded-xl text-slate-900 shadow-xl flex items-center gap-2">
                     <Upload className="w-4 h-4" />
@@ -531,7 +532,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                   </div>
                 </div>
               </div>
-              
+
               <input id="main-image-upload" type="file" accept="image/*" className="hidden" onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleMainImageChange(file);
@@ -548,11 +549,27 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
 
                 <div className="grid grid-cols-4 gap-2">
                   {existingGalleryImages.map((imgObj, index) => {
-                    const imgName = typeof imgObj === 'string' ? imgObj : imgObj.image;
+                    let imgName = '';
+                    if (typeof imgObj === 'string') {
+                      imgName = imgObj;
+                    } else if (imgObj) {
+                      imgName = imgObj.gal_img || imgObj.image || imgObj.product_gal_img || imgObj.name || String(imgObj);
+                    }
+                    // Handle case where imgName is still an object string representation
+                    if (imgName === '[object Object]' && typeof imgObj === 'object') {
+                       // Try to find any property that looks like an image
+                       const possibleImg = Object.values(imgObj).find(val => typeof val === 'string' && (val.endsWith('.jpg') || val.endsWith('.png') || val.endsWith('.jpeg') || val.endsWith('.webp')));
+                       if (possibleImg) imgName = possibleImg as string;
+                    }
+                    
+                    const srcUrl = imgName && imgName.toString().startsWith('http') 
+                      ? imgName 
+                      : `https://admin.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgName}`;
+
                     return (
                       <div key={`existing-${index}`} className="relative aspect-square rounded-lg overflow-hidden border border-slate-100 group shadow-sm">
-                        <img src={imgName.startsWith('http') ? imgName : `https://admin.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgName}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                        <button type="button" onClick={() => handleExistingGalleryImageRemove(index)} className="absolute top-1 right-1 h-5 w-5 bg-rose-500 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md">
+                        <img src={srcUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-gallery.jpg'; }} />
+                        <button type="button" onClick={() => handleExistingGalleryImageRemove(index)} className="absolute top-1 right-1 h-5 w-5 bg-rose-500 text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center shadow-md hover:bg-rose-600">
                           <X size={10} />
                         </button>
                         <div className="absolute bottom-0 left-0 right-0 bg-slate-900/60 text-white text-[6px] font-bold text-center p-0.5 uppercase tracking-tighter">Existing</div>
@@ -594,7 +611,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                     </>
                   )}
                 </Button>
-                
+
                 <Button
                   type="button"
                   variant="outline"
@@ -608,7 +625,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
               </div>
             </div>
           </div>
-          
+
           {/* Security / Info */}
           <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-200 space-y-4">
             <div className="flex items-center gap-3 text-slate-600">

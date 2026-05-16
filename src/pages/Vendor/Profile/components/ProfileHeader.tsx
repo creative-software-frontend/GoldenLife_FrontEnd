@@ -272,12 +272,12 @@ export function ProfileHeader({
                 <Edit2 size={16} />
                 Edit Profile
               </button>
-              <button className="px-4 py-2 bg-white border-2 border-primary-light text-primary-light font-bold rounded-xl hover:bg-primary-light hover:text-white transition-all duration-300 shadow-md hover:shadow-lg">
+              {/* <button className="px-4 py-2 bg-white border-2 border-primary-light text-primary-light font-bold rounded-xl hover:bg-primary-light hover:text-white transition-all duration-300 shadow-md hover:shadow-lg">
                 Share Profile
               </button>
               <button className="px-4 py-2 bg-primary-light hover:bg-primary-dark text-white font-bold rounded-xl transition-all duration-300 shadow-lg shadow-primary-light/30 hover:shadow-primary-dark/30">
                 View Shop
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

@@ -435,12 +435,7 @@ const InstructorEnrollList: React.FC = () => {
               <h3 className="text-3xl font-black text-gray-900 tracking-tighter uppercase italic">Signal Void.</h3>
               <p className="text-gray-500 font-bold max-w-sm mx-auto leading-relaxed px-10 text-sm">No signals detected on the current frequency. Resetting filters might re-establish connection.</p>
             </div>
-            <Button
-              onClick={() => setFilters({ search: '', status: 'All', page: 1, limit: 50 })}
-              className="h-15 px-12 rounded-3xl bg-[#FF8A00] hover:bg-orange-600 text-white font-black gap-3 shadow-2xl shadow-orange-500/20 active:scale-95 transition-all"
-            >
-              <RefreshCw size={18} strokeWidth={3} /> Re-Synchronize Channel
-            </Button>
+
           </motion.div>
         )}
       </AnimatePresence>

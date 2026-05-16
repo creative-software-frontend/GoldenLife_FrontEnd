@@ -184,7 +184,7 @@ const InstrutorCourseList: React.FC = () => {
         {[
           { label: 'Total Courses', value: String(courses.length), icon: BookOpen, color: 'text-emerald-600', bg: 'bg-emerald-50' },
           // { label: 'Published', value: String(courses.filter(c => c.status === '1' || c.status === 'published').length), icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Drafts', value: String(courses.filter(c => c.status !== '1' && c.status !== 'published').length), icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
+          { label: 'Inactive Course', value: String(courses.filter(c => c.status !== '1' && c.status !== 'published').length), icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
           { label: 'Course Types', value: String(new Set(courses.map(c => c.course_type)).size), icon: Award, color: 'text-purple-600', bg: 'bg-purple-50' },
         ].map((stat, i) => (
           <Card key={i} className="border-none shadow-sm hover:shadow-xl transition-all duration-500 rounded-3xl overflow-hidden bg-white group cursor-default">
@@ -352,7 +352,7 @@ const InstrutorCourseList: React.FC = () => {
                                 <Edit size={18} className="text-emerald-500 group-hover:scale-110 transition-transform" /> Edit Course
                               </DropdownMenuItem>
 
-                              {(course.course_type === 'Course (Video)' || course.course_type === 'Live Class') && (
+                              {course.course_type === 'Course (Video)' && (
                                 <>
                                   <DropdownMenuSeparator className="bg-gray-50" />
                                   <DropdownMenuItem
@@ -423,7 +423,7 @@ const InstrutorCourseList: React.FC = () => {
                             <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/view/${course.id}`)}>
                               <Eye size={16} className="mr-2" /> View
                             </DropdownMenuItem>
-                            {(course.course_type === 'Course (Video)' || course.course_type === 'Live Class') && (
+                            {course.course_type === 'Course (Video)' && (
                               <>
                                 <DropdownMenuSeparator className="bg-gray-50" />
                                 <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/curriculum/${course.id}`)}>
