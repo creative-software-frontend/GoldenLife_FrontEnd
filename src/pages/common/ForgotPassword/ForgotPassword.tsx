@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Logo from '../Logo';
+import { Eye, EyeOff } from 'lucide-react';
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const ForgotPassword: React.FC = () => {
   const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -278,33 +280,40 @@ const ForgotPassword: React.FC = () => {
                     </div>
                   )}
 
-                  <div className="space-y-2 relative">
+                  <div className="relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="New Password"
                       value={newPassword}
                       onChange={(e) => { setNewPassword(e.target.value); setPasswordError(''); }}
-                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8A00] transition-all"
+                      className="w-full pl-4 pr-12 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8A00] transition-all"
                       disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-[35px] -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
-                      {showPassword ? "Hide" : "Show"}
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="relative">
                     <input
-                      type="password"
+                      type={showConfirmPassword ? 'text' : 'password'}
                       placeholder="Confirm New Password"
                       value={confirmPassword}
                       onChange={(e) => { setConfirmPassword(e.target.value); setPasswordError(''); }}
-                      className="w-full px-4 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8A00] transition-all"
+                      className="w-full pl-4 pr-12 py-3.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#FF8A00] transition-all"
                       disabled={isLoading}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
                   </div>
 
                   <button

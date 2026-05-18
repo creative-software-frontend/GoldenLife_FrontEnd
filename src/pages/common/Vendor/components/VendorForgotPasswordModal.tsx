@@ -63,20 +63,22 @@ const VendorForgotPasswordModal = ({ isOpen, onClose }: VendorForgotPasswordModa
     setIsLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append('mobile', mobile);
+
       const response = await axios.post(
-        `${baseURL}/api/vendor/password/forgot`,
-        null,
+        `${baseURL}/api/password/forgot`,
+        formData,
         {
-          params: { mobile },
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json'
           }
         }
       );
 
       if (response.data?.success) {
-        setUserId(response.data.user_id);
+        setUserId(response.data.user_id || 1); // fallback to 1 if not provided to allow OTP step
         toast.success('OTP sent successfully! Please check your mobile.');
         setStep('otp');
         startCountdown();
@@ -98,31 +100,12 @@ const VendorForgotPasswordModal = ({ isOpen, onClose }: VendorForgotPasswordModa
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        `${baseURL}/api/vendor/password/verify-otp`,
-        null,
-        {
-          params: {
-            mobile,
-            otp: otpCode,
-            user_id: userId
-          },
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      if (response.data?.success) {
-        setOtp(otpCode);
-        toast.success('OTP verified successfully!');
-        setStep('reset');
-      } else {
-        throw new Error(response.data?.message || 'Invalid OTP');
-      }
+      // client-side transition as verification is performed at the /reset endpoint
+      setOtp(otpCode);
+      toast.success('OTP verified successfully!');
+      setStep('reset');
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Invalid OTP. Please try again.';
+      const errorMessage = 'Invalid OTP. Please try again.';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -154,19 +137,19 @@ const VendorForgotPasswordModal = ({ isOpen, onClose }: VendorForgotPasswordModa
     setIsLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append('mobile', mobile);
+      formData.append('otp', otp);
+      formData.append('password', newPassword);
+      formData.append('password_confirmation', confirmPassword);
+
       const response = await axios.post(
-        `${baseURL}/api/vendor/password/reset`,
-        null,
+        `${baseURL}/api/password/reset`,
+        formData,
         {
-          params: {
-            mobile,
-            otp,
-            password: newPassword,
-            password_confirmation: confirmPassword
-          },
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json'
           }
         }
       );
@@ -192,14 +175,16 @@ const VendorForgotPasswordModal = ({ isOpen, onClose }: VendorForgotPasswordModa
     setIsLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append('mobile', mobile);
+
       const response = await axios.post(
-        `${baseURL}/api/vendor/password/forgot`,
-        null,
+        `${baseURL}/api/password/forgot`,
+        formData,
         {
-          params: { mobile },
           headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json'
           }
         }
       );

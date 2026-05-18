@@ -4,6 +4,8 @@ import { ShieldCheck, Lock, Eye, EyeOff, Loader2, AlertTriangle } from 'lucide-r
 import { toast } from 'react-toastify';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useAppStore } from '@/store/useAppStore';
+import { getAuthToken } from '@/store/utils';
 
 export default function ChangePassward() {
     const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +21,8 @@ export default function ChangePassward() {
 
     const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
 
+    const student = useAppStore(s => s.studentProfile);
+
     const getAuthData = () => {
         const session = sessionStorage.getItem("student_session");
         if (!session) return null;
@@ -28,8 +32,8 @@ export default function ChangePassward() {
     };
 
     const auth = getAuthData();
-    const studentId = auth?.student?.id; // Fallback to 10 if not found, as per user example
-    const token = auth?.token;
+    const studentId = student?.id || auth?.student?.id;
+    const token = getAuthToken() || auth?.token;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -37,6 +41,11 @@ export default function ChangePassward() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!studentId) {
+            toast.error("User profile is still loading. Please try again in a moment.");
+            return;
+        }
 
         if (formData.password !== formData.confirm_password) {
             toast.error("New passwords do not match!");
@@ -65,8 +74,8 @@ export default function ChangePassward() {
                 }
             );
 
-            if (response.data?.success) {
-                toast.success("Password updated successfully!");
+            if (response.data?.success || response.data?.status === "success") {
+                toast.success(response.data?.message || "Password updated successfully!");
                 setFormData({ old_password: '', password: '', confirm_password: '' });
             } else {
                 toast.error(response.data?.message || "Failed to update password.");
