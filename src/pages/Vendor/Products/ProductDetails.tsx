@@ -57,9 +57,9 @@ export default function ProductDetails() {
 
   // Helper functions for safe formatting
   const formatPrice = (price: string | number | undefined | null): string => {
-    if (price === undefined || price === null || price === '') return '0.00';
+    if (price === undefined || price === null || price === '') return '0';
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
-    return `৳ ${numPrice.toFixed(2)}`;
+    return `৳ ${numPrice}`;
   };
 
   const formatNumber = (num: string | number | undefined | null): string => {

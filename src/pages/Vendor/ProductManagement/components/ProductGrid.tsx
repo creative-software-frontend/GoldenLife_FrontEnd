@@ -34,8 +34,9 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   };
 
   // Format price with BDT symbol
-  const formatPrice = (price: number) => {
-    return `৳${price.toLocaleString()}`;
+  const formatPrice = (price: any) => {
+    const num = typeof price === 'number' ? price : parseFloat(price);
+    return isNaN(num) ? `৳${price || 0}` : `৳${num.toLocaleString()}`;
   };
 
   if (isLoading) {

@@ -269,11 +269,11 @@ export function useProducts() {
     // Sorting
     switch (filters.sort) {
       case 'price_asc':
-        result.sort((a, b) => a.offer_price - b.offer_price);
+        result.sort((a, b) => Number(a.offer_price) - Number(b.offer_price));
         console.log('📊 [applyFilters] Sorted by price ascending');
         break;
       case 'price_desc':
-        result.sort((a, b) => b.offer_price - a.offer_price);
+        result.sort((a, b) => Number(b.offer_price) - Number(a.offer_price));
         console.log('📊 [applyFilters] Sorted by price descending');
         break;
       case 'stock_asc':
@@ -281,7 +281,7 @@ export function useProducts() {
         console.log('📊 [applyFilters] Sorted by stock ascending');
         break;
       case 'stock_desc':
-        result.sort((a, b) => b.stock - b.stock);
+        result.sort((a, b) => b.stock - a.stock);
         console.log('📊 [applyFilters] Sorted by stock descending');
         break;
       case 'date_asc':

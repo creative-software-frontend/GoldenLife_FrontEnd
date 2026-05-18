@@ -28,14 +28,14 @@ export const ProductTable: React.FC<ProductTableProps> = ({
   onToggleStatus,
   categories = [],
 }) => {
-  // Debug logging for categories
-  console.log('📋 [ProductTable] Render with:', {
-    productsCount: products.length,
-    categoriesCount: categories.length,
-    categories: categories.map(c => ({ id: c.id, name: c.category_name })),
-    firstProductCategory: products[0]?.category_id
-  });
-
+  // // Debug logging for categories
+  // console.log('📋 [ProductTable] Render with:', {
+  //   productsCount: products.length,
+  //   categoriesCount: categories.length,
+  //   categories: categories.map(c => ({ id: c.id, name: c.category_name })),
+  //   firstProductCategory: products[0]?.category_id
+  // });
+  console.log("🚀 ~ ProductTable ~ products:", products)
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       onSelectionChange(products.map((p) => p.id));
@@ -52,8 +52,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
     }
   };
 
-  const formatPrice = (price: number) => {
-    return `৳${price.toLocaleString()}`;
+  const formatPrice = (price: any) => {
+    const num = Number(price);
+    return isNaN(num) ? `৳${price || 0}` : `৳${num}`;
   };
 
   if (isLoading) {
@@ -66,7 +67,9 @@ export const ProductTable: React.FC<ProductTableProps> = ({
               <TableHead className="w-[120px] h-12">Image</TableHead>
               <TableHead className="h-12 min-w-[280px]">Product Details</TableHead>
               <TableHead className="h-12 min-w-[180px]">Category</TableHead>
-              <TableHead className="h-12 w-[140px] text-right">Price</TableHead>
+              <TableHead className="h-12 w-[140px] text-left">Seller price</TableHead>
+              <TableHead className="h-12 w-[140px] text-left">Company price</TableHead>
+              <TableHead className="h-12 w-[140px] text-left">Offer price</TableHead>
               <TableHead className="h-12 w-[120px] text-center">Stock</TableHead>
               <TableHead className="h-12 w-[120px] text-center">Status</TableHead>
               <TableHead className="h-12 w-[100px] text-right">Actions</TableHead>
@@ -84,8 +87,10 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell className="py-4"><Skeleton className="h-4 w-24" /></TableCell>
-                <TableCell className="py-4 text-right"><Skeleton className="h-4 w-16 ml-auto" /></TableCell>
-                <TableCell className="py-4"><Skeleton className="h-4 w-12 mx-auto" /></TableCell>
+                <TableCell className="py-4 text-left"><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell className="py-4 text-left"><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell className="py-4 text-left"><Skeleton className="h-4 w-16" /></TableCell>
+                <TableCell className="py-4 text-center"><Skeleton className="h-4 w-12 mx-auto" /></TableCell>
                 <TableCell className="py-4 text-center"><Skeleton className="h-6 w-20 mx-auto rounded-full" /></TableCell>
                 <TableCell className="py-4 text-right"><Skeleton className="h-8 w-8 ml-auto rounded-lg" /></TableCell>
               </TableRow>
@@ -143,7 +148,10 @@ export const ProductTable: React.FC<ProductTableProps> = ({
             <TableHead className="w-[120px] h-14 font-bold text-foreground">Image</TableHead>
             <TableHead className="h-14 min-w-[280px] font-bold text-foreground">Product Details</TableHead>
             <TableHead className="h-14 min-w-[180px] font-bold text-foreground">Category</TableHead>
-            <TableHead className="h-14 w-[140px] text-left font-bold text-foreground">Price</TableHead>
+            <TableHead className="h-14 w-[140px] text-left font-bold text-foreground">Seller price</TableHead>
+            <TableHead className="h-14 w-[140px] text-left font-bold text-foreground">Company price</TableHead>
+            <TableHead className="h-14 w-[140px] text-left font-bold text-foreground">Offer price</TableHead>
+
             <TableHead className="h-14 w-[120px] text-center font-bold text-foreground">Stock</TableHead>
             <TableHead className="h-14 w-[120px] text-center font-bold text-foreground">Status</TableHead>
             <TableHead className="h-14 w-[100px] text-right font-bold text-foreground">Actions</TableHead>
@@ -153,11 +161,10 @@ export const ProductTable: React.FC<ProductTableProps> = ({
           {products.map((product) => (
             <TableRow
               key={product.id}
-              className={`group transition-all duration-200 ${
-                selectedProducts.includes(product.id)
-                  ? 'bg-primary/5 hover:bg-primary/10'
-                  : 'hover:bg-muted/40'
-              }`}
+              className={`group transition-all duration-200 ${selectedProducts.includes(product.id)
+                ? 'bg-primary/5 hover:bg-primary/10'
+                : 'hover:bg-muted/40'
+                }`}
             >
               <TableCell className="py-4 px-4">
                 <Checkbox
@@ -197,7 +204,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                   const catId = product.category_id;
                   const categoryName = getCategoryNameById(catId, categories);
                   console.log('🏷️ [ProductTable.Category] Product:', product.product_title_english, '| Category ID:', catId, '(type:', typeof catId, ')', '| Category Name:', categoryName);
-                  
+
                   // Show loading indicator if categories are empty
                   if (categories.length === 0) {
                     return (
@@ -210,7 +217,7 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                       </span>
                     );
                   }
-                  
+
                   return (
                     <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-secondary/10 text-secondary text-xs font-semibold hover:bg-secondary/20 transition-colors">
                       {categoryName}
@@ -219,30 +226,36 @@ export const ProductTable: React.FC<ProductTableProps> = ({
                 })()}
               </TableCell>
 
-              {/* Price */}
-              <TableCell className="py-4 px-4">
-                <div className="flex flex-row items-center gap-2 text-left">
-                  <span className="font-bold text-primary text-sm whitespace-nowrap">
-                    {formatPrice(product.offer_price)}
-                  </span>
-                  {product.regular_price > product.offer_price && (
-                    <span className="text-xs text-muted-foreground line-through font-medium whitespace-nowrap">
-                      {formatPrice(product.regular_price)}
-                    </span>
-                  )}
-                </div>
+              {/* Seller price */}
+              <TableCell className="py-4 px-4 text-left">
+                <span className="font-medium text-foreground text-sm">
+                  {formatPrice(product.seller_price)}
+                </span>
+              </TableCell>
+
+              {/* Company price */}
+              <TableCell className="py-4 px-4 text-left">
+                <span className="font-medium text-foreground text-sm">
+                  {formatPrice(product.regular_price)}
+                </span>
+              </TableCell>
+
+              {/* Offer price */}
+              <TableCell className="py-4 px-4 text-left">
+                <span className="font-bold text-primary text-sm whitespace-nowrap">
+                  {formatPrice(product.offer_price)}
+                </span>
               </TableCell>
 
               {/* Stock */}
               <TableCell className="py-4 px-4 text-center">
                 <div className="flex flex-col items-center gap-1">
-                  <span className={`text-sm font-bold ${
-                    product.stock === 0 
-                      ? 'text-red-600 dark:text-red-500' 
-                      : product.stock <= LOW_STOCK_THRESHOLD
+                  <span className={`text-sm font-bold ${product.stock === 0
+                    ? 'text-red-600 dark:text-red-500'
+                    : product.stock <= LOW_STOCK_THRESHOLD
                       ? 'text-amber-600 dark:text-amber-500'
                       : 'text-emerald-600 dark:text-emerald-500'
-                  }`}>
+                    }`}>
                     {product.stock}
                   </span>
                   {product.stock === 0 ? (
