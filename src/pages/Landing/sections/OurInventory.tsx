@@ -1,7 +1,5 @@
 import React from 'react';
-// TEMPORARY: Using demo hook until API issue is resolved
-// Switch back to useEcommerceCategories when API is working
-import { useEcommerceCategoriesDemo as useEcommerceCategories } from '../../../hooks/useEcommerceCategoriesDemo';
+import { useEcommerceCategories } from '../../../hooks/useEcommerceCategories';
 import CategoryCard from '../../../components/CategoryCard/CategoryCard';
 
 // Temporary product count mapping (replace with real API later)
@@ -36,6 +34,37 @@ const CategorySkeleton = () => (
 
 const OurInventory: React.FC = () => {
   const { categories, loading, error } = useEcommerceCategories();
+  const [productCounts, setProductCounts] = React.useState<Record<number, number>>({});
+
+  React.useEffect(() => {
+    if (categories.length > 0) {
+      const fetchProductCounts = async () => {
+        const counts: Record<number, number> = {};
+        try {
+          await Promise.all(
+            categories.map(async (category) => {
+              try {
+                const response = await fetch(`https://admin.goldenlifeltd.com/api/student/products/category?id=${category.id}`);
+                const resData = await response.json();
+                if (resData && typeof resData.product_count !== 'undefined') {
+                  counts[category.id] = Number(resData.product_count);
+                } else {
+                  counts[category.id] = 0;
+                }
+              } catch (err) {
+                console.error(`Error fetching product count for category ${category.id}:`, err);
+                counts[category.id] = 0;
+              }
+            })
+          );
+          setProductCounts(counts);
+        } catch (err) {
+          console.error("Error in fetching category product counts:", err);
+        }
+      };
+      fetchProductCounts();
+    }
+  }, [categories]);
 
   if (loading) {
     return (
@@ -119,7 +148,7 @@ const OurInventory: React.FC = () => {
               id={category.id}
               name={category.category_name}
               slug={category.category_slug}
-              productCount={getProductCount(category.id, category.category_name)}
+              productCount={productCounts[category.id] ?? 0}
             />
           ))}
         </div>

@@ -81,7 +81,7 @@ export function useProductMutation() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['product', '*'] });
+      queryClient.invalidateQueries({ queryKey: ['product'] });
     },
   });
 

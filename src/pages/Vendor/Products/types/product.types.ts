@@ -36,8 +36,11 @@ export interface ProductFormData {
   video_link?: string;
   ebook: string; // Required field with default '0'
   images: File[];
-  existing_images?: string[]; // For edit mode - URLs of existing images
+  existing_images?: any[]; // For edit mode - URLs/objects of existing images
   removed_images?: string[]; // Track deleted images in edit mode
+  gallery_images?: File[];
+  existing_gallery_images?: any[];
+  removed_gallery_images?: string[];
 }
 
 // Product response from API (for edit mode)

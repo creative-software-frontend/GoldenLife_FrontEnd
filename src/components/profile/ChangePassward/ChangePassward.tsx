@@ -28,7 +28,7 @@ export default function ChangePassward() {
     };
 
     const auth = getAuthData();
-    const studentId = auth?.student?.id || 10; // Fallback to 10 if not found, as per user example
+    const studentId = auth?.student?.id; // Fallback to 10 if not found, as per user example
     const token = auth?.token;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

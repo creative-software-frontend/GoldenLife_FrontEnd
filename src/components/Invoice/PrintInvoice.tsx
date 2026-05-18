@@ -130,10 +130,18 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
     <>
       <style>{`
         @media print {
+          /* Hide all other elements on the page during print */
+          body * {
+            visibility: hidden;
+          }
+          /* Show only the print-only container and its children */
+          .print-only, .print-only * {
+            visibility: visible;
+          }
+
           /* Force visibility of the invoice container */
           .print-only {
             display: block !important;
-            visibility: visible !important;
             position: absolute !important;
             top: 0 !important;
             left: 0 !important;

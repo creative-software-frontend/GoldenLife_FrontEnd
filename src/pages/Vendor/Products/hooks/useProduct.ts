@@ -55,7 +55,7 @@ export function useProduct(id: number | string | undefined) {
         images: [],
         existing_images: [
           productData.product_image,
-          ...(Array.isArray(gallery) ? gallery.map((g: any) => g.gal_img || g.image || g) : [])
+          ...(Array.isArray(gallery) ? gallery : [])
         ].filter(Boolean),
         removed_images: []
       };

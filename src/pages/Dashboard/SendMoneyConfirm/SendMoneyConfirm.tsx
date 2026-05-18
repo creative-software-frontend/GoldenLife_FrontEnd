@@ -56,7 +56,7 @@ export default function SendMoneyConfirm() {
             {/* --- PREMIUM HEADER --- */}
             <div className="bg-white border-b border-slate-200 sticky top-0 z-30 px-6 py-6 shadow-sm">
                 <div className="flex items-center justify-between">
-                    <button 
+                    <button
                         onClick={() => navigate(-1)}
                         className="p-2 hover:bg-slate-100 rounded-full transition-all active:scale-95"
                     >
@@ -76,7 +76,7 @@ export default function SendMoneyConfirm() {
                         </div>
                         <h2 className="text-2xl font-black text-slate-900 tracking-tight">{receiverName}</h2>
                         <p className="text-sm font-bold text-slate-500 mt-1">{phone}</p>
-                        
+
                         <div className="mt-8 flex flex-col items-center">
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Amount to Send</p>
                             <p className="text-5xl font-black text-secondary tracking-tighter">৳{parseFloat(amount).toFixed(2)}</p>
@@ -113,8 +113,8 @@ export default function SendMoneyConfirm() {
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 block">
                                 Enter 4-Digit PIN
                             </label>
-                            <input 
-                                type="password" 
+                            <input
+                                type="password"
                                 value={pinCode}
                                 onChange={(e) => setPinCode(e.target.value.replace(/\D/g, ''))}
                                 maxLength={4}

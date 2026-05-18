@@ -80,10 +80,21 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
       if (rawImages.length > 1) {
         const gallery = rawImages.slice(1).filter((img: any) => !!img);
         setExistingGalleryImages(gallery);
+      } else {
+        // If there is no gallery or only 1 item (the main image), make sure to clear existingGalleryImages
+        setExistingGalleryImages([]);
       }
+    } else {
+      setExistingGalleryImages([]);
     }
     hasSynced.current = true;
   }, [initialData, reset]);
+
+  useEffect(() => {
+    if (isLoading) {
+      hasSynced.current = false;
+    }
+  }, [isLoading]);
 
   const sellerPrice = watch('seller_price');
   const regularPrice = watch('regular_price');
@@ -129,7 +140,9 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
     const newExistingImages = existingGalleryImages.filter((_, i) => i !== index);
     setExistingGalleryImages(newExistingImages);
 
-    const imgName = typeof imageObj === 'string' ? imageObj : imageObj.image;
+    const imgName = typeof imageObj === 'string'
+      ? imageObj
+      : (imageObj?.gal_img || imageObj?.image || imageObj?.product_gal_img || '');
     const newRemovedImages = [...removedGalleryImages, imgName];
     setRemovedGalleryImages(newRemovedImages);
     setValue('removed_images', newRemovedImages);
@@ -557,13 +570,13 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                     }
                     // Handle case where imgName is still an object string representation
                     if (imgName === '[object Object]' && typeof imgObj === 'object') {
-                       // Try to find any property that looks like an image
-                       const possibleImg = Object.values(imgObj).find(val => typeof val === 'string' && (val.endsWith('.jpg') || val.endsWith('.png') || val.endsWith('.jpeg') || val.endsWith('.webp')));
-                       if (possibleImg) imgName = possibleImg as string;
+                      // Try to find any property that looks like an image
+                      const possibleImg = Object.values(imgObj).find(val => typeof val === 'string' && (val.endsWith('.jpg') || val.endsWith('.png') || val.endsWith('.jpeg') || val.endsWith('.webp')));
+                      if (possibleImg) imgName = possibleImg as string;
                     }
-                    
-                    const srcUrl = imgName && imgName.toString().startsWith('http') 
-                      ? imgName 
+
+                    const srcUrl = imgName && imgName.toString().startsWith('http')
+                      ? imgName
                       : `https://admin.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgName}`;
 
                     return (
@@ -612,16 +625,7 @@ export function EditProductForm({ initialData, onSubmit, isLoading }: EditProduc
                   )}
                 </Button>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleReset}
-                  disabled={isLoading}
-                  className="w-full h-14 rounded-2xl border-slate-200 text-slate-500 font-bold tracking-widest text-xs hover:bg-slate-50 transition-all flex items-center gap-2"
-                >
-                  <RotateCcw size={14} />
-                  RESET CHANGES
-                </Button>
+
               </div>
             </div>
           </div>

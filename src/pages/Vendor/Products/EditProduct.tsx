@@ -33,7 +33,14 @@ export default function EditProduct() {
 
       // Append all text fields
       Object.keys(data).forEach((key) => {
-        if (key !== 'images' && key !== 'existing_images' && key !== 'removed_images') {
+        if (
+          key !== 'images' &&
+          key !== 'existing_images' &&
+          key !== 'removed_images' &&
+          key !== 'gallery_images' &&
+          key !== 'existing_gallery_images' &&
+          key !== 'removed_gallery_images'
+        ) {
           const value = data[key as keyof ProductFormData];
           if (value !== undefined && value !== null) {
             formData.append(key, value.toString());
@@ -53,9 +60,25 @@ export default function EditProduct() {
         }
       }
 
+      // Handle keep_images (existing gallery images to keep)
+      if (data.existing_gallery_images && data.existing_gallery_images.length > 0) {
+        data.existing_gallery_images.forEach((imgObj: any) => {
+          let imgId = null;
+          if (typeof imgObj === 'object' && imgObj !== null) {
+            imgId = imgObj.id;
+          } else if (typeof imgObj === 'number' || typeof imgObj === 'string') {
+            imgId = imgObj;
+          }
+          if (imgId !== undefined && imgId !== null) {
+            formData.append('keep_images[]', imgId.toString());
+          }
+        });
+      }
+
       // Handle removed images
-      if (data.removed_images && data.removed_images.length > 0) {
-        data.removed_images.forEach(imgName => {
+      const removedImages = data.removed_gallery_images || data.removed_images;
+      if (removedImages && removedImages.length > 0) {
+        removedImages.forEach(imgName => {
           formData.append('removed_images[]', imgName);
         });
       }

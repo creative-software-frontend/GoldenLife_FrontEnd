@@ -62,10 +62,20 @@ export const useEcommerceCategories = (): UseCategoriesReturn => {
       console.log('API Response Data:', response.data);
 
       // Check response structure
-      if (response.data?.status === true) {
-        if (Array.isArray(response.data?.data)) {
-          console.log(`Successfully loaded ${response.data.data.length} categories`);
-          const sorted = [...response.data.data].sort((a, b) => a.id - b.id);
+      const isSuccess = 
+        response.data?.status === true || 
+        response.data?.status?.toString().toLowerCase() === "success" ||
+        response.data?.success === true;
+
+      if (isSuccess) {
+        let rawCategories = response.data?.data;
+        if (rawCategories && !Array.isArray(rawCategories) && Array.isArray(rawCategories.categories)) {
+          rawCategories = rawCategories.categories;
+        }
+
+        if (Array.isArray(rawCategories)) {
+          console.log(`Successfully loaded ${rawCategories.length} categories`);
+          const sorted = [...rawCategories].sort((a, b) => a.id - b.id);
           setCategories(sorted);
         } else {
           console.warn('Response data is not an array:', response.data?.data);
