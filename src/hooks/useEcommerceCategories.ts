@@ -47,23 +47,16 @@ export const useEcommerceCategories = (): UseCategoriesReturn => {
       // Make API call with timeout
       console.log('Fetching categories from API...');
       const response = await axios.get(
-        'https://admin.goldenlifeltd.com/api/vendor/ecommerce/categories',
-        {
-          headers: token ? {
-            'X-Auth-Token': `Bearer ${token}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          } : {},
-          timeout: 15000, // 15 second timeout
-        }
+        'https://admin.goldenlifeltd.com/api/getProductCategory',
+
       );
 
       console.log('API Response Status:', response.status);
       console.log('API Response Data:', response.data);
 
       // Check response structure
-      const isSuccess = 
-        response.data?.status === true || 
+      const isSuccess =
+        response.data?.status === true ||
         response.data?.status?.toString().toLowerCase() === "success" ||
         response.data?.success === true;
 
