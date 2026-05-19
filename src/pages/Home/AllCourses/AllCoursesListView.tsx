@@ -31,7 +31,7 @@ function useDebounce<T>(value: T, delay: number): T {
 
 export default function AllCoursesListView() {
     const { addItem } = useCartStore();
-    
+
     const [searchQuery, setSearchQuery] = React.useState("");
     const [currentPage, setCurrentPage] = React.useState(1);
     const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
@@ -42,68 +42,59 @@ export default function AllCoursesListView() {
     const debouncedSearch = useDebounce(searchQuery, 500);
 
     const {
-        data,
-        isLoading,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage
+        data: apiCourses,
+        isLoading
     } = useAllCoursesQuery({
         type: courseTypeFilter,
         search: debouncedSearch,
         category_id: categoryFilter
     });
-    
-    // Flatten the paginated data from useInfiniteQuery
+
     const courses = React.useMemo(() => {
-        if (!data || !data.pages) return [];
-        return data.pages.flatMap(page => page.data || []);
-    }, [data]);
+        return Array.isArray(apiCourses) ? apiCourses : [];
+    }, [apiCourses]);
 
     // Fetch categories from API
     const { data: apiCategories = [] } = useCourseCategoriesQuery();
-    
+
     // We still apply client-side search/category filtering as a fallback 
     // in case the API doesn't fully support all filter combinations
     const filteredCourses = React.useMemo(() => {
         if (!Array.isArray(courses)) return [];
         return courses.filter(course => {
-            const matchesSearch = 
+            const matchesSearch =
                 (course.course_title_english || "").toLowerCase().includes(debouncedSearch.toLowerCase()) ||
                 (course.category_name || "").toLowerCase().includes(debouncedSearch.toLowerCase()) ||
                 (course.instructor?.name || "").toLowerCase().includes(debouncedSearch.toLowerCase());
-            
-            const matchesCategory = categoryFilter === "all" || 
-                                   String(course.category_id) === String(categoryFilter) ||
-                                   String(course.category) === String(categoryFilter);
-            
-            const matchesType = courseTypeFilter === "All" || 
-                               course.course_type === courseTypeFilter;
-            
+
+            const matchesCategory = categoryFilter === "all" ||
+                String(course.category_id) === String(categoryFilter) ||
+                String(course.category) === String(categoryFilter);
+
+            const matchesType = courseTypeFilter === "All" ||
+                course.course_type === courseTypeFilter;
+
             const matchesStatus = String(course.status) === "1";
-            
+
             return matchesSearch && matchesCategory && matchesType && matchesStatus;
         });
     }, [courses, debouncedSearch, categoryFilter, courseTypeFilter]);
 
-    // Infinite Scroll Intersection Observer
-    const loadMoreRef = React.useRef<HTMLDivElement>(null);
+    // Frontend Pagination Logic
+    const ITEMS_PER_PAGE = 12;
+    const totalPages = Math.max(1, Math.ceil(filteredCourses.length / ITEMS_PER_PAGE));
     
+    // Ensure currentPage is within bounds if filters change
     React.useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-                    fetchNextPage();
-                }
-            },
-            { threshold: 0.1 }
-        );
-
-        if (loadMoreRef.current) {
-            observer.observe(loadMoreRef.current);
+        if (currentPage > totalPages) {
+            setCurrentPage(1);
         }
+    }, [totalPages, currentPage]);
 
-        return () => observer.disconnect();
-    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+    const paginatedCourses = filteredCourses.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE, 
+        currentPage * ITEMS_PER_PAGE
+    );
 
     const handleCourseSelect = (course: any) => {
         setSelectedCourseId(course.id.toString());
@@ -133,7 +124,7 @@ export default function AllCoursesListView() {
     if (isLoading && courses.length === 0) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc]">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="flex flex-col items-center gap-6"
@@ -156,12 +147,12 @@ export default function AllCoursesListView() {
             {/* --- TOP HEADER SECTION --- */}
             <div className="bg-white border-b border-slate-200/60 shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-emerald-50/30 to-transparent pointer-events-none" />
-                
+
                 <div className="container mx-auto px-4 py-12 md:py-16">
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 max-w-[1760px] mx-auto relative z-10">
-                        
+
                         {/* Title & Description */}
-                        <motion.div 
+                        <motion.div
                             initial={{ x: -20, opacity: 0 }}
                             animate={{ x: 0, opacity: 1 }}
                             className="space-y-3 px-2 md:px-4"
@@ -180,7 +171,7 @@ export default function AllCoursesListView() {
                         </motion.div>
 
                         {/* Search & Filter Controls - Matching InstructorCourseList Style */}
-                        <motion.div 
+                        <motion.div
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.1 }}
@@ -195,8 +186,8 @@ export default function AllCoursesListView() {
                             {/* Search Input */}
                             <div className="relative flex-1 group">
                                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-emerald-500 group-focus-within:text-emerald-600 transition-colors" size={20} strokeWidth={3} />
-                                <Input 
-                                    placeholder="Search by title or category..." 
+                                <Input
+                                    placeholder="Search by title or category..."
                                     className="pl-14 h-14 bg-gray-50/50 border-none focus:bg-white focus:ring-4 focus:ring-emerald-500/5 rounded-2xl font-bold text-gray-700 transition-all text-base w-full shadow-inner"
                                     value={searchQuery}
                                     onChange={(e) => {
@@ -264,8 +255,8 @@ export default function AllCoursesListView() {
                                 </Select>
 
                                 {/* Reset Button */}
-                                <Button 
-                                    variant="outline" 
+                                <Button
+                                    variant="outline"
                                     className="h-14 w-14 p-0 rounded-2xl border-gray-100 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all shrink-0 active:scale-95 shadow-sm"
                                     onClick={() => {
                                         setSearchQuery("");
@@ -287,42 +278,90 @@ export default function AllCoursesListView() {
             <div className="container mx-auto px-4 md:px-6 mt-16 max-w-[1760px]">
                 <AnimatePresence mode="wait">
                     {filteredCourses.length > 0 ? (
-                        <motion.div 
+                        <motion.div
                             key="grid"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             className="space-y-16"
                         >
-                            <CourseGrid 
-                                courses={filteredCourses as any} 
+                            <CourseGrid
+                                courses={paginatedCourses as any}
                                 title={`${filteredCourses.length} ${filteredCourses.length === 1 ? 'Curriculum' : 'Curricula'} Found`}
                                 onSelect={handleCourseSelect}
                                 onAddToCart={handleAddToCart}
                             />
 
-                            {/* Infinite Scroll Loader */}
-                            <div ref={loadMoreRef} className="flex justify-center py-8">
-                                {isFetchingNextPage ? (
-                                    <div className="flex flex-col items-center gap-3">
-                                        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" strokeWidth={2} />
-                                        <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Loading more courses...</p>
-                                    </div>
-                                ) : hasNextPage ? (
-                                    <Button 
-                                        variant="outline" 
-                                        onClick={() => fetchNextPage()}
-                                        className="rounded-full px-8 py-6 border-slate-200 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 font-bold"
+                            {/* Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="flex justify-center items-center gap-2 py-8">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setCurrentPage(p => Math.max(1, p - 1));
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        disabled={currentPage === 1}
+                                        className="rounded-xl px-4 py-2 border-slate-200 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 font-bold disabled:opacity-50"
                                     >
-                                        Load More
+                                        <ChevronLeft className="w-5 h-5 mr-1" />
+                                        Previous
                                     </Button>
-                                ) : (
-                                    <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">No more courses</p>
-                                )}
-                            </div>
+
+                                    <div className="flex items-center gap-1 mx-2">
+                                        {Array.from({ length: totalPages }).map((_, idx) => {
+                                            const page = idx + 1;
+                                            // Simple windowing logic (show first, last, and +-1 of current)
+                                            if (
+                                                page === 1 || 
+                                                page === totalPages || 
+                                                Math.abs(page - currentPage) <= 1
+                                            ) {
+                                                return (
+                                                    <Button
+                                                        key={page}
+                                                        variant={currentPage === page ? "default" : "outline"}
+                                                        onClick={() => {
+                                                            setCurrentPage(page);
+                                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                        }}
+                                                        className={`w-10 h-10 rounded-xl font-bold transition-all ${
+                                                            currentPage === page 
+                                                                ? "bg-emerald-500 text-white shadow-md hover:bg-emerald-600 border-none" 
+                                                                : "border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-emerald-600"
+                                                        }`}
+                                                    >
+                                                        {page}
+                                                    </Button>
+                                                );
+                                            } else if (
+                                                page === currentPage - 2 || 
+                                                page === currentPage + 2
+                                            ) {
+                                                return <span key={page} className="text-slate-400 font-bold px-1">...</span>;
+                                            }
+                                            return null;
+                                        })}
+                                    </div>
+
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setCurrentPage(p => Math.min(totalPages, p + 1));
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        disabled={currentPage === totalPages}
+                                        className="rounded-xl px-4 py-2 border-slate-200 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 font-bold disabled:opacity-50"
+                                    >
+                                        Next
+                                        <ChevronRight className="w-5 h-5 ml-1" />
+                                    </Button>
+                                </div>
+                            )}                            {/* Infinite Scroll Loader */}
+
                         </motion.div>
                     ) : (
-                        <motion.div 
+                        <motion.div
                             key="empty"
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -338,7 +377,7 @@ export default function AllCoursesListView() {
                             <p className="text-slate-500 font-bold max-w-sm mx-auto mb-10 leading-relaxed">
                                 We couldn't find any courses matching your current filters. Try adjusting your search or resetting all filters.
                             </p>
-                            <Button 
+                            {/* <Button
                                 className="bg-gray-900 hover:bg-black text-white px-8 h-14 rounded-2xl font-black shadow-xl transition-all gap-2 active:scale-95 border-none"
                                 onClick={() => {
                                     setSearchQuery("");
@@ -349,7 +388,7 @@ export default function AllCoursesListView() {
                             >
                                 <RotateCcw size={18} strokeWidth={4} />
                                 Reset All Filters
-                            </Button>
+                            </Button> */}
                         </motion.div>
                     )}
                 </AnimatePresence>

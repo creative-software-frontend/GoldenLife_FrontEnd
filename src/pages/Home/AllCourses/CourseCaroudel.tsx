@@ -111,10 +111,7 @@ const CourseCarousel: React.FC<{
                                 // Desktop: 33% (3 cards)
                                 className="pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3"
                             >
-                                <div className="h-full">
-                                    {/* WRAPPER: Apply max-w-4xl to the grid container, NOT the individual card */}
-                                    <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-
+                                <div className="h-full p-1">
                                         <Card className="h-full border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden group flex flex-col bg-white">
 
                                             <div className="relative aspect-video overflow-hidden bg-slate-100 cursor-pointer" onClick={() => onSelect(lesson)}>
@@ -216,8 +213,6 @@ const CourseCarousel: React.FC<{
                                             </CardFooter>
 
                                         </Card>
-
-                                    </div>
                                 </div>
                             </CarouselItem>
                         ))}

@@ -46,32 +46,23 @@ export interface CourseFilters {
 }
 
 export const useAllCoursesQuery = (filters: CourseFilters = {}) => {
-    return useInfiniteQuery({
+    return useQuery({
         queryKey: ['allCoursesList', filters],
-        queryFn: async ({ pageParam = 1 }) => {
-            const params: any = { page: pageParam };
+        queryFn: async () => {
+            const params: any = {};
             if (filters.type && filters.type !== 'All') params.type = filters.type;
             if (filters.search) params.search = filters.search;
             if (filters.category_id && filters.category_id !== 'all') params.category_id = filters.category_id;
 
             const response = await axios.get<AllCoursesResponse>(`${baseURL}/api/course/list`, {
                 params
-            })
+            });
 
             if (response.data.status && response.data.data) {
                 return response.data.data;
             }
-            return { data: [], current_page: 1, last_page: 1, total: 0 };
-        },
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => {
-            const current = Number(lastPage?.current_page || 1);
-            const last = Number(lastPage?.last_page || 1);
-            if (current < last) {
-                return current + 1;
-            }
-            return undefined;
-        },
+            return [];
+        }
     });
 };
 

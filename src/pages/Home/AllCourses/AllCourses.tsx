@@ -93,7 +93,7 @@ export default function AllCourses() {
           ) : (
             <>
               <CourseGrid
-                courses={activeCourses as any}
+                courses={activeCourses.slice(0, 10) as any}
                 title="Courses"
                 onSelect={handleCourseSelect}
                 onAddToCart={addToCart}

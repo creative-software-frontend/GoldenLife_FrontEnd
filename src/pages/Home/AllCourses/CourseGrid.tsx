@@ -52,13 +52,7 @@ const CourseGrid: React.FC<{
     onAddToCart: (lesson: Lesson) => void
 }> = ({ courses, title, onSelect, onAddToCart }) => {
     const [t] = useTranslation("global")
-    const [showAll, setShowAll] = React.useState(false)
-
-    if (!courses || courses.length === 0) {
-        return null;
-    }
-
-    const displayedCourses = showAll ? courses : courses.slice(0, 10)
+    const displayedCourses = courses;
 
 
     return (

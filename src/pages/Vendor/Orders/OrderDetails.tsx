@@ -362,7 +362,7 @@ export default function OrderDetails() {
               </div>
 
               <div className="space-y-1 pt-1">
-                <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2">Location</div>
+                <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2">Shipping Address</div>
                 <div className="flex items-start gap-2.5 text-slate-700">
                   <MapPin className="w-4 h-4 mt-0.5 text-slate-400 shrink-0" />
                   <p className="text-[15px] font-bold leading-relaxed">
