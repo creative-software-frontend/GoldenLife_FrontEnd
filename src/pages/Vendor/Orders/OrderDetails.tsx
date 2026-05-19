@@ -29,6 +29,7 @@ export default function OrderDetails() {
   const [order, setOrder] = useState<Order | null>(null);
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [fullAddressText, setFullAddressText] = useState<string | null>(null);
+  const [shippingAddressObj, setShippingAddressObj] = useState<any | null>(null);
 
   // New state for transactions
   const [orderTransaction, setOrderTransaction] = useState<any | null>(null);
@@ -84,20 +85,29 @@ export default function OrderDetails() {
             const addr = data.addresses.find((a: any) => a.id.toString() === order.user_address?.toString());
             if (addr) {
               setFullAddressText(addr.address);
+              setShippingAddressObj({
+                name: addr.name,
+                address: addr.address,
+                phone: addr.phone
+              });
             } else {
               setFullAddressText('Address not found');
+              setShippingAddressObj(null);
             }
           }
         } catch (error) {
           console.error('Failed to fetch addresses:', error);
           setFullAddressText('Address not available');
+          setShippingAddressObj(null);
         }
       };
       fetchAddress();
     } else if (order?.user_address) {
       setFullAddressText(order.user_address);
+      setShippingAddressObj(null);
     } else {
       setFullAddressText('Not provided');
+      setShippingAddressObj(null);
     }
   }, [order?.user_address, order?.user_id]);
 
@@ -195,6 +205,7 @@ export default function OrderDetails() {
       <PrintInvoice
         order={order}
         fullAddressText={fullAddressText}
+        shippingInfo={shippingAddressObj}
         orderTransaction={orderTransaction}
         baseURL="https://admin.goldenlifeltd.com"
       />
@@ -362,12 +373,26 @@ export default function OrderDetails() {
               </div>
 
               <div className="space-y-1 pt-1">
-                <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2">Shipping Address</div>
-                <div className="flex items-start gap-2.5 text-slate-700">
-                  <MapPin className="w-4 h-4 mt-0.5 text-slate-400 shrink-0" />
-                  <p className="text-[15px] font-bold leading-relaxed">
-                    {order.student?.personal_info?.location || order.student_address?.address || fullAddressText || 'Not provided'}
-                  </p>
+                <div className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] mb-2">Shipping Details</div>
+                <div className="space-y-2">
+                  {shippingAddressObj && (
+                    <>
+                      <div className="flex items-center gap-2.5 text-slate-700">
+                        <User className="w-4 h-4 text-slate-400" />
+                        <span className="text-[15px] font-bold">{shippingAddressObj.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2.5 text-slate-700">
+                        <Phone className="w-4 h-4 text-slate-400" />
+                        <span className="text-[15px] font-bold">{shippingAddressObj.phone}</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex items-start gap-2.5 text-slate-700">
+                    <MapPin className="w-4 h-4 mt-0.5 text-slate-400 shrink-0" />
+                    <p className="text-[15px] font-bold leading-relaxed">
+                      {shippingAddressObj?.address || order.student?.personal_info?.location || order.student_address?.address || fullAddressText || 'Not provided'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>
