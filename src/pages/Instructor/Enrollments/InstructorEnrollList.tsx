@@ -117,8 +117,13 @@ const InstructorEnrollList: React.FC = () => {
 
   useEffect(() => {
     loadOrders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters.status]);
+
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 15000); // Auto-refresh every 15 seconds
+
+    return () => clearInterval(interval);
+  }, [loadOrders]);
 
   useEffect(() => {
     applyLocalFilters(orders, filters);

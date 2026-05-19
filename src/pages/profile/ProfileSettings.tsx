@@ -22,6 +22,7 @@ export default function ProfileSettings() {
                 const response = await axios.get(`${baseURL}/api/student/referral-link`, {
                     headers: { 'X-Auth-Token': `Bearer ${token}` }
                 });
+                console.log(response.data);
                 if (response.data?.success) {
                     setReferralLink(response.data.data.referral_link);
                 }

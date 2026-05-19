@@ -58,7 +58,10 @@ export default function CategoryCourse() {
         enabled: !!id
     });
 
-    const courses: CategoryWiseCourse[] = result?.data || [];
+    const courses: CategoryWiseCourse[] = React.useMemo(() => {
+        const raw = result?.data || [];
+        return raw.filter((course: any) => String(course.status) === "1");
+    }, [result]);
     const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -132,7 +135,7 @@ export default function CategoryCourse() {
                 </div>
 
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#0c2a4c] mb-8">
-                    {result?.data?.[0]?.category?.category_name || "Category Courses"} ({result?.course_count || 0})
+                    {result?.data?.[0]?.category?.category_name || "Category Courses"} ({courses.length})
                 </h2>
                 {courses.length === 0 ? (
                     <p className="text-slate-500 bg-white p-8 rounded-2xl text-center shadow-sm">No courses found for this category.</p>

@@ -54,6 +54,10 @@ const CourseGrid: React.FC<{
     const [t] = useTranslation("global")
     const [showAll, setShowAll] = React.useState(false)
 
+    if (!courses || courses.length === 0) {
+        return null;
+    }
+
     const displayedCourses = showAll ? courses : courses.slice(0, 10)
 
 

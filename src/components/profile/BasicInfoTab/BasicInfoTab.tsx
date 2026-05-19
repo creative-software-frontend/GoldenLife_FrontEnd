@@ -98,7 +98,7 @@ export default function BasicInfoTab() {
                             icon={<Hash size={14} />}
                         />
                         <DataRow label="Affiliate ID" value={student?.affiliate_id || '—'} icon={<ShieldCheck size={14} />} />
-                        <DataRow label="Status" icon={<Activity size={14} />} value={<StatusBadge status={student?.status} />} isLast />
+                        {/* <DataRow label="Status" icon={<Activity size={14} />} value={<StatusBadge status={student?.status} />} isLast /> */}
                     </div>
                 </div>
             </div>
@@ -121,9 +121,7 @@ const StatusBadge = ({ status }: { status?: string }) => {
                 {isActive && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${isActive ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
             </span>
-            <span className={`${isActive ? 'text-emerald-600' : 'text-rose-600'} font-bold text-[11px] uppercase tracking-widest`}>
-                {isActive ? 'Active Account' : 'Inactive Account'}
-            </span>
+
         </div>
     );
 };

@@ -70,6 +70,8 @@ const CheckoutSummaryView = ({
     }, []);
 
     // --- DYNAMIC CALCULATIONS ---
+    const isCourseCheckout = cartItems.every((item: any) => (item.type || item.service_type) === 'course');
+
     const { currentSubTotal, originalTotal, currentTotalItems } = cartItems.reduce(
         (acc, item) => {
             const qty = Number(item.quantity) || 1;
@@ -87,7 +89,7 @@ const CheckoutSummaryView = ({
     );
 
     const totalSavings = originalTotal - currentSubTotal;
-    const safeDeliveryFee = Number(deliveryFee) || 0;
+    const safeDeliveryFee = isCourseCheckout ? 0 : (Number(deliveryFee) || 0);
     const total = currentSubTotal + safeDeliveryFee;
     const remainingBalance = walletBalance - total;
 
@@ -112,7 +114,7 @@ const CheckoutSummaryView = ({
             return;
         }
 
-        if (!selectedAddress?.id) {
+        if (!isCourseCheckout && !selectedAddress?.id) {
             toast.error("Please select a delivery address.");
             return;
         }
@@ -128,10 +130,10 @@ const CheckoutSummaryView = ({
         }
 
         let calculatedSubTotal = 0;
-        const delivery = Number(deliveryFee) || 0;
+        const delivery = isCourseCheckout ? 0 : (Number(deliveryFee) || 0);
 
         const formData = new FormData();
-        formData.append('address_id', String(selectedAddress.id));
+        formData.append('address_id', selectedAddress?.id ? String(selectedAddress.id) : '');
         formData.append('payment_method', paymentMethod.toLowerCase());
         formData.append('delivery_charge', delivery.toFixed(2));
 
@@ -207,25 +209,27 @@ const CheckoutSummaryView = ({
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50 min-h-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
 
                 {/* 1. Address Section */}
-                <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                    <div className="flex justify-between items-center mb-3">
-                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Delivery Address</h3>
-                        <button onClick={onChangeAddress} className="text-[13px] font-bold text-[#F97316] hover:underline">Change</button>
-                    </div>
-                    <div className="flex gap-3 items-start">
-                        <div className="p-2 bg-gray-50 rounded-lg shrink-0 mt-0.5">
-                            <MapPin className="w-5 h-5 text-gray-800" />
+                {!isCourseCheckout && (
+                    <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <div className="flex justify-between items-center mb-3">
+                            <h3 className="text-xs font-black text-gray-400 uppercase tracking-widest">Delivery Address</h3>
+                            <button onClick={onChangeAddress} className="text-[13px] font-bold text-[#F97316] hover:underline">Change</button>
                         </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="text-[15px] font-bold text-gray-900 uppercase truncate">
-                                {selectedAddress?.name || "SELECT ADDRESS"}
-                            </p>
-                            <p className="text-[13px] text-gray-500 mt-1 leading-relaxed font-medium break-words line-clamp-2">
-                                {selectedAddress?.address || "No address selected"}
-                            </p>
+                        <div className="flex gap-3 items-start">
+                            <div className="p-2 bg-gray-50 rounded-lg shrink-0 mt-0.5">
+                                <MapPin className="w-5 h-5 text-gray-800" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-[15px] font-bold text-gray-900 uppercase truncate">
+                                    {selectedAddress?.name || "SELECT ADDRESS"}
+                                </p>
+                                <p className="text-[13px] text-gray-500 mt-1 leading-relaxed font-medium break-words line-clamp-2">
+                                    {selectedAddress?.address || "No address selected"}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* 2. Product List Section */}
                 {cartItems.length > 0 && (
@@ -312,10 +316,12 @@ const CheckoutSummaryView = ({
                                 <span className="text-gray-900">৳{originalTotal.toFixed(2)}</span>
                             </div>
 
-                            <div className="flex justify-between text-[13px] font-bold text-gray-500">
-                                <span>Delivery Fee:</span>
-                                <span className="text-gray-900">৳{safeDeliveryFee.toFixed(2)}</span>
-                            </div>
+                            {!isCourseCheckout && (
+                                <div className="flex justify-between text-[13px] font-bold text-gray-500">
+                                    <span>Delivery Fee:</span>
+                                    <span className="text-gray-900">৳{safeDeliveryFee.toFixed(2)}</span>
+                                </div>
+                            )}
 
                             {totalSavings > 0 && (
                                 <div className="flex justify-between text-[13px] font-bold text-[#5C9C72] bg-[#5C9C72]/10 p-1.5 -mx-1.5 rounded-lg">

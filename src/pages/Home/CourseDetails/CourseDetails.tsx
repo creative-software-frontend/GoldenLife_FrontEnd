@@ -116,7 +116,7 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                         {course.course_title_bangla}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-6 text-slate-300 text-sm md:text-base">
+                    {/* <div className="flex flex-wrap items-center gap-6 text-slate-300 text-sm md:text-base">
                         <div className="flex items-center gap-2">
                             <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
                             <span className="font-bold text-white">4.8</span>
@@ -126,7 +126,7 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                             <Users className="w-5 h-5 text-slate-400" />
                             <span>1,200+ Students enrolled</span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
@@ -183,7 +183,7 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Instructor</h2>
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                                     <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 border-4 border-emerald-50">
-                                        <img src={`https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image}`} alt={course.instructor.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = '/placeholder.svg' }} />
+                                        <img src={course.instructor.image ? `https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image.replace('uploads/instructor/image/', '')}` : '/placeholder.svg'} alt={course.instructor.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = '/placeholder.svg' }} />
                                     </div>
                                     <div className="text-center sm:text-left space-y-2">
                                         <h3 className="text-xl font-bold text-slate-800">{course.instructor.name}</h3>
@@ -305,10 +305,10 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                                         <BookOpen className="w-4 h-4 text-blue-500" />
                                         Comprehensive learning materials
                                     </li>
-                                    <li className="flex items-center gap-3">
+                                    {/* <li className="flex items-center gap-3">
                                         <ShieldCheck className="w-4 h-4 text-amber-500" />
                                         Certificate of completion
-                                    </li>
+                                    </li> */}
                                 </ul>
                             </div>
 

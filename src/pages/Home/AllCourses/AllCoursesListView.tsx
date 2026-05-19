@@ -79,7 +79,9 @@ export default function AllCoursesListView() {
             const matchesType = courseTypeFilter === "All" || 
                                course.course_type === courseTypeFilter;
             
-            return matchesSearch && matchesCategory && matchesType;
+            const matchesStatus = String(course.status) === "1";
+            
+            return matchesSearch && matchesCategory && matchesType && matchesStatus;
         });
     }, [courses, debouncedSearch, categoryFilter, courseTypeFilter]);
 
@@ -294,7 +296,7 @@ export default function AllCoursesListView() {
                         >
                             <CourseGrid 
                                 courses={filteredCourses as any} 
-                                title={`${data?.pages?.[0]?.total || filteredCourses.length} ${filteredCourses.length === 1 ? 'Curriculum' : 'Curricula'} Found`}
+                                title={`${filteredCourses.length} ${filteredCourses.length === 1 ? 'Curriculum' : 'Curricula'} Found`}
                                 onSelect={handleCourseSelect}
                                 onAddToCart={handleAddToCart}
                             />

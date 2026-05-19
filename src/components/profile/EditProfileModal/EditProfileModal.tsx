@@ -96,7 +96,7 @@ export default function EditProfileModal({ isOpen, onClose, student, baseURL }: 
                 }
             );
 
-            if (response.data?.status === "success" || response.data?.success) {
+            if (response.data?.status === "success" || response.data?.success || response.data?.status === true) {
                 toast.success(response.data.message || "Basic profile updated successfully!");
 
                 // 1. Force refresh of all profile photos (with cache breaking)

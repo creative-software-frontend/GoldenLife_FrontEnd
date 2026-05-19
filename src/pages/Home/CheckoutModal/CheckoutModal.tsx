@@ -82,7 +82,7 @@ const CheckoutModal = () => {
         try {
             // If all items are courses, skip the API call and set fee to 0
             const allAreCourses = cartItems.every((item: any) => (item.type || item.service_type) === 'course');
-            
+
             if (allAreCourses) {
                 console.log("🚚 [CheckoutModal] All items are courses, skipping delivery fee.");
                 setDeliveryFee(0);

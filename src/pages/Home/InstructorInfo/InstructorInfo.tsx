@@ -77,7 +77,7 @@ export default function InstructorInfo() {
 
     const profileImg = instructor.image?.startsWith('http')
         ? instructor.image
-        : `${baseURL}/uploads/instructor/image/${instructor.image}`;
+        : `${baseURL}/uploads/instructor/image/${instructor.image?.replace('uploads/instructor/image/', '')}`;
 
     const bannerImg = instructor.banner?.startsWith('http')
         ? instructor.banner
@@ -236,9 +236,9 @@ export default function InstructorInfo() {
                         <div className="grid grid-cols-2 gap-4 w-full xl:w-auto xl:min-w-[320px]">
                             {[
                                 { label: 'Courses', value: result?.course_count || courses.length, color: 'text-emerald-600', bg: 'bg-emerald-50/50', icon: <BookOpen size={18} /> },
-                                { label: 'Rating', value: '4.8/5.0', color: 'text-orange-500', bg: 'bg-orange-50/50', icon: <Star size={18} /> },
-                                { label: 'Students', value: '1.2k+', color: 'text-blue-600', bg: 'bg-blue-50/50', icon: <User size={18} /> },
-                                { label: 'Member Since', value: instructor.joining_date ? new Date(instructor.joining_date).getFullYear() : '2023', color: 'text-purple-600', bg: 'bg-purple-50/50', icon: <CheckCircle2 size={18} /> },
+                                // { label: 'Rating', value: '4.8/5.0', color: 'text-orange-500', bg: 'bg-orange-50/50', icon: <Star size={18} /> },
+                                // { label: 'Students', value: '1.2k+', color: 'text-blue-600', bg: 'bg-blue-50/50', icon: <User size={18} /> },
+                                // { label: 'Member Since', value: instructor.joining_date ? new Date(instructor.joining_date).getFullYear() : '2023', color: 'text-purple-600', bg: 'bg-purple-50/50', icon: <CheckCircle2 size={18} /> },
                             ].map((stat, i) => (
                                 <div key={i} className={`${stat.bg} p-5 rounded-3xl border border-white shadow-sm flex flex-col items-center xl:items-start transition-transform hover:-translate-y-1`}>
                                     <div className="flex items-center gap-2 mb-2">

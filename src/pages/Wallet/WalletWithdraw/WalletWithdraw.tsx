@@ -148,6 +148,12 @@ export default function WalletWithdraw() {
         }
     }, [activeTab, fetchHistory]);
 
+    useEffect(() => {
+        if (isPinModalOpen || isConfirmModalOpen) {
+            clearMessages();
+        }
+    }, [isPinModalOpen, isConfirmModalOpen, clearMessages]);
+
     // --- Helpers ---
     const getGatewayConfig = (method: string) => {
         switch (method?.toLowerCase()) {
@@ -203,7 +209,6 @@ export default function WalletWithdraw() {
 
     const handleWithdrawSuccess = async (msg: string) => {
         setSuccessMessage(msg);
-        toast.success(msg);
         setAmount('');
         setMfsNumber('');
         setBankDetails({ bankName: '', branchName: '', accountName: '', accountNumber: '' });

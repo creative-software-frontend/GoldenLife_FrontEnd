@@ -125,6 +125,12 @@ export default function WalletSend() {
         setImageFailed(false);
     }, [affiliateId]);
 
+    useEffect(() => {
+        if (showSetPinModal || showConfirmModal) {
+            clearMessages();
+        }
+    }, [showSetPinModal, showConfirmModal, clearMessages]);
+
     // Derived Transactions
     const transactions = React.useMemo(() => {
         return storeTransactions.filter((t: Transaction) => t.type === 'send' || t.type === 'transfer_out');
@@ -135,7 +141,6 @@ export default function WalletSend() {
     // --- 3. Modal Handlers ---
     const handleSuccess = (message: string) => {
         setSuccessMessage(message);
-        toast.success(message);
     };
 
     const handleTransferSuccess = async (message: string) => {
@@ -147,7 +152,6 @@ export default function WalletSend() {
 
     const handleError = (message: string) => {
         setErrorMessage(message);
-        toast.error(message);
     };
 
     const triggerPinConfirmation = (e: React.FormEvent) => {
@@ -225,7 +229,7 @@ export default function WalletSend() {
                 isOpen={showConfirmModal}
                 onClose={() => setShowConfirmModal(false)}
                 onSuccess={handleTransferSuccess}
-                onError={(msg) => toast.error(msg)}
+                onError={handleError}
 
                 // Pass values directly to ensure no empty strings are sent
                 amount={Number(amount)}

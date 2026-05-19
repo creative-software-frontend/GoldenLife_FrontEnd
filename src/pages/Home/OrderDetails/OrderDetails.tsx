@@ -83,6 +83,7 @@ const OrderDetails = () => {
 
   const subtotal = Number(order.total) - Number(order.delivery_charge);
   const totalItems = order.products?.reduce((sum: number, p: OrderProduct) => sum + Number(p.quantity || 0), 0) || 0;
+  const isCourseOrder = order.products?.every((p: any) => p.service_type === 'course');
 
   const statuses = [
     "Order Placed", "Processing", "Packaging", "Sent To Courier",
@@ -206,41 +207,43 @@ const OrderDetails = () => {
         </div>
 
         {/* Progress Tracker */}
-        <div className="screen-only bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">
-            Order Progress
-          </h3>
+        {!isCourseOrder && (
+          <div className="screen-only bg-white rounded-xl border border-slate-200 shadow-sm p-5 sm:p-6">
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-6">
+              Order Progress
+            </h3>
 
-          <div className="relative flex flex-wrap justify-between gap-2 sm:gap-0 items-center max-w-5xl mx-auto">
-            <div className="absolute inset-x-0 top-1/2 h-1.5 bg-slate-100 rounded-full -translate-y-1/2 hidden sm:block" />
-            <div
-              className={`absolute left-0 top-1/2 h-1.5 rounded-full transition-all ${isReturned ? 'bg-red-500' : 'bg-emerald-500'} hidden sm:block`}
-              style={{ width: `${(activeIndex / (statuses.length - 1)) * 100}%` }}
-            />
+            <div className="relative flex flex-wrap justify-between gap-2 sm:gap-0 items-center max-w-5xl mx-auto">
+              <div className="absolute inset-x-0 top-1/2 h-1.5 bg-slate-100 rounded-full -translate-y-1/2 hidden sm:block" />
+              <div
+                className={`absolute left-0 top-1/2 h-1.5 rounded-full transition-all ${isReturned ? 'bg-red-500' : 'bg-emerald-500'} hidden sm:block`}
+                style={{ width: `${(activeIndex / (statuses.length - 1)) * 100}%` }}
+              />
 
-            {statuses.map((status, idx) => {
-              const isActive = idx <= activeIndex;
-              return (
-                <div key={status} className="relative z-10 flex flex-col items-center flex-1 min-w-[70px] sm:min-w-0">
-                  <div
-                    className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm transition-all ${isReturned && idx === statuses.length - 1
-                      ? 'bg-red-500 text-white ring-2 ring-red-200'
-                      : isActive
-                        ? 'bg-emerald-500 text-white ring-2 ring-emerald-200'
-                        : 'bg-slate-100 text-slate-400'
-                      }`}
-                  >
-                    {idx === statuses.length - 1 ? <CheckCircle2 size={18} /> : <Truck size={16} />}
+              {statuses.map((status, idx) => {
+                const isActive = idx <= activeIndex;
+                return (
+                  <div key={status} className="relative z-10 flex flex-col items-center flex-1 min-w-[70px] sm:min-w-0">
+                    <div
+                      className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm transition-all ${isReturned && idx === statuses.length - 1
+                        ? 'bg-red-500 text-white ring-2 ring-red-200'
+                        : isActive
+                          ? 'bg-emerald-500 text-white ring-2 ring-emerald-200'
+                          : 'bg-slate-100 text-slate-400'
+                        }`}
+                    >
+                      {idx === statuses.length - 1 ? <CheckCircle2 size={18} /> : <Truck size={16} />}
+                    </div>
+                    <span className={`mt-2 text-[10px] sm:text-xs font-medium text-center leading-tight ${isActive || (isReturned && idx === statuses.length - 1) ? 'text-slate-800' : 'text-slate-400'
+                      }`}>
+                      {status}
+                    </span>
                   </div>
-                  <span className={`mt-2 text-[10px] sm:text-xs font-medium text-center leading-tight ${isActive || (isReturned && idx === statuses.length - 1) ? 'text-slate-800' : 'text-slate-400'
-                    }`}>
-                    {status}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main content */}
         <div className="screen-only grid grid-cols-1 xl:grid-cols-4 gap-6">
@@ -374,29 +377,31 @@ const OrderDetails = () => {
               )}
             </div>
 
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                <Contact size={16} /> Shipping Address
-              </h3>
-              {shippingInfo ? (
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Name</p>
-                    <p className="font-medium">{shippingInfo.name}</p>
+            {!isCourseOrder && (
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <Contact size={16} /> Shipping Address
+                </h3>
+                {shippingInfo ? (
+                  <div className="space-y-4 text-sm">
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase mb-1">Name</p>
+                      <p className="font-medium">{shippingInfo.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase mb-1">Phone</p>
+                      <p>{shippingInfo.phone}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-400 uppercase mb-1">Address</p>
+                      <p className="leading-relaxed">{shippingInfo.address}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Phone</p>
-                    <p>{shippingInfo.phone}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase mb-1">Address</p>
-                    <p className="leading-relaxed">{shippingInfo.address}</p>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-slate-400 text-sm italic">No shipping details</p>
-              )}
-            </div>
+                ) : (
+                  <p className="text-slate-400 text-sm italic">No shipping details</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -53,12 +53,12 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
     const handleAddToCart = () => {
         // Try to get instructor name from cache if possible
         const instructorId = course.instructor_id || course.instructor?.id;
-        
+
         // Normalize ID to try both string and number in cache
         let instructorData: any = null;
         if (instructorId) {
-            instructorData = queryClient.getQueryData(['instructor', String(instructorId)]) || 
-                             queryClient.getQueryData(['instructor', Number(instructorId)]);
+            instructorData = queryClient.getQueryData(['instructor', String(instructorId)]) ||
+                queryClient.getQueryData(['instructor', Number(instructorId)]);
         }
 
         const instructorName = instructorData?.name || course.instructor_name || course.instructor?.name || `Instructor #${instructorId}`;
@@ -81,17 +81,17 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
         <div className={`${onClose ? 'w-full' : 'min-h-screen'} bg-slate-50 pb-20`}>
             {/* Hero Section */}
             <div className="relative w-full h-[400px] md:h-[500px] bg-slate-900 overflow-hidden">
-                <img 
-                    src={imageUrl} 
-                    alt={course.course_title_english} 
+                <img
+                    src={imageUrl}
+                    alt={course.course_title_english}
                     className="absolute inset-0 w-full h-full object-cover opacity-30"
                     onError={(e) => { (e.target as any).src = '/placeholder.svg' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
-                
+
                 <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-end pb-12 md:pb-16 pt-20">
                     {onClose ? (
-                        <button 
+                        <button
                             onClick={onClose}
                             className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors mb-6 font-medium text-sm w-fit group"
                         >
@@ -99,7 +99,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             Close
                         </button>
                     ) : (
-                        <button 
+                        <button
                             onClick={() => navigate('/allcourses')}
                             className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors mb-6 font-medium text-sm w-fit group"
                         >
@@ -120,12 +120,12 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                     <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight">
                         {course.course_title_english}
                     </h1>
-                    
+
                     <p className="text-slate-300 text-lg md:text-xl max-w-2xl mb-6">
                         {course.course_title_bangla}
                     </p>
 
-                    <div className="flex flex-wrap items-center gap-6 text-slate-300 text-sm md:text-base">
+                    {/* <div className="flex flex-wrap items-center gap-6 text-slate-300 text-sm md:text-base">
                         <div className="flex items-center gap-2">
                             <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
                             <span className="font-bold text-white">4.8</span>
@@ -135,17 +135,17 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             <Users className="w-5 h-5 text-slate-400" />
                             <span>1,200+ Students enrolled</span>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 
             {/* Main Content & Sidebar Container */}
             <div className="container mx-auto px-4 mt-8 md:mt-12">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    
+
                     {/* Left Column - Details */}
                     <div className="lg:col-span-2 space-y-8">
-                        
+
                         {/* Course Stats Cards */}
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2">
@@ -165,11 +165,11 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                 </div>
                                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Lessons</div>
                             </div>
-                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2">
+                            {/* <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-2">
                                 <ShieldCheck className="w-6 h-6 text-amber-500" />
                                 <div className="text-2xl font-bold text-slate-800">Yes</div>
                                 <div className="text-xs font-medium text-slate-500 uppercase tracking-wider">Certificate</div>
-                            </div>
+                            </div> */}
                         </div>
 
                         {/* About Section */}
@@ -177,14 +177,14 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             <h2 className="text-2xl font-bold text-slate-900 mb-6">About this Course</h2>
                             <div className="space-y-4">
                                 <h3 className="text-lg font-bold text-slate-800">English Description</h3>
-                                <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed" 
-                                     dangerouslySetInnerHTML={{ __html: course.course_details_english || 'No description provided.' }} />
-                                
+                                <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed"
+                                    dangerouslySetInnerHTML={{ __html: course.course_details_english || 'No description provided.' }} />
+
                                 <div className="h-px w-full bg-slate-100 my-6"></div>
 
                                 <h3 className="text-lg font-bold text-slate-800">Bangla Description</h3>
-                                <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed" 
-                                     dangerouslySetInnerHTML={{ __html: course.course_details_bangla || 'No description provided.' }} />
+                                <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed"
+                                    dangerouslySetInnerHTML={{ __html: course.course_details_bangla || 'No description provided.' }} />
                             </div>
                         </div>
 
@@ -256,8 +256,8 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Instructor</h2>
                                 <div className="flex flex-col md:flex-row gap-6 items-start">
                                     <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-200 shrink-0 border-4 border-white shadow-lg">
-                                        <img 
-                                            src={course.instructor.image ? `https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image}` : '/placeholder.svg'} 
+                                        <img
+                                            src={course.instructor.image ? `https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image.replace('uploads/instructor/image/', '')}` : '/placeholder.svg'}
                                             alt={course.instructor.name}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { (e.target as any).src = '/placeholder.svg' }}
@@ -269,7 +269,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                             <p className="text-emerald-600 font-medium">{course.instructor.designation} - {course.instructor.department}</p>
                                         </div>
                                         <p className="text-slate-600 text-sm leading-relaxed">
-                                            Qualification: <span className="font-medium">{course.instructor.qualification}</span><br/>
+                                            Qualification: <span className="font-medium">{course.instructor.qualification}</span><br />
                                             Experience: <span className="font-medium">{course.instructor.experience} Years</span>
                                         </p>
                                         <div className="flex flex-wrap gap-4 pt-2 text-sm">
@@ -311,7 +311,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                     {/* Right Column - Sticky Sidebar */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-24 bg-white rounded-3xl shadow-lg border border-slate-100 p-6 overflow-hidden">
-                            
+
                             {/* Accent line at top */}
                             <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
 
@@ -325,7 +325,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                 </div>
                             </div>
 
-                            <Button 
+                            <Button
                                 onClick={handleAddToCart}
                                 className="w-full h-14 text-lg font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-emerald-500/20 shadow-lg transition-all hover:-translate-y-1"
                             >
@@ -344,10 +344,10 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                         <BookOpen className="w-4 h-4 text-blue-500" />
                                         Comprehensive learning materials
                                     </li>
-                                    <li className="flex items-center gap-3">
+                                    {/* <li className="flex items-center gap-3">
                                         <ShieldCheck className="w-4 h-4 text-amber-500" />
                                         Certificate of completion
-                                    </li>
+                                    </li> */}
                                 </ul>
                             </div>
 

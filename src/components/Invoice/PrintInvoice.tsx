@@ -80,6 +80,7 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
   });
 
   const trackingUrl = `${window.location.origin}/order-tracking/${invoiceNumber}`;
+  const isCourseOrder = order.products?.every((p: any) => p.service_type === 'course');
 
   // Generate QR Code
   useEffect(() => {
@@ -226,7 +227,14 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
         </div>
         {/* Billing + Shipping Info with QR/Barcode */}
         {/* Billing + Shipping Info with QR/Barcode */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr', gap: '24px', borderTop: '1px solid #eee', paddingTop: '14px', marginBottom: '24px' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: isCourseOrder ? '1fr 1fr' : '1fr 1fr 2fr', 
+          gap: '24px', 
+          borderTop: '1px solid #eee', 
+          paddingTop: '14px', 
+          marginBottom: '24px' 
+        }}>
           {/* Billing Info */}
           <div>
             <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.15em', color: '#111', textTransform: 'uppercase', marginBottom: '10px', marginTop: 0 }}>Billing Address</p>
@@ -252,24 +260,26 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
           </div>
 
           {/* Shipping Address */}
-          <div>
-            <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.15em', color: '#111', textTransform: 'uppercase', marginBottom: '10px', marginTop: 0 }}>Shipping Address</p>
-            {shippingInfo ? (
-              <>
-                <p style={{ fontWeight: 700, fontSize: '14px', margin: '0 0 4px', color: '#111' }}>{shippingInfo.name}</p>
-                <p style={{ fontSize: '13px', color: '#444', margin: '0 0 3px' }}>{shippingInfo.address}</p>
-                <p style={{ fontSize: '13px', color: '#444', margin: 0 }}>{shippingInfo.phone}</p>
-              </>
-            ) : (
-              <>
-                <p style={{ fontWeight: 700, fontSize: '14px', margin: '0 0 4px', color: '#111' }}>{order.user_name}</p>
-                <p style={{ fontSize: '13px', color: '#444', margin: '0 0 3px' }}>
-                  {order.student_address?.address || fullAddressText || formatAddress(order.user_address)}
-                </p>
-                <p style={{ fontSize: '13px', color: '#444', margin: 0 }}>{order.user_phone}</p>
-              </>
-            )}
-          </div>
+          {!isCourseOrder && (
+            <div>
+              <p style={{ fontSize: '10px', fontWeight: 900, letterSpacing: '0.15em', color: '#111', textTransform: 'uppercase', marginBottom: '10px', marginTop: 0 }}>Shipping Address</p>
+              {shippingInfo ? (
+                <>
+                  <p style={{ fontWeight: 700, fontSize: '14px', margin: '0 0 4px', color: '#111' }}>{shippingInfo.name}</p>
+                  <p style={{ fontSize: '13px', color: '#444', margin: '0 0 3px' }}>{shippingInfo.address}</p>
+                  <p style={{ fontSize: '13px', color: '#444', margin: 0 }}>{shippingInfo.phone}</p>
+                </>
+              ) : (
+                <>
+                  <p style={{ fontWeight: 700, fontSize: '14px', margin: '0 0 4px', color: '#111' }}>{order.user_name}</p>
+                  <p style={{ fontSize: '13px', color: '#444', margin: '0 0 3px' }}>
+                    {order.student_address?.address || fullAddressText || formatAddress(order.user_address)}
+                  </p>
+                  <p style={{ fontSize: '13px', color: '#444', margin: 0 }}>{order.user_phone}</p>
+                </>
+              )}
+            </div>
+          )}
 
           {/* QR/Barcode Box */}
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '20px', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
@@ -326,7 +336,7 @@ const PrintInvoice: React.FC<PrintInvoiceProps> = ({
           <div style={{ width: '280px', fontSize: '13px' }}>
             {[
               { label: 'Subtotal', value: formatBDT(subtotal, { compact: true }) },
-              { label: 'Delivery Fee', value: formatBDT(Number(order.delivery_charge), { compact: true }) },
+              ...(!isCourseOrder ? [{ label: 'Delivery Fee', value: formatBDT(Number(order.delivery_charge), { compact: true }) }] : []),
               { label: 'Total Amount Paid', value: formatBDT(Number(order.total), { compact: true }), bold: true },
               { label: 'Total Due', value: '৳0', bold: true },
             ].map(({ label, value, bold }) => (

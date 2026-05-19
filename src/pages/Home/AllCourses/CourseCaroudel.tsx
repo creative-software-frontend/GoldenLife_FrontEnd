@@ -61,6 +61,10 @@ const CourseCarousel: React.FC<{
 }> = ({ courses, title, onSelect, onAddToCart }) => {
     const [t] = useTranslation("global")
 
+    const filteredCourses = React.useMemo(() => {
+        return (courses || []).filter((lesson: any) => String(lesson.status) === "1");
+    }, [courses]);
+
     // 2. Configure Autoplay Plugin
     const plugin = React.useRef(
         Autoplay({ delay: 4000, stopOnInteraction: true })
@@ -98,7 +102,7 @@ const CourseCarousel: React.FC<{
                     className="w-full"
                 >
                     <CarouselContent className="-ml-4 pb-4">
-                        {courses.slice(0, 10).map((lesson, index) => (
+                        {filteredCourses.slice(0, 10).map((lesson, index) => (
                             <CarouselItem
                                 key={lesson.id || index}
                                 // 4. RESPONSIVE LOGIC:

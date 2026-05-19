@@ -40,6 +40,10 @@ export default function AllCourses() {
 
   const { data: apiCourses = [], isLoading } = useStudentCoursesQuery();
 
+  const activeCourses = React.useMemo(() => {
+    return (apiCourses || []).filter((course: any) => String(course.status) === "1");
+  }, [apiCourses]);
+
   const handleCourseSelect = (lesson: any) => {
     setSelectedCourseId(lesson.id);
     setIsModalOpen(true);
@@ -89,7 +93,7 @@ export default function AllCourses() {
           ) : (
             <>
               <CourseGrid
-                courses={apiCourses as any}
+                courses={activeCourses as any}
                 title="Courses"
                 onSelect={handleCourseSelect}
                 onAddToCart={addToCart}

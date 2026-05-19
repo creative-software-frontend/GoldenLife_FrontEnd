@@ -139,7 +139,13 @@ export default function AddAddressForm({ onBack, onClose, onSave }: Props) {
       const response = await axios.post(`${baseURL}/api/student/address/store`, payload, config);
 
       if (response.data) {
-        onSave(response.data.data || payload);
+        const serverData = response.data.data || response.data.address || response.data;
+        const finalAddress = {
+          ...payload,
+          ...serverData,
+          id: serverData?.id || response.data?.id || response.data?.address_id || serverData?.address_id
+        };
+        onSave(finalAddress);
       }
     } catch (error) {
       console.error("Failed to save address:", error);
@@ -187,8 +193,19 @@ export default function AddAddressForm({ onBack, onClose, onSave }: Props) {
             {/* Phone */}
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-gray-500 uppercase px-1">Phone <span className="text-red-500">*</span></label>
-              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="017XXXXXXXX"
-                className={`w-full h-11 px-4 rounded-xl border text-sm focus:outline-none transition-all ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-500'}`} />
+              <input 
+                type="tel" 
+                value={phone} 
+                maxLength={11}
+                onChange={e => {
+                  const val = e.target.value.replace(/\D/g, '');
+                  if (val.length <= 11) {
+                    setPhone(val);
+                  }
+                }} 
+                placeholder="017XXXXXXXX"
+                className={`w-full h-11 px-4 rounded-xl border text-sm focus:outline-none transition-all ${errors.phone ? 'border-red-500 bg-red-50' : 'border-gray-200 focus:border-green-500'}`} 
+              />
             </div>
           </div>
 
