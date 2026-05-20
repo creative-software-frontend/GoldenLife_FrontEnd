@@ -64,7 +64,6 @@ const CourseGrid: React.FC<{
                     <h3 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">
                         {title}
                     </h3>
-                    {courses.length >= 10 && (
                         <Link
                             to="/dashboard/all-courses-view"
                             className="group flex items-center gap-1.5 text-sm font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-5 py-2.5 rounded-full border border-emerald-200 transition-all duration-300"
@@ -72,7 +71,6 @@ const CourseGrid: React.FC<{
                             All Courses
                             <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
-                    )}
                 </div>
 
                 {/* Grid Layout Container - 4 Columns */}
