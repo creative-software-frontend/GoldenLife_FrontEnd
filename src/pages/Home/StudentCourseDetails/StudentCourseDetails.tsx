@@ -219,14 +219,40 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                                 <span>Module {module.serial_number || idx + 1}: {module.module_title}</span>
                                                 <span className="text-sm font-medium text-slate-500">{module.lessons?.length || 0} lessons</span>
                                             </div>
-                                            {module.lessons && module.lessons.length > 0 && (
-                                                <div className="p-4 space-y-3 bg-white border-t border-slate-100">
+                                            {module.lessons && module.lessons.length > 0 ? (
+                                                <div className="p-4 space-y-4 bg-white border-t border-slate-100">
                                                     {module.lessons.map((lesson: any, lIdx: number) => (
-                                                        <div key={lesson.id || lIdx} className="flex items-center gap-3 text-slate-600 text-sm">
-                                                            <PlayCircle className="w-4 h-4 text-emerald-500" />
-                                                            <span>{lesson.title || `Lesson ${lIdx + 1}`}</span>
+                                                        <div key={lesson.id || lIdx} className="space-y-2">
+                                                            <div className="flex items-start justify-between gap-3 text-slate-700">
+                                                                <div className="flex items-start gap-3">
+                                                                    <BookOpen className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                                                                    <div>
+                                                                        <span className="font-semibold">{lesson.lesson_title || `Lesson ${lIdx + 1}`}</span>
+                                                                        {lesson.description && <p className="text-xs text-slate-500 mt-1">{lesson.description}</p>}
+                                                                    </div>
+                                                                </div>
+                                                                {lesson.is_free === 1 && (
+                                                                    <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-600 border-emerald-200">Free Preview</Badge>
+                                                                )}
+                                                            </div>
+                                                            {/* Render Videos if available */}
+                                                            {lesson.videos && lesson.videos.length > 0 && (
+                                                                <div className="pl-8 space-y-2 mt-2">
+                                                                    {lesson.videos.map((video: any, vIdx: number) => (
+                                                                        <div key={video.id || vIdx} className="flex items-center gap-2 text-slate-500 text-sm">
+                                                                            <PlayCircle className="w-4 h-4 text-emerald-400" />
+                                                                            <span>{video.video_title || `Video ${vIdx + 1}`}</span>
+                                                                            {video.duration && <span className="text-xs text-slate-400 ml-auto">({video.duration})</span>}
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
+                                                </div>
+                                            ) : (
+                                                <div className="p-4 text-sm text-slate-400 font-medium italic bg-white border-t border-slate-100">
+                                                    No lessons added yet.
                                                 </div>
                                             )}
                                         </div>
@@ -239,11 +265,29 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                         {course.quizzes && course.quizzes.length > 0 && (
                             <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
                                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Quizzes</h2>
-                                <div className="space-y-3">
+                                <div className="space-y-4">
                                     {course.quizzes.map((quiz: any, idx: number) => (
-                                        <div key={quiz.id || idx} className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                            <FileText className="w-5 h-5 text-blue-500" />
-                                            <span className="font-medium text-slate-800">{quiz.quiz_title || `Quiz ${idx + 1}`}</span>
+                                        <div key={quiz.id || idx} className="border border-slate-100 bg-slate-50 rounded-xl p-4 flex flex-col gap-3">
+                                            <div className="flex items-start gap-3">
+                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 shrink-0 mt-0.5">
+                                                    <FileText className="w-4 h-4" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-bold text-slate-800 leading-snug">{quiz.question || quiz.quiz_title || quiz.title || `Quiz ${idx + 1}`}</p>
+                                                    {quiz.points && (
+                                                        <p className="text-xs font-semibold text-emerald-600 mt-1">Points: {quiz.points}</p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {(quiz.option_a || quiz.option_b || quiz.option_c || quiz.option_d) && (
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 ml-11">
+                                                    {quiz.option_a && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">A. {quiz.option_a}</div>}
+                                                    {quiz.option_b && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">B. {quiz.option_b}</div>}
+                                                    {quiz.option_c && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">C. {quiz.option_c}</div>}
+                                                    {quiz.option_d && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">D. {quiz.option_d}</div>}
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -354,9 +398,9 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                             {/* Earning Value Banner */}
                             {Number(course.earning_value) > 0 && (
                                 <div className="mt-8 bg-amber-50 rounded-xl p-4 border border-amber-100 text-center">
-                                    <div className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-1">Reseller Bonus</div>
+                                    <div className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-1">Seller Bonus</div>
                                     <div className="text-amber-600 font-medium text-sm">
-                                        Earn <span className="font-bold">৳{course.earning_value}</span> when you resell this course!
+                                        Earn <span className="font-bold">৳{course.earning_value}</span> when you sell this course!
                                     </div>
                                 </div>
                             )}

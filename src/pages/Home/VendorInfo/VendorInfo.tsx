@@ -147,9 +147,7 @@ export default function VendorInfo() {
             <div className="grid grid-cols-2 gap-3 w-full xl:w-auto xl:min-w-[350px]">
               {[
                 { label: 'Products', value: vendor.products?.length || 0, color: 'text-emerald-600', bg: 'bg-emerald-50/50' },
-                { label: 'Rating', value: '4.9/5.0', color: 'text-orange-500', bg: 'bg-orange-50/50' },
-                { label: 'Followers', value: '850+', color: 'text-blue-600', bg: 'bg-blue-50/50' },
-                { label: 'Est.', value: '2026', color: 'text-purple-600', bg: 'bg-purple-50/50' },
+
               ].map((stat, i) => (
                 <div key={i} className={`${stat.bg} p-4 rounded-2xl border border-white shadow-sm flex flex-col items-center xl:items-start`}>
                   <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">{stat.label}</p>

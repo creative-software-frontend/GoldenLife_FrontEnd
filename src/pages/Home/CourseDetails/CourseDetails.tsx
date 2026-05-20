@@ -251,13 +251,29 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                                                 <ShieldCheck className="w-6 h-6 text-amber-500" />
                                                 Assessments & Quizzes
                                             </h3>
-                                            <div className="space-y-3">
+                                            <div className="space-y-4">
                                                 {course.quizzes.map((quiz: any, idx: number) => (
-                                                    <div key={quiz.id || idx} className="border border-amber-100 bg-amber-50/30 rounded-xl p-4 flex items-center gap-3">
-                                                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-sm shrink-0">
-                                                            Q{idx + 1}
-                                                        </span>
-                                                        <p className="font-bold text-amber-900">{quiz.quiz_title || quiz.title || 'Quiz Assessment'}</p>
+                                                    <div key={quiz.id || idx} className="border border-amber-100 bg-amber-50/30 rounded-xl p-4 flex flex-col gap-3">
+                                                        <div className="flex items-start gap-3">
+                                                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-sm shrink-0 mt-0.5">
+                                                                Q{idx + 1}
+                                                            </span>
+                                                            <div className="flex-1">
+                                                                <p className="font-bold text-slate-800 leading-snug">{quiz.question || quiz.quiz_title || quiz.title || 'Quiz Assessment'}</p>
+                                                                {quiz.points && (
+                                                                    <p className="text-xs font-semibold text-amber-600 mt-1">Points: {quiz.points}</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {(quiz.option_a || quiz.option_b || quiz.option_c || quiz.option_d) && (
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 ml-11">
+                                                                {quiz.option_a && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">A. {quiz.option_a}</div>}
+                                                                {quiz.option_b && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">B. {quiz.option_b}</div>}
+                                                                {quiz.option_c && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">C. {quiz.option_c}</div>}
+                                                                {quiz.option_d && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">D. {quiz.option_d}</div>}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -315,9 +331,9 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                             {/* Earning Value Banner */}
                             {Number(course.earning_value) > 0 && (
                                 <div className="mt-8 bg-amber-50 rounded-xl p-4 border border-amber-100 text-center">
-                                    <div className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-1">Reseller Bonus</div>
+                                    <div className="text-sm font-bold text-amber-800 uppercase tracking-wider mb-1">Seller Bonus</div>
                                     <div className="text-amber-600 font-medium text-sm">
-                                        Earn <span className="font-bold">৳{course.earning_value}</span> when you resell this course!
+                                        Earn <span className="font-bold">৳{course.earning_value}</span> when you Sell this course!
                                     </div>
                                 </div>
                             )}

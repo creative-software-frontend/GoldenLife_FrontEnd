@@ -37,8 +37,10 @@ export const usePlaceOrder = () => {
         },
         onSuccess: async (data, variables) => {
             if (data?.status === 'success' || data?.success) {
-                toast.success(data?.message || "Order placed successfully!");
-                
+                let msg = data?.message || "Order placed successfully!";
+                msg = msg.replace(/\s*&\s*profit\s+distributed!?/i, '');
+                toast.success(msg);
+
                 // Refresh global data
                 await Promise.all([
                     fetchWallet(true),
