@@ -10,6 +10,8 @@ import {
   ShoppingBag,
   ExternalLink,
   ArrowRight,
+  Download,
+  Video,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -23,6 +25,9 @@ interface Product {
   subtotal: string;
   ebook?: string;
   video_link?: string;
+  service_type?: string;
+  course_type?: string;
+  download_url?: string | null;
 }
 
 interface Order {
@@ -193,7 +198,7 @@ const OrderHistory = () => {
                         {new Date(order.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                       </span>
                       {(() => {
-                        const s = order.status.toLowerCase();
+                        const s = (order.status || "").toLowerCase();
                         let colorClass = "bg-slate-100 text-slate-700 border-slate-200"; // default
 
                         if (s.includes('delivered')) colorClass = "bg-emerald-50 text-emerald-700 border-emerald-100";
@@ -204,7 +209,7 @@ const OrderHistory = () => {
 
                         return (
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide border shadow-sm ${colorClass}`}>
-                            {order.status}
+                            {order.status || "Order Placed"}
                           </span>
                         );
                       })()}
@@ -246,7 +251,7 @@ const OrderHistory = () => {
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                         <Truck size={12} className="text-slate-300" /> Delivery
                       </p>
-                      <p className="font-bold text-slate-800 text-sm">৳{Number(order.delivery_charge).toFixed(2)}</p>
+                      <p className="font-bold text-slate-800 text-sm">৳{Number(order.delivery_charge || 0).toFixed(2)}</p>
                     </div>
 
                     <div
@@ -280,7 +285,10 @@ const OrderHistory = () => {
                           <div className="md:col-span-7 lg:col-span-8 flex items-center gap-3">
                             <div className="h-14 w-14 sm:h-16 sm:w-16 shrink-0 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
                               <img
-                                src={`${baseURL}/uploads/ecommarce/product_image/${item.product_image}`}
+                                src={item.service_type === 'course'
+                                  ? `${baseURL}/uploads/course/course_image/${item.product_image}`
+                                  : `${baseURL}/uploads/ecommarce/product_image/${item.product_image}`
+                                }
                                 alt={item.product_name}
                                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Image')}
@@ -300,23 +308,48 @@ const OrderHistory = () => {
                             </div>
                             <div className="md:col-span-3 lg:col-span-2 md:text-right flex flex-col items-end">
                               <span className="md:hidden text-[10px] text-slate-500 block mb-0.5 font-bold uppercase">Subtotal</span>
-                              <span className="font-black text-slate-900 text-sm sm:text-base">৳{Number(item.subtotal).toFixed(2)}</span>
+                              <span className="font-black text-slate-900 text-sm sm:text-base">৳{Number(item.subtotal || 0).toFixed(2)}</span>
 
-                              {/* New Access Button for E-books */}
-                              {/* {item.ebook === "1" && item.video_link ? (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    window.open(item.video_link, '_blank', 'noopener,noreferrer');
-                                  }}
-                                  className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold transition-all shadow-sm shadow-indigo-100 no-print"
-                                >
-                                  <Download size={12} />
-                                  DOWNLOAD
-                                </button>
-                              ) : item.ebook === "1" ? (
-                                <span className="text-[10px] text-amber-600 font-bold mt-1 uppercase tracking-tighter italic">Digitizing...</span>
-                              ) : null} */}
+                              {item.service_type === 'course' && (
+                                <div className="mt-2 flex flex-col items-end gap-1">
+                                  {(() => {
+                                    const type = (item.course_type || "").toLowerCase();
+                                    const hasLink = !!item.download_url;
+
+                                    if (type.includes("ebook")) {
+                                      return hasLink ? (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(item.download_url!, '_blank', 'noopener,noreferrer');
+                                          }}
+                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm shadow-emerald-100 no-print"
+                                        >
+                                          <Download size={12} />
+                                          Download PDF
+                                        </button>
+                                      ) : (
+                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider italic">PDF Pending</span>
+                                      );
+                                    } else {
+                                      return hasLink ? (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            window.open(item.download_url!, '_blank', 'noopener,noreferrer');
+                                          }}
+                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm shadow-indigo-100 no-print"
+                                        >
+                                          <Video size={12} />
+                                          Watch Class
+                                        </button>
+                                      ) : (
+                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider italic">Class Link Pending</span>
+                                      );
+                                    }
+                                  })()}
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>

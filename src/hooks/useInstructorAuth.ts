@@ -399,6 +399,47 @@ const getInstructorToken = (): string | null => {
   }
 };
 
+// ─── Change Password (when logged in) ───────────────────────────────────────────
+
+export interface InstructorChangePasswordPayload {
+  old_password: string;
+  password: string;
+  password_confirmation: string;
+}
+
+export interface InstructorChangePasswordResponse {
+  status: boolean;
+  message: string;
+}
+
+/**
+ * Change Password (when logged in)
+ * POST /api/instructor/password/update
+ * Response: { status, message }
+ */
+export const useInstructorChangePasswordMutation = () =>
+  useMutation<InstructorChangePasswordResponse, Error, InstructorChangePasswordPayload>({
+    mutationFn: async (payload) => {
+      try {
+        const token = getInstructorToken();
+        const response = await axios.post<InstructorChangePasswordResponse>(
+          `${baseURL}/api/instructor/password/update`,
+          payload,
+          {
+            headers: {
+              'X-Auth-Token': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+          }
+        );
+        return response.data;
+      } catch (err: any) {
+        throw new Error(extractError(err));
+      }
+    },
+  });
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface CourseData {

@@ -151,9 +151,9 @@ export default function InstructorProfile() {
                 <Settings className="text-indigo-600" size={20} /> Quick Settings
               </h3>
 
-              {/* <div className="space-y-4">
+              <div className="space-y-4">
                 <button
-                  onClick={() => setIsForgotModalOpen(true)}
+                  onClick={() => navigate('/instructor/dashboard/change-password')}
                   className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-indigo-50 rounded-2xl group transition-all"
                 >
                   <div className="flex items-center gap-4">
@@ -164,7 +164,7 @@ export default function InstructorProfile() {
                   </div>
                   <ShieldCheck size={18} className="text-emerald-500" />
                 </button>
-              </div> */}
+              </div>
 
               {/* Verification Status */}
               <div className="mt-8 pt-8 border-t-2 border-slate-50 mb-8">

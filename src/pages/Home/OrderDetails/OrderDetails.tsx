@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Package, Truck, MapPin, CreditCard, CheckCircle2,
-  User, Phone, ArrowLeft, Contact, Mail, Calendar, Download, Printer
+  User, Phone, ArrowLeft, Contact, Mail, Calendar, Download, Printer, Video
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
@@ -305,17 +305,40 @@ const OrderDetails = () => {
                         ৳{Number(item.subtotal).toFixed(2)}
                       </p>
 
-                      {item.ebook === "1" && item.video_link ? (
-                        <button
-                          onClick={() => window.open(item.video_link, '_blank', 'noopener,noreferrer')}
-                          className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition no-print whitespace-nowrap"
-                        >
-                          <Download size={14} />
-                          Download
-                        </button>
-                      ) : item.ebook === "1" ? (
-                        <p className="text-xs text-amber-700 italic">Coming soon</p>
-                      ) : null}
+                      {item.service_type === 'course' && (
+                        <div className="flex flex-col items-end gap-1.5 no-print whitespace-nowrap">
+                          {(() => {
+                            const type = (item.course_type || "").toLowerCase();
+                            const hasLink = !!item.download_url;
+
+                            if (type.includes("ebook")) {
+                              return hasLink ? (
+                                <button
+                                  onClick={() => window.open(item.download_url!, '_blank', 'noopener,noreferrer')}
+                                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-sm shadow-emerald-100"
+                                >
+                                  <Download size={14} />
+                                  Download PDF
+                                </button>
+                              ) : (
+                                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider italic">PDF Pending</span>
+                              );
+                            } else {
+                              return hasLink ? (
+                                <button
+                                  onClick={() => window.open(item.download_url!, '_blank', 'noopener,noreferrer')}
+                                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-sm shadow-indigo-100"
+                                >
+                                  <Video size={14} />
+                                  Watch Class
+                                </button>
+                              ) : (
+                                <span className="text-xs text-slate-400 font-bold uppercase tracking-wider italic">Class Link Pending</span>
+                              );
+                            }
+                          })()}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

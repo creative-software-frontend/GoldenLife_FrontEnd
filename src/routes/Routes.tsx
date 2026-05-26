@@ -67,6 +67,7 @@ import InstructorRegister from "@/pages/common/Instructor/InstructorRegister";
 import InstructorLayout from "@/layout/InstructorLayout/InstructorLayout";
 import InstructorHome from "@/pages/InstructorHome/InstructorHome";
 import InstructorProfile from "@/pages/Instructor/Profile/index";
+import InstructorChangePassword from "@/pages/Instructor/Profile/ChangePassword";
 import InstructorCourseList from "@/pages/Instructor/Courses/InstrutorCourseList";
 import InstructorAddCourse from "@/pages/Instructor/Courses/InstructorAddCourse";
 import InstructorEditCourse from "@/pages/Instructor/Courses/InstructorEditCourse";
@@ -524,6 +525,10 @@ export const routes = createBrowserRouter([
                             {
                                 path: 'profile',
                                 element: <InstructorProfile />
+                            },
+                            {
+                                path: 'change-password',
+                                element: <InstructorChangePassword />
                             },
                             {
                                 path: 'courses',

@@ -17,6 +17,8 @@ export interface OrderProduct {
     service_type: string;
     ebook?: string;
     video_link?: string;
+    course_type?: string;
+    download_url?: string | null;
 }
 
 export interface Order {
@@ -83,7 +85,7 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
     isOrderDetailsLoading: false,
 
     fetchOrders: async (silent = false) => {
-        // Redined Guard: Only skip if already fetched and not a silent refresh.
+        // Refined Guard: Only skip if already fetched and not a silent refresh.
         if (get().isOrdersFetched && !silent) return;
 
         const token = getAuthToken();
@@ -91,26 +93,105 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
 
         if (!silent) set({ isOrdersLoading: true });
 
-        try {
-            const url = `${baseURL}/api/student/orders`;
-            console.log(`📡 orderSlice: Fetching orders from ${url}`);
+        // Try multiple student order history endpoint variations
+        const endpointsToTry = [
+            `${baseURL}/api/student/orders`,
+            `${baseURL}/api/student/orders/history`,
+            `${baseURL}/api/student/order/history`,
+            `${baseURL}/api/student/order`
+        ];
 
-            const response = await axios.get(url, {
-                headers: { 'X-Auth-Token': `Bearer ${token}` }
+        let rawOrders: any[] = [];
+        let success = false;
+
+        for (const url of endpointsToTry) {
+            try {
+                console.log(`📡 orderSlice: Fetching orders from ${url}`);
+                const response = await axios.get(url, {
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
+                });
+
+                const resData = response.data;
+                if (resData) {
+                    if (Array.isArray(resData.orders)) {
+                        rawOrders = resData.orders;
+                    } else if (Array.isArray(resData.data)) {
+                        rawOrders = resData.data;
+                    } else if (Array.isArray(resData)) {
+                        rawOrders = resData;
+                    }
+                }
+
+                console.log(`✅ orderSlice: Fetched ${rawOrders.length} raw orders from ${url}`);
+                success = true;
+                break; // Exit loop if endpoint returns successfully
+            } catch (error: any) {
+                console.warn(`⚠️ orderSlice failed endpoint ${url}:`, error.message);
+            }
+        }
+
+        if (success) {
+            // Normalize orders data structure
+            const normalizedOrders = rawOrders.map((order: any) => {
+                const items = order.items || order.products || [];
+                
+                // Calculate total if null/empty
+                let totalAmount = order.total_amount || order.total;
+                if (!totalAmount && items.length > 0) {
+                    totalAmount = items.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0).toString();
+                } else if (!totalAmount) {
+                    totalAmount = "0.00";
+                }
+
+                return {
+                    id: order.id,
+                    order_no: order.order_no || "",
+                    user_id: order.user_id || "",
+                    vendor_id: order.vendor_id || "",
+                    user_name: order.user_name || order.address?.name || "",
+                    user_phone: order.user_phone || order.address?.phone || "",
+                    user_address: order.user_address || order.address?.address || "",
+                    delivery_charge: order.delivery_charge || "0.00",
+                    total: totalAmount,
+                    status: order.status || order.payment_status || "Order Placed",
+                    created_at: order.created_at || new Date().toISOString(),
+                    updated_at: order.updated_at || new Date().toISOString(),
+                    payment: order.payment || (order.payment_status ? {
+                        payment_method: order.payment_method || "Wallet",
+                        transaction_number: order.transaction_number || ""
+                    } : null),
+                    products: items.map((item: any) => {
+                        const details = item.details || {};
+                        return {
+                            id: item.order_product_id || item.id,
+                            order_no: order.order_no || "",
+                            product_id: details.id || item.product_id || "",
+                            product_name: details.product_title_english || details.course_title_english || item.product_name || details.product_name || details.name || "Unknown Item",
+                            product_image: details.image || details.product_image || item.product_image || "",
+                            quantity: item.quantity?.toString() || "1",
+                            subtotal: item.subtotal?.toString() || "0.00",
+                            service_type: item.service_type || "product",
+                            ebook: (details.course_type?.toLowerCase().includes("ebook") || details.ebook === 1 || details.ebook === "1") ? "1" : "0",
+                            video_link: details.download_url || details.video_link || null,
+                            course_type: details.course_type || "",
+                            download_url: details.download_url || details.video_link || item.video_link || null,
+                            created_at: item.created_at || order.created_at,
+                            updated_at: item.updated_at || order.updated_at
+                        };
+                    }),
+                    student_address: order.student_address || order.address || undefined
+                };
             });
-
-            const rawOrders = Array.isArray(response.data.orders) ? response.data.orders : [];
-            console.log(`✅ orderSlice: Fetched ${rawOrders.length} orders`);
 
             set({
-                orders: rawOrders,
+                orders: normalizedOrders,
                 isOrdersFetched: true
             });
-        } catch (error: any) {
-            console.error("❌ orderSlice Fetch Error:", error.response?.data || error.message);
-        } finally {
-            if (!silent) set({ isOrdersLoading: false });
+        } else {
+            console.error("❌ orderSlice: All student orders endpoints failed.");
         }
+
+        if (!silent) set({ isOrdersLoading: false });
     },
 
     fetchOrderDetails: async (orderNo: string) => {
@@ -120,12 +201,61 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
         set({ isOrderDetailsLoading: true });
 
         try {
+            // ✅ FIRST: check if order already exists in the fetched orders list
+            // The orders list has full nested `items[].details` with download_url, course_type, etc.
+            const existingOrders = get().orders;
+            const cachedOrder = existingOrders.find(
+                (o: any) => o.order_no === orderNo || o.id?.toString() === orderNo
+            );
+
+            if (cachedOrder) {
+                console.log(`✅ orderSlice: Using cached order data for ${orderNo}`);
+                set({ currentOrder: cachedOrder, isOrderDetailsLoading: false });
+                return;
+            }
+
+            // ⬇️ FALLBACK: fetch from API if not in cache
             const response = await axios.get(`${baseURL}/api/order-details?order_no=${orderNo}`, {
                 headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
             if (response.data?.status === "success" && response.data.order) {
-                set({ currentOrder: response.data.order });
+                const order = response.data.order;
+                const items = order.items || order.products || [];
+                
+                // Calculate total if null/empty
+                let totalAmount = order.total_amount || order.total;
+                if (!totalAmount && items.length > 0) {
+                    totalAmount = items.reduce((sum: number, item: any) => sum + Number(item.subtotal || 0), 0).toString();
+                } else if (!totalAmount) {
+                    totalAmount = "0.00";
+                }
+
+                const normalizedOrder = {
+                    ...order,
+                    total: totalAmount,
+                    delivery_charge: order.delivery_charge || "0.00",
+                    status: order.status || order.payment_status || "Order Placed",
+                    products: items.map((item: any) => {
+                        const details = item.details || {};
+                        return {
+                            id: item.order_product_id || item.id,
+                            order_no: order.order_no || "",
+                            product_id: details.id || item.product_id || "",
+                            product_name: details.product_title_english || details.course_title_english || item.product_name || details.product_name || details.name || "Unknown Item",
+                            product_image: details.image || details.product_image || item.product_image || "",
+                            quantity: item.quantity?.toString() || "1",
+                            subtotal: item.subtotal?.toString() || "0.00",
+                            service_type: item.service_type || "product",
+                            ebook: (details.course_type?.toLowerCase().includes("ebook") || details.ebook === 1 || details.ebook === "1") ? "1" : "0",
+                            video_link: details.download_url || details.video_link || item.video_link || null,
+                            course_type: details.course_type || item.course_type || "",
+                            download_url: details.download_url || details.video_link || item.video_link || item.download_url || null
+                        };
+                    })
+                };
+
+                set({ currentOrder: normalizedOrder });
             }
         } catch (error) {
             console.error("Order Details Fetch Error:", error);
