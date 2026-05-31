@@ -46,32 +46,31 @@ export const SettingsTabs = () => {
     fetchPlans();
   }, []);
 
+  const [quantity, setQuantity] = useState(1);
+
   const handlePlanClick = (plan: SubscriptionPlan) => {
     setSelectedPlan(plan);
     setPaymentType('single');
+    setQuantity(1);
     setIsPaymentModalOpen(true);
   };
 
   const handleCollaborationClick = () => {
     setSelectedPlan(null);
     setPaymentType('multiple');
+    setQuantity(1);
     setIsPaymentModalOpen(true);
   };
 
-  const handlePayNow = () => {
+  const handlePayNow = (qty: number) => {
+    setQuantity(qty);
     setIsPaymentModalOpen(false);
     setIsCheckoutModalOpen(true);
   };
 
   return (
     <div className="w-full max-w-7xl mx-auto p-6 bg-white rounded-2xl shadow-sm mt-8 border border-gray-100">
-      {/* Section header */}
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-gray-900">Subscription Plans</h2>
-        <p className="text-sm text-gray-500 mt-1">Choose a plan to unlock premium features</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {loading ? (
           <>
             <PlanSkeleton />
@@ -103,6 +102,7 @@ export const SettingsTabs = () => {
         onClose={() => setIsCheckoutModalOpen(false)}
         type={paymentType}
         plan={selectedPlan}
+        quantity={quantity}
       />
     </div>
   );

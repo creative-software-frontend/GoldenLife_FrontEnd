@@ -31,13 +31,11 @@ export const useAppStore = create<AppState>()((set, get, api) => ({
     isProfileLoading: false,
     isWalletLoading: false,
     isNotificationLoading: false,
-    isDashboardLoading: false,
     
     isCategoryFetched: false,
     isProfileFetched: false,
     isWalletFetched: false,
     isNotificationFetched: false,
-    isDashboardFetched: false,
 
     instructor_session: (() => {
         try {

@@ -7,12 +7,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAppStore } from '@/store/useAppStore';
-import { OrderProduct } from '@/store/slices/orderSlice';
+import { Order, OrderProduct } from '@/store/slices/orderSlice';
 import PrintInvoice from '@/components/Invoice/PrintInvoice';
 import { usePrintInvoice } from '@/hooks/usePrintInvoice';
 import { OrderForPrint } from '@/hooks/usePrintInvoice';
-
-// Interfaces removed - using store Order type
 
 // ─── Component ─────────────────────────────────────────────
 const OrderDetails = () => {
@@ -26,9 +24,9 @@ const OrderDetails = () => {
   const effectiveOrderNo = orderNoFromQuery || orderNoFromState || id?.toString?.() || '';
 
   const {
-    currentOrder: order,
-    isOrderDetailsLoading: loading,
-    fetchOrderDetails,
+    orders,
+    isOrdersLoading: loading,
+    fetchOrders,
     studentProfile,
     personalInfo
   } = useAppStore();
@@ -42,8 +40,14 @@ const OrderDetails = () => {
       setError(t("orderDetails.errorNotFound") || "No order number provided.");
       return;
     }
-    fetchOrderDetails(effectiveOrderNo);
-  }, [effectiveOrderNo, fetchOrderDetails, t]);
+    // Always fetch fresh from API (silent=true bypasses cache guard)
+    fetchOrders(true);
+  }, [effectiveOrderNo, fetchOrders, t]);
+
+  // Find the matching order from the list by order_no or id
+  const order: Order | undefined = orders.find(
+    (o: Order) => o.order_no === effectiveOrderNo || o.id?.toString() === effectiveOrderNo
+  );
 
   // Shipping info can be derived from the currentOrder or store addresses
   const shippingInfo = order?.student_address || null;
@@ -56,7 +60,7 @@ const OrderDetails = () => {
       ? { student: studentProfile, personal_info: personalInfo }
       : null;
 
-  if (loading) {
+  if (loading || (!order && !error)) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-slate-400 animate-pulse">
@@ -70,7 +74,7 @@ const OrderDetails = () => {
   if (error || !order) {
     return (
       <div className="max-w-md mx-auto px-4 py-12 text-center">
-        <p className="text-red-600 font-medium mb-6">{error}</p>
+        <p className="text-red-600 font-medium mb-6">{error || "Order not found."}</p>
         <button
           onClick={() => navigate(-1)}
           className="px-8 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition font-medium"

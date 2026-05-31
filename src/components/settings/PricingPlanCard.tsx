@@ -22,11 +22,10 @@ export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
 
   return (
     <div
-      className={`relative border-2 rounded-2xl p-6 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-        isRecommended
+      className={`relative border-2 rounded-2xl p-6 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isRecommended
           ? "border-primary bg-blue-50/40"
           : "border-gray-200 bg-white"
-      }`}
+        }`}
     >
       {/* Badge */}
       {isRecommended && (
@@ -85,11 +84,10 @@ export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
 
       <button
         onClick={() => onClick(plan)}
-        className={`w-full mt-8 py-3 rounded-xl font-bold transition-all shadow-md ${
-          isRecommended
+        className={`w-full mt-8 py-3 rounded-xl font-bold transition-all shadow-md ${isRecommended
             ? "bg-primary text-white hover:opacity-90 shadow-primary/30"
             : "bg-gray-800 text-white hover:bg-gray-700"
-        }`}
+          }`}
       >
         Subscribe Now
       </button>

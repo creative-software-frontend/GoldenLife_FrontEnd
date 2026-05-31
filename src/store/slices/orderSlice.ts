@@ -161,7 +161,25 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
                         transaction_number: order.transaction_number || ""
                     } : null),
                     products: items.map((item: any) => {
-                        const details = item.details || {};
+                        const details = item.course || item.product || item.details || {};
+                        // Comprehensive download_url extraction — covers all known API field variants
+                        const resolvedDownloadUrl =
+                            details.download_url ||
+                            details.video_link ||
+                            details.class_link ||
+                            details.stream_url ||
+                            details.link ||
+                            item.download_url ||
+                            item.video_link ||
+                            item.class_link ||
+                            item.stream_url ||
+                            null;
+                        const resolvedCourseType =
+                            details.course_type ||
+                            item.course_type ||
+                            details.type ||
+                            item.type ||
+                            "";
                         return {
                             id: item.order_product_id || item.id,
                             order_no: order.order_no || "",
@@ -171,10 +189,10 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
                             quantity: item.quantity?.toString() || "1",
                             subtotal: item.subtotal?.toString() || "0.00",
                             service_type: item.service_type || "product",
-                            ebook: (details.course_type?.toLowerCase().includes("ebook") || details.ebook === 1 || details.ebook === "1") ? "1" : "0",
-                            video_link: details.download_url || details.video_link || null,
-                            course_type: details.course_type || "",
-                            download_url: details.download_url || details.video_link || item.video_link || null,
+                            ebook: (resolvedCourseType.toLowerCase().includes("ebook") || details.ebook === 1 || details.ebook === "1") ? "1" : "0",
+                            video_link: resolvedDownloadUrl,
+                            course_type: resolvedCourseType,
+                            download_url: resolvedDownloadUrl,
                             created_at: item.created_at || order.created_at,
                             updated_at: item.updated_at || order.updated_at
                         };
@@ -201,26 +219,28 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
         set({ isOrderDetailsLoading: true });
 
         try {
-            // ✅ FIRST: check if order already exists in the fetched orders list
-            // The orders list has full nested `items[].details` with download_url, course_type, etc.
-            const existingOrders = get().orders;
-            const cachedOrder = existingOrders.find(
-                (o: any) => o.order_no === orderNo || o.id?.toString() === orderNo
-            );
+            // Always fetch from detail API — the list endpoint often omits download_url.
+            // Fall back to cached order only if the API call fails.
+            console.log(`📡 orderSlice: Fetching order details for ${orderNo} from API`);
 
-            if (cachedOrder) {
-                console.log(`✅ orderSlice: Using cached order data for ${orderNo}`);
-                set({ currentOrder: cachedOrder, isOrderDetailsLoading: false });
-                return;
-            }
-
-            // ⬇️ FALLBACK: fetch from API if not in cache
             const response = await axios.get(`${baseURL}/api/order-details?order_no=${orderNo}`, {
                 headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
-            if (response.data?.status === "success" && response.data.order) {
-                const order = response.data.order;
+            // Debug: log raw response to see actual structure
+            console.log('📦 orderSlice: order-details raw response:', JSON.stringify(response.data, null, 2));
+
+            // Handle multiple API response shapes:
+            // { status: "success", order: {...} } OR { success: true, data: {...} } OR { order: {...} }
+            const resData = response.data;
+            const rawOrder =
+                resData?.order ||
+                resData?.data?.order ||
+                resData?.data ||
+                (resData?.success || resData?.status === 'success' ? resData : null);
+
+            if (rawOrder && typeof rawOrder === 'object' && !Array.isArray(rawOrder)) {
+                const order = rawOrder;
                 const items = order.items || order.products || [];
                 
                 // Calculate total if null/empty
@@ -237,7 +257,25 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
                     delivery_charge: order.delivery_charge || "0.00",
                     status: order.status || order.payment_status || "Order Placed",
                     products: items.map((item: any) => {
-                        const details = item.details || {};
+                        const details = item.course || item.product || item.details || {};
+                        // Comprehensive download_url extraction — covers all known API field variants
+                        const resolvedDownloadUrl =
+                            details.download_url ||
+                            details.video_link ||
+                            details.class_link ||
+                            details.stream_url ||
+                            details.link ||
+                            item.download_url ||
+                            item.video_link ||
+                            item.class_link ||
+                            item.stream_url ||
+                            null;
+                        const resolvedCourseType =
+                            details.course_type ||
+                            item.course_type ||
+                            details.type ||
+                            item.type ||
+                            "";
                         return {
                             id: item.order_product_id || item.id,
                             order_no: order.order_no || "",
@@ -247,10 +285,10 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
                             quantity: item.quantity?.toString() || "1",
                             subtotal: item.subtotal?.toString() || "0.00",
                             service_type: item.service_type || "product",
-                            ebook: (details.course_type?.toLowerCase().includes("ebook") || details.ebook === 1 || details.ebook === "1") ? "1" : "0",
-                            video_link: details.download_url || details.video_link || item.video_link || null,
-                            course_type: details.course_type || item.course_type || "",
-                            download_url: details.download_url || details.video_link || item.video_link || item.download_url || null
+                            ebook: (resolvedCourseType.toLowerCase().includes("ebook") || details.ebook === 1 || details.ebook === "1") ? "1" : "0",
+                            video_link: resolvedDownloadUrl,
+                            course_type: resolvedCourseType,
+                            download_url: resolvedDownloadUrl
                         };
                     })
                 };
@@ -259,6 +297,15 @@ export const createOrderSlice: StateCreator<AppState, [], [], OrderSlice> = (set
             }
         } catch (error) {
             console.error("Order Details Fetch Error:", error);
+            // Fallback: use cached order from the list if API fails
+            const existingOrders = get().orders;
+            const cachedOrder = existingOrders.find(
+                (o: any) => o.order_no === orderNo || o.id?.toString() === orderNo
+            );
+            if (cachedOrder) {
+                console.warn(`⚠️ orderSlice: API failed, using cached order for ${orderNo}`);
+                set({ currentOrder: cachedOrder });
+            }
         } finally {
             set({ isOrderDetailsLoading: false });
         }
