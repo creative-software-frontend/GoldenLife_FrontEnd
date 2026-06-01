@@ -26,7 +26,7 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <img src="/image/logo/logo.jpg" alt="Logo" className="h-8 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
-            <h3 className="text-primary font-semibold text-lg">Next Js Company</h3>
+            {/* <h3 className="text-primary font-semibold text-lg">Next Js Company</h3> */}
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
             <X className="w-5 h-5" />
