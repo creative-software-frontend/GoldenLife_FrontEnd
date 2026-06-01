@@ -5,6 +5,9 @@ import { baseURL, getAuthToken } from "@/store/utils";
 import { useAppStore } from "@/store/useAppStore";
 import { SubscriptionPlan } from "./PricingPlanCard";
 import { toast } from "react-toastify";
+import bikash from "../../../public/image/payment/bikash.png";
+import nogod from "../../../public/image/payment/nogod.png";
+import rocket from "../../../public/image/payment/rocket.jpg";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -35,9 +38,9 @@ export const CheckoutModal = ({ isOpen, onClose, type, plan, quantity }: Checkou
 
   const paymentMethods = [
     { id: 'wallet', name: 'Wallet', icon: <Wallet className="text-blue-500" />, color: 'border-blue-200 bg-blue-50' },
-    { id: 'bkash', name: 'bKash', img: '/image/payment/bikash.png', color: 'border-pink-200 bg-pink-50' },
-    { id: 'nagad', name: 'Nagad', img: '/image/payment/nogod.png', color: 'border-orange-200 bg-orange-50' },
-    { id: 'rocket', name: 'Rocket', img: '/image/payment/rocket.jpg', color: 'border-purple-200 bg-purple-50' },
+    { id: 'bkash', name: 'bKash', img: bikash, color: 'border-pink-200 bg-pink-50' },
+    { id: 'nagad', name: 'Nagad', img: nogod, color: 'border-orange-200 bg-orange-50' },
+    { id: 'rocket', name: 'Rocket', img: rocket, color: 'border-purple-200 bg-purple-50' },
   ];
 
   const handlePayNow = async () => {
@@ -191,7 +194,6 @@ export const CheckoutModal = ({ isOpen, onClose, type, plan, quantity }: Checkou
                         src={method.img}
                         alt={method.name}
                         className="w-full h-full object-contain"
-                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
                       />
                     )}
                   </div>

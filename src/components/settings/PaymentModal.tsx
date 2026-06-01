@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { SubscriptionPlan } from "./PricingPlanCard";
+import logo from "../../../public/image/logo/logo.jpg";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -25,7 +26,7 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
         {/* Header styling matching the first image */}
         <div className="flex justify-between items-center p-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <img src="/image/logo/logo.jpg" alt="Logo" className="h-8 object-contain" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <img src={logo} alt="Logo" className="h-8 object-contain" />
             {/* <h3 className="text-primary font-semibold text-lg">Next Js Company</h3> */}
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -37,7 +38,7 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
           {/* Voucher Card */}
           <div className="bg-gradient-to-r from-primary to-primary-light rounded-xl p-5 text-white relative overflow-hidden mb-4 shadow-lg">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-            <img src="/image/logo/logo.jpg" alt="Watermark" className="absolute right-4 bottom-4 w-12 h-12 opacity-25 rounded-lg object-cover" onError={(e) => e.currentTarget.style.display = 'none'} />
+            <img src={logo} alt="Watermark" className="absolute right-4 bottom-4 w-12 h-12 opacity-25 rounded-lg object-cover" />
 
             <div className="flex justify-between items-start mb-6">
               {/* <div>
