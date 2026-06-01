@@ -1,4 +1,5 @@
-import { CheckCircle2, Clock, Zap, Star } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Star, MapPin, TrendingUp, Headphones, Users, BarChart2, Gift } from "lucide-react";
+import { useState } from "react";
 
 export interface SubscriptionPlan {
   id: number;
@@ -16,105 +17,142 @@ interface PricingPlanCardProps {
   onClick: (plan: SubscriptionPlan) => void;
 }
 
+interface FeatureItem {
+  icon: React.ReactNode;
+  heading: string;
+  detail: string;
+}
+
+const features: FeatureItem[] = [
+  {
+    icon: <MapPin className="w-4 h-4 flex-shrink-0 text-primary" />,
+    heading: "নিজের এলাকায় কাজ করার সুযোগ",
+    detail: "আপনি আপনার নিজ উপজেলা/জেলা/এলাকা থেকেই কাজ করতে পারবেন, আলাদা অফিসে যাওয়ার দরকার নেই।",
+  },
+  {
+    icon: <TrendingUp className="w-4 h-4 flex-shrink-0 text-primary" />,
+    heading: "১২ ধরণের ইনকাম করার সুযোগ",
+    detail: "বিভিন্ন ধরনের ইনকাম সোর্স থেকে আয় করুন এবং আপনার আর্থিক স্বাধীনতা নিশ্চিত করুন।",
+  },
+  {
+    icon: <Headphones className="w-4 h-4 flex-shrink-0 text-primary" />,
+    heading: "অনলাইন সাপোর্ট ও ট্রেনিং",
+    detail: "বিশেষজ্ঞ দলের কাছ থেকে ২৪/৭ অনলাইন সাপোর্ট এবং পেশাদার ট্রেনিং সেশন পান।",
+  },
+  {
+    icon: <Users className="w-4 h-4 flex-shrink-0 text-primary" />,
+    heading: "টিম বিল্ডিং সিস্টেম",
+    detail: "নিজের টিম তৈরি করুন এবং একসাথে কাজ করে সাফল্য অর্জন করুন।",
+  },
+  {
+    icon: <BarChart2 className="w-4 h-4 flex-shrink-0 text-primary" />,
+    heading: "ক্যারিয়ার গ্রোথ সুযোগ",
+    detail: "ধাপে ধাপে আপনার ক্যারিয়ার গড়ে তুলুন এবং পেশাদার দক্ষতা অর্জন করুন।",
+  },
+  {
+    icon: <Gift className="w-4 h-4 flex-shrink-0 text-primary" />,
+    heading: "বিভিন্ন অফার ও বোনাস+",
+    detail: "নিয়মিত বিশেষ অফার, বোনাস এবং পুরস্কার উপভোগ করুন।",
+  },
+];
+
+const FeatureRow = ({
+  feature,
+  isRecommended,
+}: {
+  feature: FeatureItem;
+  isRecommended: boolean;
+}) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <li className="rounded-md overflow-hidden border border-gray-100">
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors duration-200 ${
+          open
+            ? isRecommended
+              ? "bg-primary/10"
+              : "bg-gray-50"
+            : "hover:bg-gray-50"
+        }`}
+      >
+        {feature.icon}
+        <span className="flex-1 text-base font-semibold text-gray-800">
+          {feature.heading}
+        </span>
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        )}
+      </button>
+      {open && (
+        <div className="px-3 pb-3 pt-1.5 text-base text-gray-500 leading-relaxed bg-gray-50 border-t border-gray-100">
+          <div className="flex items-start gap-1.5">
+            <CheckCircle2
+              className={`w-3 h-3 flex-shrink-0 mt-0.5 ${
+                isRecommended ? "text-primary" : "text-gray-400"
+              }`}
+            />
+            <span>{feature.detail}</span>
+          </div>
+        </div>
+      )}
+    </li>
+  );
+};
+
 export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
   const isRecommended = plan.is_active === 1;
   const price = Number(plan.price);
 
   return (
     <div
-      className={`relative border-2 rounded-2xl p-6 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isRecommended
-        ? "border-primary bg-blue-50/40"
-        : "border-gray-200 bg-white"
-        }`}
+      className={`relative border-2 rounded-xl p-4 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+        isRecommended
+          ? "border-primary bg-blue-50/40"
+          : "border-gray-200 bg-white"
+      }`}
     >
-      {/* Badge */}
-      {isRecommended && (
-        <div className="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl flex items-center gap-1">
-          <Star className="w-3 h-3" />      <span className="text-4xl font-black text-gray-900">৳{price.toLocaleString()}</span>
-        </div>
-      )}
-
-      {/* Plan name & description */}
-      <h3 className={`text-xl font-bold capitalize ${isRecommended ? "text-primary" : "text-gray-800"}`}>
-        {plan.name}
-      </h3>
-      <p className="text-gray-500 text-sm mt-1 line-clamp-2">{plan.description}</p>
-
-
-      <div className="mt-5 flex items-end gap-1">
-        <span className="text-4xl font-black text-gray-900">৳{price.toLocaleString()}</span>
-        <span className="text-sm text-gray-400 font-medium mb-1">/ {plan.billing_cycle}</span>
+      {/* Price Badge (top-right) */}
+      <div
+        className={`absolute top-0 right-0 text-white text-xl font-bold px-4 py-2 rounded-bl-xl rounded-tr-xl flex items-center gap-1.5 ${
+          isRecommended ? "bg-primary" : "bg-gray-700"
+        }`}
+      >
+        <Star className="w-4 h-4" />
+        <span>৳{price.toLocaleString()}</span>
       </div>
 
-
-      <div className="mt-0 flex flex-wrap gap-2">
-        {/* <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 px-3 py-1 rounded-full">
-          <Clock className="w-3.5 h-3.5" />
-          {plan.duration_value} days access
-        </span> */}
-        {/* {plan.trial_days > 0 && (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-full">
-            <Zap className="w-3.5 h-3.5" />
-            {plan.trial_days}-day free trial
-          </span>
-        )} */}
-
-        {/* <span className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1 rounded-full">
-          নিজের এলাকায় কাজ করার সুযোগ
-
-        </span> */}
-
-
+      {/* Header: Plan name */}
+      <div className="pr-20">
+        <h3
+          className={`text-lg font-bold capitalize leading-tight ${
+            isRecommended ? "text-primary" : "text-gray-800"
+          }`}
+        >
+          {plan.name}
+        </h3>
+        <p className="text-gray-500 text-sm mt-1 line-clamp-1">
+          {plan.description}
+        </p>
       </div>
 
-      {/* Feature list */}
-      <ul className="mt-6 space-y-2.5 flex-grow">
-        {/* <li className="flex items-center gap-2 text-gray-600 text-sm">
-          <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${isRecommended ? "text-primary" : "text-gray-400"}`} />
-          Billed {plan.billing_cycle}
-        </li>
-        <li className="flex items-center gap-2 text-gray-600 text-sm">
-          <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${isRecommended ? "text-primary" : "text-gray-400"}`} />
-          {plan.duration_value} days full access
-        </li>
-        {plan.trial_days > 0 && (
-          <li className="flex items-center gap-2 text-gray-600 text-sm">
-            <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${isRecommended ? "text-primary" : "text-gray-400"}`} />
-            {plan.trial_days} days free trial included
-          </li>
-        )}
-        <li className="flex items-center gap-2 text-gray-600 text-sm">
-          <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${isRecommended ? "text-primary" : "text-gray-400"}`} />
-          Wallet payment supported
-        </li> */}
-        <li className="flex items-center gap-2 text-gray-900 text-sm">
-          নিজের এলাকায় কাজ করার সুযোগ
-        </li>
-        <p className="text-gray-500 text-sm mt-1 line-clamp-2">আপনি আপনার নিজ উপজেলা/জেলা/এলাকা থেকেই কাজ করতে পারবেন, আলাদা অফিসে যাওয়ার দরকার নেই।</p>
-        <li className="flex items-center gap-2 text-gray-900 text-sm">
-          ১২ ধরণের  ইনকাম করার সুযোগ
-        </li>
-        <li className="flex items-center gap-2 text-gray-900 text-sm">
-          অনলাইন সাপোর্ট ও ট্রেনিং
-        </li>
-        <li className="flex items-center gap-2 text-gray-900 text-sm">
-          টিম বিল্ডিং সিস্টেম
-        </li>
-        <li className="flex items-center gap-2 text-gray-900 text-sm">
-          ক্যারিয়ার গ্রোথ সুযোগ
-        </li>
-        <li className="flex items-center gap-2 text-gray-900 text-sm">
-          বিভিন্ন অফার ও বোনাস+
-        </li>
-
+      {/* Feature accordion list */}
+      <ul className="mt-3 space-y-1 flex-grow">
+        {features.map((feature, idx) => (
+          <FeatureRow key={idx} feature={feature} isRecommended={isRecommended} />
+        ))}
       </ul>
 
       <button
         onClick={() => onClick(plan)}
-        className={`w-full mt-8 py-3 rounded-xl font-bold transition-all shadow-md ${isRecommended
-          ? "bg-primary text-white hover:opacity-90 shadow-primary/30"
-          : "bg-gray-800 text-white hover:bg-gray-700"
-          }`}
+        className={`flex items-center justify-center w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md ${
+          isRecommended
+            ? "bg-primary text-white hover:opacity-90 shadow-primary/30"
+            : "bg-gray-800 text-white hover:bg-gray-700"
+        }`}
       >
         Subscribe Now
       </button>

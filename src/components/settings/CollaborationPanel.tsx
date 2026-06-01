@@ -1,4 +1,107 @@
-import { Users, Share2, ShieldCheck } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  Star,
+  Users,
+  ShieldCheck,
+  Share2,
+  TrendingUp,
+  BookOpen,
+  Award,
+  Globe,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
+
+interface ShareFeatureItem {
+  icon: React.ReactNode;
+  heading: string;
+  detail: string;
+}
+
+const shareFeatures: ShareFeatureItem[] = [
+  {
+    icon: <Users className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "মালিকানার অংশীদারিত্ব",
+    detail:
+      "Golden Life Business Platform-এর একজন অংশীদার হিসেবে কোম্পানির নির্ধারিত শেয়ার ধারণের সুযোগ।",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "ব্যবসায়িক সিদ্ধান্তে অংশগ্রহণ",
+    detail:
+      "কোম্পানির নীতিমালা অনুযায়ী সাধারণ সভা (AGM) বা বিশেষ সভায় মতামত প্রদানের সুযোগ।",
+  },
+  {
+    icon: <TrendingUp className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "দীর্ঘমেয়াদী ব্যবসায়িক প্রবৃদ্ধির অংশীদার",
+    detail: "কোম্পানির বৃদ্ধি ও সম্প্রসারণের সাথে সম্পৃক্ত থাকার সুযোগ।",
+  },
+  {
+    icon: <BookOpen className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "বিশেষ প্রশিক্ষণ ও গাইডলাইন",
+    detail:
+      "ব্যবসা, নেতৃত্ব, মার্কেটিং ও ডিজিটাল দক্ষতা উন্নয়নের জন্য প্রশিক্ষণ সুবিধা।",
+  },
+  {
+    icon: <Globe className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "ব্যবসায়িক নেটওয়ার্ক",
+    detail:
+      "দেশব্যাপী উদ্যোক্তা, বিক্রেতা ও ব্যবসায়িক অংশীদারদের সাথে নেটওয়ার্ক তৈরির সুযোগ।",
+  },
+  {
+    icon: <Zap className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "নতুন প্রকল্পে অগ্রাধিকার",
+    detail:
+      "কোম্পানির নতুন উদ্যোগ, ক্যাম্পেইন বা সম্প্রসারণ কার্যক্রমে অগ্রাধিকারভিত্তিক অংশগ্রহণের সুযোগ।",
+  },
+  {
+    icon: <Award className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "অফিসিয়াল স্বীকৃতি",
+    detail:
+      "কোম্পানির অফিসিয়াল কার্যক্রম, মিটিং, প্রশিক্ষণ ও ইভেন্টে অংশগ্রহণের সুযোগ।",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 flex-shrink-0 text-secondary" />,
+    heading: "সম্ভাব্য লভ্যাংশ",
+    detail:
+      "যদি কোম্পানি লাভ করে এবং পরিচালনা পর্ষদ অনুমোদন দেয়, তাহলে শেয়ারহোল্ডাররা লভ্যাংশ পাওয়ার জন্য বিবেচিত হতে পারেন।",
+  },
+];
+
+const ShareFeatureRow = ({ feature }: { feature: ShareFeatureItem }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <li className="rounded-md overflow-hidden border border-gray-100">
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors duration-200 ${
+          open ? "bg-secondary/10" : "hover:bg-gray-50"
+        }`}
+      >
+        {feature.icon}
+        <span className="flex-1 text-base font-semibold text-gray-800">
+          {feature.heading}
+        </span>
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        )}
+      </button>
+      {open && (
+        <div className="px-3 pb-3 pt-1.5 text-base text-gray-500 leading-relaxed bg-gray-50 border-t border-gray-100">
+          <div className="flex items-start gap-1.5">
+            <CheckCircle2 className="w-3 h-3 flex-shrink-0 mt-0.5 text-secondary" />
+            <span>{feature.detail}</span>
+          </div>
+        </div>
+      )}
+    </li>
+  );
+};
 
 interface CollaborationPanelProps {
   onClick: () => void;
@@ -6,93 +109,36 @@ interface CollaborationPanelProps {
 
 export const CollaborationPanel = ({ onClick }: CollaborationPanelProps) => {
   return (
-    <div className="border border-gray-200 rounded-2xl p-6 md:p-8 bg-gradient-to-br from-white to-gray-50 h-full flex flex-col">
-      <h3 className="text-2xl font-bold text-gray-800 mb-2">Buy Share Plan</h3>
-      <p className="text-gray-600 mb-6">
-        Golden Life Shareholder Benefits
-      </p>
-
-      <div className="space-y-4 mb-8 flex-grow">
-        <div className="flex items-start gap-3">
-          <div className="bg-primary/10 p-2 rounded-lg text-primary"><Users className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">মালিকানার অংশীদারিত্ব</h4>
-            <p className="text-sm text-gray-500">Golden Life Business Platform-এর একজন অংশীদার হিসেবে কোম্পানির নির্ধারিত শেয়ার ধারণের সুযোগ।</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">ব্যবসায়িক সিদ্ধান্তে অংশগ্রহণ</h4>
-            <p className="text-sm text-gray-500">কোম্পানির নীতিমালা অনুযায়ী সাধারণ সভা (AGM) বা বিশেষ সভায় মতামত প্রদানের সুযোগ।.</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">দীর্ঘমেয়াদী ব্যবসায়িক প্রবৃদ্ধির অংশীদার</h4>
-            <p className="text-sm text-gray-500">কোম্পানির বৃদ্ধি ও সম্প্রসারণের সাথে সম্পৃক্ত থাকার সুযোগ।</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">বিশেষ প্রশিক্ষণ ও গাইডলাইন</h4>
-            <p className="text-sm text-gray-500">
-              ব্যবসা, নেতৃত্ব, মার্কেটিং ও ডিজিটাল দক্ষতা উন্নয়নের জন্য প্রশিক্ষণ সুবিধা।</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">ব্যবসায়িক নেটওয়ার্ক</h4>
-            <p className="text-sm text-gray-500">দেশব্যাপী উদ্যোক্তা, বিক্রেতা ও ব্যবসায়িক অংশীদারদের সাথে নেটওয়ার্ক তৈরির সুযোগ।</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">নতুন প্রকল্পে অগ্রাধিকার</h4>
-            <p className="text-sm text-gray-500">কোম্পানির নতুন উদ্যোগ, ক্যাম্পেইন বা সম্প্রসারণ কার্যক্রমে অগ্রাধিকারভিত্তিক অংশগ্রহণের সুযোগ।.</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">অফিসিয়াল স্বীকৃতি</h4>
-            <p className="text-sm text-gray-500">
-              কোম্পানির অফিসিয়াল কার্যক্রম, মিটিং, প্রশিক্ষণ ও ইভেন্টে অংশগ্রহণের সুযোগ।
-            </p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="bg-secondary/10 p-2 rounded-lg text-secondary"><ShieldCheck className="w-5 h-5" /></div>
-          <div>
-            <h4 className="font-semibold text-gray-800">সম্ভাব্য লভ্যাংশ</h4>
-            <p className="text-sm text-gray-500">
-              যদি কোম্পানি লাভ করে এবং পরিচালনা পর্ষদ অনুমোদন দেয়, তাহলে প্রযোজ্য আইন ও কোম্পানির নীতিমালা অনুযায়ী শেয়ারহোল্ডাররা লভ্যাংশ পাওয়ার জন্য বিবেচিত হতে পারেন।
-            </p>
-          </div>
-        </div>
-
+    <div className="relative border-2 border-gray-200 rounded-xl p-4 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-gradient-to-br from-white to-gray-50">
+      {/* Price Badge (top-right) */}
+      <div className="absolute top-0 right-0 bg-gray-700 text-white text-xl font-bold px-4 py-2 rounded-bl-xl rounded-tr-xl flex items-center gap-1.5">
+        <Star className="w-4 h-4" />
+        <span>৳ 800</span>
       </div>
 
-      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm text-center mb-6">
-        <div className="text-sm text-gray-500 font-medium mb-1">Starting at</div>
-        <div className="flex items-center justify-center gap-2">
-          <div className="text-3xl font-bold text-gray-900">৳ 800</div>
-          <div className="text-xs text-secondary font-semibold bg-secondary/10 py-1 px-2 rounded-full inline-block">
-            Save 20%
-          </div>
-        </div>
-        <div className="text-xs text-gray-500 mt-1">per user / month</div>
+      {/* Header */}
+      <div className="pr-20">
+        <h3 className="text-lg font-bold capitalize leading-tight text-gray-800">
+          Buy Share Plan
+        </h3>
+        <p className="text-gray-500 text-sm mt-1 line-clamp-1">
+          Golden Life Shareholder Benefits
+        </p>
       </div>
+
+      {/* Feature accordion list */}
+      <ul className="mt-3 space-y-1 flex-grow">
+        {shareFeatures.map((feature, idx) => (
+          <ShareFeatureRow key={idx} feature={feature} />
+        ))}
+      </ul>
 
       <button
         onClick={onClick}
-        className="flex items-center justify-center gap-2 px-8 py-3 rounded-xl font-semibold bg-gray-900 text-white hover:bg-gray-800 transition-colors w-full mt-auto"
+        className="flex items-center justify-center gap-2 w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md bg-gray-800 text-white hover:bg-gray-700"
       >
-        <Share2 className="w-5 h-5" /> Purchase Team Access
+        <Share2 className="w-4 h-4" />
+        Purchase Team Access
       </button>
     </div>
   );
