@@ -107,11 +107,10 @@ const StyledSelect = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled || loading || options.length === 0}
-        className={`w-full appearance-none border rounded-lg px-3 py-2.5 text-sm pr-8 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 ${
-          disabled || options.length === 0
+        className={`w-full appearance-none border rounded-lg px-3 py-2.5 text-sm pr-8 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 ${disabled || options.length === 0
             ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
             : "bg-white border-gray-300 text-gray-800 hover:border-primary cursor-pointer"
-        }`}
+          }`}
       >
         <option value="">{placeholder}</option>
         {options.map((opt) => (
@@ -303,7 +302,7 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
           {/* ========== STEP 1: SELECT ========== */}
           {step === "select" && (
             <div className="space-y-5">
-              
+
               {/* Classification overview card from 1st image */}
               <div className="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-emerald-200/50">
@@ -314,20 +313,20 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                 </div>
                 <div className="space-y-1.5 text-xs text-gray-700 font-medium">
                   <div className="flex justify-between items-center">
-                    <span>Type A (Divisional - Director)</span>
-                    <span className="font-bold text-gray-800">500,000 * 8 = 40,00,000 ৳</span>
+                    <span>Type A (Divisional)</span>
+                    <span className="font-bold text-gray-800">500,000</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Type B (District - Organizer)</span>
-                    <span className="font-bold text-gray-800">1,00,000 * 64 = 64,00,000 ৳</span>
+                    <span>Type B (District)</span>
+                    <span className="font-bold text-gray-800">1,00,000</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Type C (Thana - Counselor)</span>
-                    <span className="font-bold text-gray-800">50,000 * 650 = 32,50,000 ৳</span>
+                    <span>Type C (Thana)</span>
+                    <span className="font-bold text-gray-800">50,000</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>Type D (Union - Ambassador)</span>
-                    <span className="font-bold text-gray-800">5,000 * 4500 = 22,50,000 ৳</span>
+                    <span>Type D (Union)</span>
+                    <span className="font-bold text-gray-800">5,000 </span>
                   </div>
                 </div>
               </div>
@@ -344,11 +343,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                         key={type.value}
                         type="button"
                         onClick={() => handleTypeSelect(type.value)}
-                        className={`flex flex-col items-start p-3 rounded-xl border-2 text-left transition-all duration-205 ${
-                          selectedType === type.value
+                        className={`flex flex-col items-start p-3 rounded-xl border-2 text-left transition-all duration-205 ${selectedType === type.value
                             ? `${type.bgColor} ${type.color} border-primary shadow-sm scale-[1.01]`
                             : "border-gray-100 bg-white hover:border-gray-300 hover:shadow-sm text-gray-700"
-                        }`}
+                          }`}
                       >
                         <span className="font-bold text-xs leading-tight">{type.label.split(" (")[0]}</span>
                         <span className="text-[10px] opacity-75 mt-0.5 font-medium">
@@ -381,16 +379,16 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                     {(selectedType === "district" ||
                       selectedType === "upazila" ||
                       selectedType === "union") && (
-                      <StyledSelect
-                        label="District (জেলা)"
-                        value={districtId}
-                        onChange={handleDistrictChange}
-                        options={districts}
-                        loading={loadingDistricts}
-                        disabled={!divisionId}
-                        placeholder={divisionId ? "Select District…" : "Select division first"}
-                      />
-                    )}
+                        <StyledSelect
+                          label="District (জেলা)"
+                          value={districtId}
+                          onChange={handleDistrictChange}
+                          options={districts}
+                          loading={loadingDistricts}
+                          disabled={!divisionId}
+                          placeholder={divisionId ? "Select District…" : "Select division first"}
+                        />
+                      )}
 
                     {(selectedType === "upazila" || selectedType === "union") && (
                       <StyledSelect
@@ -530,11 +528,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                   <button
                     type="button"
                     onClick={() => setSelectedMethod("wallet")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                      selectedMethod === "wallet"
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "wallet"
                         ? "border-primary bg-primary/5 text-primary shadow-sm"
                         : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="w-10 h-10 flex items-center justify-center mb-1">
                       <Wallet className="text-blue-500 w-8 h-8" />
@@ -546,11 +543,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                   <button
                     type="button"
                     onClick={() => setSelectedMethod("bkash")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                      selectedMethod === "bkash"
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "bkash"
                         ? "border-primary bg-pink-50 text-primary shadow-sm"
                         : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="w-10 h-10 flex items-center justify-center mb-1">
                       {bikash ? (
@@ -566,11 +562,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                   <button
                     type="button"
                     onClick={() => setSelectedMethod("nagad")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                      selectedMethod === "nagad"
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "nagad"
                         ? "border-primary bg-orange-50 text-primary shadow-sm"
                         : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="w-10 h-10 flex items-center justify-center mb-1">
                       {nogod ? (
@@ -586,11 +581,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                   <button
                     type="button"
                     onClick={() => setSelectedMethod("rocket")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                      selectedMethod === "rocket"
+                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "rocket"
                         ? "border-primary bg-purple-50 text-primary shadow-sm"
                         : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="w-10 h-10 flex items-center justify-center mb-1">
                       {rocket ? (
@@ -614,11 +608,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
             <button
               onClick={handleProceed}
               disabled={!isSelectionComplete()}
-              className={`w-full py-3.5 rounded-full font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 ${
-                isSelectionComplete()
+              className={`w-full py-3.5 rounded-full font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 ${isSelectionComplete()
                   ? "bg-primary text-white hover:opacity-90 active:scale-95"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
+                }`}
             >
               Proceed to Payment →
             </button>
@@ -626,11 +619,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
             <button
               onClick={handleConfirmPurchase}
               disabled={!agreed || isPending}
-              className={`w-full py-4 rounded-full font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${
-                agreed && !isPending
+              className={`w-full py-4 rounded-full font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${agreed && !isPending
                   ? "bg-primary hover:opacity-90 active:scale-95"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
+                }`}
             >
               {isPending ? (
                 <>
