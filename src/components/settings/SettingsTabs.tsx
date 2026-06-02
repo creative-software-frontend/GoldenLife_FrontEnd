@@ -85,7 +85,7 @@ export const SettingsTabs = () => {
             <PricingPlanCard key={plan.id} plan={plan} onClick={handlePlanClick} />
           ))
         )}
-        <CollaborationPanel onClick={handleCollaborationClick} />
+        <CollaborationPanel />
       </div>
 
       {/* Modals */}
