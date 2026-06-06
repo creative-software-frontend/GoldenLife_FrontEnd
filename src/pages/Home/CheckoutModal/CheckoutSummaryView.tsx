@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { X, MapPin, ArrowLeft, AlertCircle, Loader2, Receipt, Package, Trash2 } from 'lucide-react'; // Added Trash2
 import { Address, PaymentMethod } from './CheckoutModal';
 import useModalStore from '@/store/modalStore';
@@ -396,14 +396,15 @@ const CheckoutSummaryView = ({
                             className="w-6 h-6 text-[#5C9C72] border-gray-300 rounded-md focus:ring-0 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
                         />
                         <label htmlFor="terms-final" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
-                            I accept the{" "}
-                            <a href="/dashboard/help/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Privacy Policy</a>
-                            {" "}&{" "}
-                            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Terms</a>.
+                            I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms" className="text-[#F97316]">Terms</Link>.
                         </label>
                     </div>
+
+                    {/* Error Handling Logic */}
                     {error && !termsAccepted && (
-                        <p className="text-red-500 text-[12px] font-black animate-bounce pl-9 mt-1">* You must accept terms to place order.</p>
+                        <p className="text-red-500 text-[12px] font-black animate-bounce pl-9 mt-1">
+                            * You must accept terms to place order.
+                        </p>
                     )}
                 </div>
 

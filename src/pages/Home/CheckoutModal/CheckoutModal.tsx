@@ -38,7 +38,7 @@ const CheckoutModal = () => {
     };
 
     const [view, setView] = useState<ViewState>('CHECKOUT');
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Wallet');
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Bkash');
 
     // --- State ---
     const [addresses, setAddresses] = useState<Address[]>([]);

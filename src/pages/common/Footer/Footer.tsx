@@ -10,13 +10,13 @@ import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
     const { t, i18n } = useTranslation("global");
-    
+
     const [value, setValue] = useState<string | undefined>();
     const currentYear = new Date().getFullYear();
 
     return (
         <footer className="bg-gray-100 pt-12 mt-8 w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-200">
-            
+
             {/* --- TOP SECTION (4 Columns) --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-10 mx-0 md:mx-12">
                 {/* 1. About Section */}
@@ -79,7 +79,7 @@ const Footer = () => {
 
             {/* --- MIDDLE SECTION (Payment Left, Contact Right) --- */}
             <div className="py-8 border-t border-gray-200 grid grid-cols-1 md:grid-cols-4 mx-0 md:mx-12 gap-8">
-                
+
                 {/* Payment Methods - Left Side */}
                 <div className="md:col-span-3">
                     <h3 className="font-bold text-base mb-4 text-gray-800 uppercase tracking-wider">

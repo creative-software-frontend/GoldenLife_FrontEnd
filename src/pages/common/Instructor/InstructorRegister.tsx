@@ -356,7 +356,8 @@ const InstructorRegister = () => {
                         className="h-5 w-5 text-[#FF8A00] border-gray-300 rounded focus:ring-[#FF8A00] cursor-pointer"
                       />
                       <label htmlFor="acceptTerms" className="text-sm text-gray-600 cursor-pointer select-none">
-                        I accept the <span className="text-[#FF8A00] font-medium hover:underline">Terms & Conditions</span>
+                        I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
+                          className="text-[#F97316]">Terms</Link>.
                       </label>
                     </div>
                     {fieldErrors.acceptTerms && <p className="text-xs text-red-500 font-medium mt-1.5">{fieldErrors.acceptTerms}</p>}

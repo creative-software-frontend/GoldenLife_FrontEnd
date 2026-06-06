@@ -17,6 +17,8 @@ export interface Student {
     updated_at: string;
     user_id: string;
     student_id?: string;
+    designation?: string;
+    star_count?: number;
 }
 
 
@@ -204,6 +206,8 @@ export const createProfileSlice: StateCreator<AppState, [], [], ProfileSlice> = 
 
     logout: (navigate) => {
         sessionStorage.removeItem("student_session");
+        localStorage.removeItem("student_designation");
+        localStorage.removeItem("student_star_count");
         // Reset state across all slices
         set({
             studentProfile: null,

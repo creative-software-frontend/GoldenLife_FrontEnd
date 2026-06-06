@@ -6,7 +6,7 @@ import useModalStore from '@/store/modalStore';
 import { usePlaceOrder } from '@/hooks/useOrder';
 import { useAppStore } from '@/store/useAppStore';
 import { toast } from 'react-toastify';
-
+import { Link } from 'react-router-dom'
 interface Props {
     selectedAddress?: Address;
     paymentMethod: PaymentMethod;
@@ -29,18 +29,18 @@ const CheckSummaryBookView = ({
     deliveryFee
 }: Props) => {
     const { closeBuyNow, triggerWalletUpdate, buyNowProduct } = useModalStore();
-    const { 
-        walletBalance: storeWalletBalance, 
-        isWalletLoading: isFetchingBalance, 
+    const {
+        walletBalance: storeWalletBalance,
+        isWalletLoading: isFetchingBalance,
         fetchWallet,
-        fetchNavbarData 
+        fetchNavbarData
     } = useAppStore();
-    
+
     const navigate = useNavigate();
 
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [error, setError] = useState(false);
-    
+
     const { mutate: placeOrder, isPending: isPlacingOrder } = usePlaceOrder();
 
     // Convert string balance from store to number for calculations
@@ -313,6 +313,8 @@ const CheckSummaryBookView = ({
                     </div>
                 )}
 
+
+
                 <div className="flex flex-col gap-1.5 px-1 py-1">
                     <div className="flex items-center gap-3">
                         <input
@@ -323,7 +325,8 @@ const CheckSummaryBookView = ({
                             className="w-6 h-6 text-[#5C9C72] border-gray-300 rounded-md focus:ring-0 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
                         />
                         <label htmlFor="terms-book" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
-                            I accept the <span className="text-[#F97316]">Privacy Policy</span> & <span className="text-[#F97316]">Terms</span>.
+                            I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
+                                className="text-[#F97316]">Terms</Link>.
                         </label>
                     </div>
                     {error && !termsAccepted && (

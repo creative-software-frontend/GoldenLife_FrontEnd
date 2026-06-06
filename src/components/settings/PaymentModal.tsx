@@ -2,6 +2,7 @@ import { X, ArrowLeft, Home } from "lucide-react";
 import { useState } from "react";
 import { SubscriptionPlan } from "./PricingPlanCard";
 import logo from "../../../public/image/logo/logo.jpg";
+import { Link } from "react-router-dom";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -35,7 +36,7 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
           </button>
         </div>
 
-         <div className="p-4 overflow-y-auto flex-1">
+        <div className="p-4 overflow-y-auto flex-1">
           {/* Voucher Card - Updated with Green Gradient */}
           <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl p-5 text-white relative overflow-hidden mb-4 shadow-lg">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
@@ -128,10 +129,8 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
               className="w-6 h-6 rounded border-gray-300 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
             />
             <label htmlFor="payment_terms_final" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
-              I accept the{" "}
-              <a href="/dashboard/help/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Privacy Policy</a>
-              {" "}&amp;{" "}
-              <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Terms</a>.
+              I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
+                className="text-[#F97316]">Terms</Link>.
             </label>
           </div>
 
@@ -139,11 +138,10 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
           <button
             onClick={() => { if (agreed) onPayNow(quantity); }}
             disabled={!agreed}
-            className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
-              agreed
+            className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${agreed
                 ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-xl shadow-green-100 active:scale-[0.97]"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
+              }`}
           >
             CONFIRM PURCHASE &mdash; ৳{totalPrice.toFixed(2)}
           </button>

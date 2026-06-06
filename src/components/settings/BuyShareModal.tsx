@@ -25,6 +25,7 @@ import { useAppStore } from "@/store/useAppStore";
 import bikash from "../../../public/image/payment/bikash.png";
 import nogod from "../../../public/image/payment/nogod.png";
 import rocket from "../../../public/image/payment/rocket.jpg";
+import { Link } from "react-router-dom";
 
 // ─── Share type config ────────────────────────────────────────────────────────
 
@@ -147,7 +148,7 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
   const [agreed, setAgreed] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("wallet");
 
-  const { walletBalance, fetchWallet } = useAppStore();
+  const { walletBalance, fetchWallet, fetchProfile } = useAppStore();
 
   // Location queries
   const { data: divisions = [], isLoading: loadingDivisions } = useDivisions();
@@ -248,7 +249,11 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
         toast.success(
           `🎉 Area share acquired successfully! Designation: ${data.designation}.`
         );
+        if (data.designation) {
+          localStorage.setItem("student_designation", data.designation);
+        }
         fetchWallet(true);
+        fetchProfile(true);
         handleClose();
       },
       onError: (err) => {
@@ -498,11 +503,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
             <button
               onClick={handleProceed}
               disabled={!isSelectionComplete()}
-              className={`w-full h-14 rounded-2xl font-black text-[14px] uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
-                isSelectionComplete()
-                  ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-lg shadow-green-100 active:scale-[0.97]"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
+              className={`w-full h-14 rounded-2xl font-black text-[14px] uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${isSelectionComplete()
+                ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-lg shadow-green-100 active:scale-[0.97]"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
             >
               Proceed to Payment →
             </button>
@@ -515,11 +519,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                   <button
                     type="button"
                     onClick={() => setSelectedMethod("wallet")}
-                    className={`flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 transition-all ${
-                      selectedMethod === "wallet"
-                        ? "bg-[#5C9C72] text-white border-[#5C9C72] shadow-md"
-                        : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
-                    }`}
+                    className={`flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 transition-all ${selectedMethod === "wallet"
+                      ? "bg-[#5C9C72] text-white border-[#5C9C72] shadow-md"
+                      : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                      }`}
                   >
                     Wallet
                   </button>
@@ -542,10 +545,8 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                   className="w-6 h-6 rounded border-gray-300 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
                 />
                 <label htmlFor="share_terms_final" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
-                  I accept the{" "}
-                  <a href="/dashboard/help/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Privacy Policy</a>
-                  {" "}&amp;{" "}
-                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Terms</a>.
+                  I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
+                    className="text-[#F97316]">Terms</Link>.
                 </label>
               </div>
 
@@ -553,11 +554,10 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
               <button
                 onClick={handleConfirmPurchase}
                 disabled={!agreed || isPending}
-                className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
-                  agreed && !isPending
-                    ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-xl shadow-green-100 active:scale-[0.97]"
-                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
+                className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${agreed && !isPending
+                  ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-xl shadow-green-100 active:scale-[0.97]"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  }`}
               >
                 {isPending
                   ? <><Loader2 className="w-5 h-5 animate-spin" /> PROCESSING...</>

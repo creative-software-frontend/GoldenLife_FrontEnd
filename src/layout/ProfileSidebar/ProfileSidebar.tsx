@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import {
-    LayoutDashboard, User, FileText, FileBadge, Info, ShieldCheck, UserCircle2, Facebook, Send, Twitter, Youtube, Linkedin, Users
+    LayoutDashboard, User, FileText, FileBadge, Info, ShieldCheck, UserCircle2, Facebook, Send, Twitter, Youtube, Linkedin, Users, Star
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { baseURL } from '@/store/utils';
@@ -11,6 +11,8 @@ interface DashboardStats {
     boucher: string | number;
     earning: string | number;
     recharge: string | number;
+    designation: string;
+    starCount: number;
 }
 
 const SocialIcon = ({ icon: Icon, url, color }: { icon: any, url: string | null, color: string }) => {
@@ -36,7 +38,29 @@ export default function ProfileSidebar() {
     const fetchProfile = useAppStore(s => s.fetchProfile);
     const fetchWallet = useAppStore(s => s.fetchWallet);
 
-    const [stats, setStats] = useState<DashboardStats>({ boucher: 0, earning: 0, recharge: 0 });
+    const [stats, setStats] = useState<DashboardStats>({ 
+        boucher: 0, 
+        earning: 0, 
+        recharge: 0,
+        designation: "",
+        starCount: 0
+    });
+
+    const savedDesignation = localStorage.getItem("student_designation") || "";
+    const savedStarCount = Number(localStorage.getItem("student_star_count") || "0");
+
+    const currentDesignation = studentProfile?.designation || stats.designation || savedDesignation || "";
+    const currentStarCount = studentProfile?.star_count || stats.starCount || savedStarCount || 0;
+
+    // Sync state values with localStorage when retrieved from APIs
+    useEffect(() => {
+        if (studentProfile?.designation) {
+            localStorage.setItem("student_designation", studentProfile.designation);
+        }
+        if (studentProfile?.star_count !== undefined) {
+            localStorage.setItem("student_star_count", studentProfile.star_count.toString());
+        }
+    }, [studentProfile]);
 
     useEffect(() => {
         // Initial fetch
@@ -54,13 +78,45 @@ export default function ProfileSidebar() {
                     headers: { 'X-Auth-Token': `Bearer ${token}` }
                 });
 
+                let designation = "";
+                let starCount = 0;
+
                 if (dashboardRes.data?.success) {
                     const data = dashboardRes.data.data;
-                    setStats({
+                    designation = data.designation || data.student?.designation || "";
+                    starCount = data.star_count || data.star || data.student?.star_count || 0;
+
+                    if (designation) {
+                        localStorage.setItem("student_designation", designation);
+                    }
+                    if (starCount) {
+                        localStorage.setItem("student_star_count", starCount.toString());
+                    }
+
+                    setStats(prev => ({
+                        ...prev,
                         boucher: data.boucher_balance || 0,
                         earning: data.earning_balance || 0,
-                        recharge: data.recharge_balance || 0
-                    });
+                        recharge: data.recharge_balance || 0,
+                        designation: designation || prev.designation,
+                        starCount: starCount || prev.starCount
+                    }));
+                }
+
+                // Fetch referred students for star_count
+                const referredRes = await axios.get(`${baseURL}/api/referred-students`, {
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
+                });
+                if (referredRes.data?.success) {
+                    const rData = referredRes.data;
+                    const starsCount = rData.star_count || rData.star || 0;
+                    if (starsCount) {
+                        localStorage.setItem("student_star_count", starsCount.toString());
+                    }
+                    setStats(prev => ({
+                        ...prev,
+                        starCount: starsCount || prev.starCount
+                    }));
                 }
             } catch (err) {
                 console.error('ProfileSidebar: Local data fetch failed:', err);
@@ -124,9 +180,27 @@ export default function ProfileSidebar() {
                     {isProfileLoading ? (
                         <div className="h-6 w-32 bg-slate-200 rounded-lg animate-pulse mb-1" />
                     ) : (
-                        <h3 className="font-black text-xl text-slate-800 tracking-tight capitalize">
-                            {studentProfile?.name || "Student"}
-                        </h3>
+                        <>
+                            <h3 className="font-black text-xl text-slate-800 tracking-tight capitalize">
+                                {studentProfile?.name || "Student"}
+                            </h3>
+                            {(currentDesignation || currentStarCount > 0) && (
+                                <div className="flex items-center justify-center gap-2 mt-1 flex-wrap">
+                                    {currentDesignation && (
+                                        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-black rounded-full border border-emerald-100 uppercase tracking-wider">
+                                            {currentDesignation}
+                                        </span>
+                                    )}
+                                    {currentStarCount > 0 && (
+                                        <div className="flex items-center gap-0.5 bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-100 text-xs font-black">
+                                            {Array.from({ length: currentStarCount }).map((_, i) => (
+                                                <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

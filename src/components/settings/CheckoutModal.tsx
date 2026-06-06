@@ -26,7 +26,7 @@ export const CheckoutModal = ({
   quantity,
 }: CheckoutModalProps) => {
   const [agreed, setAgreed] = useState(false);
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<string | null>("wallet");
   const [loading, setLoading] = useState(false);
 
   const { walletBalance, fetchWallet } = useAppStore();
@@ -193,29 +193,8 @@ export const CheckoutModal = ({
               htmlFor="checkout_terms_final"
               className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold"
             >
-              I accept the{" "}
-              <Link
-                to="/dashboard/help/privacy-policy"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClose(); // Closes the modal so the user can see the new page
-                }}
-                className="text-[#F97316] hover:underline"
-              >
-                Privacy Policy
-              </Link>
-              {" & "}
-              <Link
-                to="/dashboard/help/terms"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClose(); // Closes the modal so the user can see the new page
-                }}
-                className="text-[#F97316] hover:underline"
-              >
-                Terms
-              </Link>
-              .
+              I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
+                className="text-[#F97316]">Terms</Link>.
             </label>
           </div>
 

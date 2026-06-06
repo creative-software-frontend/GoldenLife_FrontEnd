@@ -5,7 +5,7 @@ export default function LandingFooter() {
   return (
     <footer className="bg-white border-t border-gray-100">
       <div className="container mx-auto px-4 sm:px-5 md:px-8 pt-16 pb-6">
-        
+
         {/* MAIN FOOTER GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
 
@@ -94,8 +94,8 @@ export default function LandingFooter() {
                 { name: "Security", path: "/security" },
               ].map((item) => (
                 <li key={item.name}>
-                  <Link 
-                    to={item.path} 
+                  <Link
+                    to={item.path}
                     className="hover:text-[#FF9100] cursor-pointer transition-colors font-medium"
                   >
                     {item.name}

@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { baseURL } from '@/store/utils';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { Loader2, Users, User, Phone, CheckCircle, XCircle } from 'lucide-react';
+import { Loader2, Users, User, Phone, CheckCircle, XCircle, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ReferredStudent {
@@ -20,7 +20,7 @@ interface ReferredStudent {
 
 export default function ReferralsTab() {
     const { t } = useTranslation("global");
-    const { data: referrals = [], isLoading, error: queryError } = useQuery({
+    const { data: referralResponse, isLoading, error: queryError } = useQuery({
         queryKey: ['referrals'],
         queryFn: async () => {
             const session = sessionStorage.getItem("student_session");
@@ -34,7 +34,7 @@ export default function ReferralsTab() {
             });
 
             if (response.data && response.data.success) {
-                return response.data.data;
+                return response.data;
             } else {
                 throw new Error(response.data?.message || "Failed to fetch referred students.");
             }
@@ -42,6 +42,12 @@ export default function ReferralsTab() {
     });
 
     const error = queryError instanceof Error ? queryError.message : '';
+
+    const referrals: ReferredStudent[] = referralResponse?.data || [];
+    const totalReferred = referralResponse?.total_referred ?? referrals.length;
+    const activeReferred = referralResponse?.active_referred ?? 0;
+    const discountPercentage = referralResponse?.discount_percentage ?? "0%";
+    const starCount = referralResponse?.star_count ?? 0;
 
     const avatarUrl = (img: string | null, name: string) => {
         if (img) return img.startsWith('http') ? img : `${baseURL}/uploads/student/image/${img}`;
@@ -78,8 +84,54 @@ export default function ReferralsTab() {
                 <div>
                     <h2 className="text-2xl font-black text-slate-800">My Referrals</h2>
                     <p className="text-slate-500 font-medium mt-1">
-                        You have successfully referred <span className="text-emerald-600 font-bold">{referrals.length}</span> students.
+                        You have successfully referred <span className="text-emerald-600 font-bold">{totalReferred}</span> students.
                     </p>
+                </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {/* Total Referred */}
+                <div className="bg-slate-50/60 hover:bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col justify-between transition-colors">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Referred</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                        <span className="text-2xl font-black text-slate-800">{totalReferred}</span>
+                        <span className="text-xs text-slate-400 font-bold">students</span>
+                    </div>
+                </div>
+
+                {/* Active Referred */}
+                <div className="bg-slate-50/60 hover:bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col justify-between transition-colors">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Active Referred</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                        <span className="text-2xl font-black text-emerald-600">{activeReferred}</span>
+                        <span className="text-xs text-emerald-500 font-bold">active</span>
+                    </div>
+                </div>
+
+                {/* Discount Percentage */}
+                <div className="bg-slate-50/60 hover:bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col justify-between transition-colors">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Discount</span>
+                    <div className="flex items-baseline gap-1 mt-2">
+                        <span className="text-2xl font-black text-primary">{discountPercentage}</span>
+                        <span className="text-xs text-primary font-bold font-sans">off</span>
+                    </div>
+                </div>
+
+                {/* Stars / Star Level */}
+                <div className="bg-slate-50/60 hover:bg-slate-50 rounded-2xl p-4 border border-slate-100 flex flex-col justify-between transition-colors">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Star Level</span>
+                    <div className="flex items-center gap-1 mt-2">
+                        {starCount > 0 ? (
+                            <div className="flex gap-0.5">
+                                {Array.from({ length: starCount }).map((_, i) => (
+                                    <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                                ))}
+                            </div>
+                        ) : (
+                            <span className="text-slate-400 text-xs font-bold">No stars yet</span>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -117,8 +169,12 @@ export default function ReferralsTab() {
                                     >
                                         <td className="py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200">
-                                                    <img src={avatarUrl(req.image, req.name)} alt="profile" className="w-full h-full object-cover" />
+                                                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200 flex items-center justify-center">
+                                                    {req.image ? (
+                                                        <img src={avatarUrl(req.image, req.name)} alt="profile" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <User className="w-5 h-5 text-slate-400" />
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-slate-800 capitalize">{req.name}</p>
@@ -166,8 +222,12 @@ export default function ReferralsTab() {
                             >
                                 <div className="flex justify-between items-start gap-4 border-b border-slate-50 pb-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200">
-                                            <img src={avatarUrl(req.image, req.name)} alt="profile" className="w-full h-full object-cover" />
+                                        <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200 flex items-center justify-center">
+                                            {req.image ? (
+                                                <img src={avatarUrl(req.image, req.name)} alt="profile" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <User className="w-5 h-5 text-slate-400" />
+                                            )}
                                         </div>
                                         <div>
                                             <p className="font-bold text-slate-800 capitalize leading-tight">{req.name}</p>
