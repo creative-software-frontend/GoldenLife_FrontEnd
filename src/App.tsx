@@ -4,11 +4,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { routes } from './routes/Routes';
+import ScrollToTop from './components/shared/ScrollToTop';
 
 function App() {
   return (
     <div className="dark:bg-gray-900 text-gray-900 dark:text-white scrool">
       <RouterProvider router={routes} />
+      <ScrollToTop />
       <ToastContainer 
         position="top-right"
         autoClose={3000}

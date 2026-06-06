@@ -41,7 +41,7 @@ interface ShareTypeOption {
 const SHARE_TYPES: ShareTypeOption[] = [
   {
     value: "division",
-    label: "Divisional - Director (Type A)",
+    label: "Divisional - Director",
     bn_label: "বিভাগীয় পরিচালক",
     price: 500000,
     description: "Become a shareholder for a Division (500,000 ৳)",
@@ -50,7 +50,7 @@ const SHARE_TYPES: ShareTypeOption[] = [
   },
   {
     value: "district",
-    label: "District - Organizer (Type B)",
+    label: "District - Organizer",
     bn_label: "জেলা সংগঠক",
     price: 100000,
     description: "Become a shareholder for a District area (1,00,000 ৳)",
@@ -59,7 +59,7 @@ const SHARE_TYPES: ShareTypeOption[] = [
   },
   {
     value: "upazila",
-    label: "Thana - Counselor (Type C)",
+    label: "Thana - Counselor",
     bn_label: "থানা/উপজেলা কাউন্সিলর",
     price: 50000,
     description: "Become a shareholder for an Upazila/Thana area (50,000 ৳)",
@@ -68,7 +68,7 @@ const SHARE_TYPES: ShareTypeOption[] = [
   },
   {
     value: "union",
-    label: "Union - Ambassador (Type D)",
+    label: "Union - Ambassador",
     bn_label: "ইউনিয়ন অ্যাম্বাসেডর",
     price: 5000,
     description: "Become a shareholder for a Union area (5,000 ৳)",
@@ -108,8 +108,8 @@ const StyledSelect = ({
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled || loading || options.length === 0}
         className={`w-full appearance-none border rounded-lg px-3 py-2.5 text-sm pr-8 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30 ${disabled || options.length === 0
-            ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-            : "bg-white border-gray-300 text-gray-800 hover:border-primary cursor-pointer"
+          ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+          : "bg-white border-gray-300 text-gray-800 hover:border-primary cursor-pointer"
           }`}
       >
         <option value="">{placeholder}</option>
@@ -282,8 +282,8 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
     <div className="fixed inset-0 z-[120] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-0 md:p-4">
       <div className="bg-white rounded-t-3xl md:rounded-3xl w-full max-w-md h-[90vh] md:h-auto md:max-h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in slide-in-from-bottom-8 md:slide-in-from-bottom-0 md:zoom-in duration-300">
 
-        {/* ── Header matching 4th image style ── */}
-        <div className="bg-primary text-white p-4 flex items-center gap-3 shrink-0">
+        {/* ── Header ── */}
+        <div className="bg-[#5C9C72] text-white p-4 flex items-center gap-3 shrink-0">
           <button
             onClick={step === "confirm" ? () => setStep("select") : handleClose}
             className="p-1 hover:bg-white/20 rounded-full transition-colors"
@@ -291,9 +291,15 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
             <ArrowLeft className="w-6 h-6" />
           </button>
           <Home className="w-5 h-5 opacity-80" />
-          <h2 className="font-bold text-lg ml-2">
-            {step === "select" ? "Select Area Share" : "Membership Payment"}
+          <h2 className="font-bold text-lg ml-2 flex-1">
+            {step === "select" ? "Select Area" : "Membership Payment"}
           </h2>
+          <button
+            onClick={handleClose}
+            className="p-1 hover:bg-white/20 rounded-full transition-colors ml-auto"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* ── Body ── */}
@@ -304,31 +310,13 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
             <div className="space-y-5">
 
               {/* Classification overview card from 1st image */}
+              {/* Classification overview card */}
               <div className="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 shadow-sm">
-                <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-emerald-200/50">
-                  <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    Shareholder- 20% (1,60,00,000 ৳)
-                  </span>
+                <div className="flex pb-1.5 border-b border-emerald-200/50">
                   <span className="text-[11px] text-emerald-700 font-bold">Per Share: ৳ 5,000</span>
                 </div>
-                <div className="space-y-1.5 text-xs text-gray-700 font-medium">
-                  <div className="flex justify-between items-center">
-                    <span>Type A (Divisional)</span>
-                    <span className="font-bold text-gray-800">500,000</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Type B (District)</span>
-                    <span className="font-bold text-gray-800">1,00,000</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Type C (Thana)</span>
-                    <span className="font-bold text-gray-800">50,000</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span>Type D (Union)</span>
-                    <span className="font-bold text-gray-800">5,000 </span>
-                  </div>
-                </div>
+
+
               </div>
 
               <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-4">
@@ -344,8 +332,8 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                         type="button"
                         onClick={() => handleTypeSelect(type.value)}
                         className={`flex flex-col items-start p-3 rounded-xl border-2 text-left transition-all duration-205 ${selectedType === type.value
-                            ? `${type.bgColor} ${type.color} border-primary shadow-sm scale-[1.01]`
-                            : "border-gray-100 bg-white hover:border-gray-300 hover:shadow-sm text-gray-700"
+                          ? `${type.bgColor} ${type.color} border-primary shadow-sm scale-[1.01]`
+                          : "border-gray-100 bg-white hover:border-gray-300 hover:shadow-sm text-gray-700"
                           }`}
                       >
                         <span className="font-bold text-xs leading-tight">{type.label.split(" (")[0]}</span>
@@ -500,140 +488,93 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
                 </div>
               </div>
 
-              {/* Terms and conditions */}
-              <div className="text-center">
-                <button type="button" className="border border-gray-300 rounded-lg px-4 py-2 text-xs text-gray-700 font-medium hover:bg-gray-50 bg-white">
-                  Terms & conditions
-                </button>
-              </div>
-
-              <div className="flex justify-center items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="share_terms"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary accent-primary cursor-pointer"
-                />
-                <label htmlFor="share_terms" className="text-xs text-gray-600 cursor-pointer font-medium">
-                  I agree to terms and conditions
-                </label>
-              </div>
-
-              {/* SELECT PAYMENT METHOD matching 2nd image */}
-              <div className="bg-white rounded-2xl p-5 border border-gray-150 shadow-sm">
-                <h4 className="text-sm font-bold text-gray-700 mb-4 tracking-tight uppercase">Select Payment Method</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Wallet */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedMethod("wallet")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "wallet"
-                        ? "border-primary bg-primary/5 text-primary shadow-sm"
-                        : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                      }`}
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center mb-1">
-                      <Wallet className="text-blue-500 w-8 h-8" />
-                    </div>
-                    <span className="text-xs font-bold text-gray-800">Wallet</span>
-                  </button>
-
-                  {/* bKash */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedMethod("bkash")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "bkash"
-                        ? "border-primary bg-pink-50 text-primary shadow-sm"
-                        : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                      }`}
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center mb-1">
-                      {bikash ? (
-                        <img src={bikash} alt="bKash" className="h-7 object-contain" />
-                      ) : (
-                        <span className="font-extrabold text-pink-600 text-sm">bKash</span>
-                      )}
-                    </div>
-                    <span className="text-xs font-bold text-gray-800">bKash</span>
-                  </button>
-
-                  {/* Nagad */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedMethod("nagad")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "nagad"
-                        ? "border-primary bg-orange-50 text-primary shadow-sm"
-                        : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                      }`}
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center mb-1">
-                      {nogod ? (
-                        <img src={nogod} alt="Nagad" className="h-7 object-contain" />
-                      ) : (
-                        <span className="font-extrabold text-orange-600 text-sm">Nagad</span>
-                      )}
-                    </div>
-                    <span className="text-xs font-bold text-gray-800">Nagad</span>
-                  </button>
-
-                  {/* Rocket */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedMethod("rocket")}
-                    className={`flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 ${selectedMethod === "rocket"
-                        ? "border-primary bg-purple-50 text-primary shadow-sm"
-                        : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
-                      }`}
-                  >
-                    <div className="w-10 h-10 flex items-center justify-center mb-1">
-                      {rocket ? (
-                        <img src={rocket} alt="Rocket" className="h-7 rounded object-contain" />
-                      ) : (
-                        <span className="font-extrabold text-purple-600 text-sm">Rocket</span>
-                      )}
-                    </div>
-                    <span className="text-xs font-bold text-gray-800">Rocket</span>
-                  </button>
-                </div>
-              </div>
-
             </div>
           )}
         </div>
 
-        {/* ── Footer / Proceed button ── */}
-        <div className="p-4 border-t border-gray-100 bg-white shrink-0">
+        {/* ── Footer ── */}
+        <div className="p-4 border-t border-gray-100 bg-white shrink-0 space-y-3.5 shadow-[0_-8px_24px_rgba(0,0,0,0.06)]">
           {step === "select" ? (
             <button
               onClick={handleProceed}
               disabled={!isSelectionComplete()}
-              className={`w-full py-3.5 rounded-full font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 ${isSelectionComplete()
-                  ? "bg-primary text-white hover:opacity-90 active:scale-95"
+              className={`w-full h-14 rounded-2xl font-black text-[14px] uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+                isSelectionComplete()
+                  ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-lg shadow-green-100 active:scale-[0.97]"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                }`}
+              }`}
             >
               Proceed to Payment →
             </button>
-          ) : (
-            <button
-              onClick={handleConfirmPurchase}
-              disabled={!agreed || isPending}
-              className={`w-full py-4 rounded-full font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 ${agreed && !isPending
-                  ? "bg-primary hover:opacity-90 active:scale-95"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          ) : shareConfig ? (
+            <>
+              {/* Payment method row */}
+              <div>
+                <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Choose Payment Method</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMethod("wallet")}
+                    className={`flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 transition-all ${
+                      selectedMethod === "wallet"
+                        ? "bg-[#5C9C72] text-white border-[#5C9C72] shadow-md"
+                        : "bg-white text-gray-500 border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    Wallet
+                  </button>
+                  <button disabled className="flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed">
+                    Bkash
+                  </button>
+                  <button disabled className="flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed">
+                    Nogod
+                  </button>
+                </div>
+              </div>
+
+              {/* Terms checkbox */}
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="share_terms_final"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                  className="w-6 h-6 rounded border-gray-300 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
+                />
+                <label htmlFor="share_terms_final" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
+                  I accept the{" "}
+                  <a href="/dashboard/help/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Privacy Policy</a>
+                  {" "}&amp;{" "}
+                  <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Terms</a>.
+                </label>
+              </div>
+
+              {/* Confirm Purchase button */}
+              <button
+                onClick={handleConfirmPurchase}
+                disabled={!agreed || isPending}
+                className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+                  agreed && !isPending
+                    ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-xl shadow-green-100 active:scale-[0.97]"
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  PROCESSING...
-                </>
-              ) : (
-                "PAY NOW"
-              )}
-            </button>
-          )}
+              >
+                {isPending
+                  ? <><Loader2 className="w-5 h-5 animate-spin" /> PROCESSING...</>
+                  : `CONFIRM PURCHASE — ৳${shareConfig.price.toFixed(2)}`
+                }
+              </button>
+
+              {/* Cancel */}
+              <button
+                onClick={() => setStep("select")}
+                disabled={isPending}
+                className="w-full h-11 text-gray-400 text-[13px] font-bold uppercase flex items-center justify-center gap-2 hover:text-gray-600 transition-colors disabled:opacity-50"
+              >
+                <ArrowLeft size={15} /> Cancel
+              </button>
+            </>
+          ) : null}
         </div>
 
       </div>

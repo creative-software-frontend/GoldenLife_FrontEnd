@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X, ArrowLeft, Home } from "lucide-react";
 import { useState } from "react";
 import { SubscriptionPlan } from "./PricingPlanCard";
 import logo from "../../../public/image/logo/logo.jpg";
@@ -22,21 +22,22 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
-        {/* Header styling matching the first image */}
-        <div className="flex justify-between items-center p-4 border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            <img src={logo} alt="Logo" className="h-8 object-contain" />
-            {/* <h3 className="text-primary font-semibold text-lg">Next Js Company</h3> */}
-          </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+      <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
+        {/* Header — green */}
+        <div className="bg-[#5C9C72] text-white p-4 flex items-center gap-3 shrink-0">
+          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+          <Home className="w-5 h-5 opacity-80" />
+          <h2 className="font-bold text-lg ml-2 flex-1">Membership Payment</h2>
+          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full transition-colors ml-auto">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="p-4">
-          {/* Voucher Card */}
-          <div className="bg-gradient-to-r from-primary to-primary-light rounded-xl p-5 text-white relative overflow-hidden mb-4 shadow-lg">
+         <div className="p-4 overflow-y-auto flex-1">
+          {/* Voucher Card - Updated with Green Gradient */}
+          <div className="bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-xl p-5 text-white relative overflow-hidden mb-4 shadow-lg">
             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
             <img src={logo} alt="Watermark" className="absolute right-4 bottom-4 w-12 h-12 opacity-25 rounded-lg object-cover" />
 
@@ -94,36 +95,66 @@ export const PaymentModal = ({ isOpen, onClose, onPayNow, type, plan }: PaymentM
             />
           </div>
 
-          <div className="mt-6 flex items-start gap-3">
+        </div>
+
+        {/* Sticky footer — exact design match */}
+        <div className="p-4 border-t border-gray-100 bg-white shrink-0 space-y-3.5 shadow-[0_-8px_24px_rgba(0,0,0,0.06)]">
+          {/* Payment method row */}
+          <div>
+            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">Choose Payment Method</p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className="flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 bg-[#5C9C72] text-white border-[#5C9C72] shadow-md"
+              >
+                Wallet
+              </button>
+              <button disabled className="flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed">
+                Bkash
+              </button>
+              <button disabled className="flex-1 py-3.5 rounded-xl text-[14px] font-black border-2 bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed">
+                Nogod
+              </button>
+            </div>
+          </div>
+
+          {/* Terms checkbox */}
+          <div className="flex items-center gap-3">
             <input
               type="checkbox"
-              id="terms"
+              id="payment_terms_final"
               checked={agreed}
               onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-1 w-5 h-5 text-teal-600 rounded border-gray-300 focus:ring-teal-500 accent-teal-600"
+              className="w-6 h-6 rounded border-gray-300 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
             />
-            <label htmlFor="terms" className="text-sm text-primary font-medium cursor-pointer">
-              আমি রিটার্ন এন্ড রিফান্ড পলিসির সাথে একমত।
+            <label htmlFor="payment_terms_final" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
+              I accept the{" "}
+              <a href="/dashboard/help/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Privacy Policy</a>
+              {" "}&amp;{" "}
+              <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Terms</a>.
             </label>
           </div>
 
-          <div className="mt-6 flex gap-3">
-            <button
-              onClick={onClose}
-              className="flex-1 bg-destructive text-white py-3 rounded-lg font-bold hover:opacity-90 transition-opacity shadow-md"
-            >
-              CLOSE
-            </button>
-            <button
-              onClick={() => {
-                if (agreed) onPayNow(quantity);
-                else alert("Please agree to the terms first.");
-              }}
-              className={`flex-1 py-3 rounded-lg font-bold transition-all shadow-md ${agreed ? 'bg-primary text-white hover:opacity-90' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
-            >
-              Pay Now
-            </button>
-          </div>
+          {/* Confirm purchase button */}
+          <button
+            onClick={() => { if (agreed) onPayNow(quantity); }}
+            disabled={!agreed}
+            className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase tracking-wide transition-all flex items-center justify-center gap-2 ${
+              agreed
+                ? "bg-[#5C9C72] hover:bg-[#4a855d] text-white shadow-xl shadow-green-100 active:scale-[0.97]"
+                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+            }`}
+          >
+            CONFIRM PURCHASE &mdash; ৳{totalPrice.toFixed(2)}
+          </button>
+
+          {/* Cancel */}
+          <button
+            onClick={onClose}
+            className="w-full h-11 text-gray-400 text-[13px] font-bold uppercase flex items-center justify-center gap-2 hover:text-gray-600 transition-colors"
+          >
+            <ArrowLeft size={15} /> Cancel
+          </button>
         </div>
       </div>
     </div>

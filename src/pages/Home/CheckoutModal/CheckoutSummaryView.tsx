@@ -396,7 +396,10 @@ const CheckoutSummaryView = ({
                             className="w-6 h-6 text-[#5C9C72] border-gray-300 rounded-md focus:ring-0 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
                         />
                         <label htmlFor="terms-final" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
-                            I accept the <span className="text-[#F97316]">Privacy Policy</span> & <span className="text-[#F97316]">Terms</span>.
+                            I accept the{" "}
+                            <a href="/dashboard/help/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Privacy Policy</a>
+                            {" "}&{" "}
+                            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-[#F97316] hover:underline">Terms</a>.
                         </label>
                     </div>
                     {error && !termsAccepted && (

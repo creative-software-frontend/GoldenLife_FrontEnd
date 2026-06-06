@@ -128,7 +128,7 @@ export const CollaborationPanel = ({ onClick }: CollaborationPanelProps) => {
         <div className="pr-20 mb-4">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full border border-emerald-200">
-              Shareholder- 20% (1,60,00,000 ৳)
+              Shareholder
             </span>
           </div>
           <h3 className="text-lg font-bold text-gray-800 capitalize leading-tight">
@@ -194,7 +194,7 @@ export const CollaborationPanel = ({ onClick }: CollaborationPanelProps) => {
           className="flex items-center justify-center gap-2 w-full mt-5 py-3 rounded-lg font-bold text-base transition-all shadow-md bg-primary text-white hover:opacity-90 shadow-primary/30"
         >
           <Share2 className="w-4 h-4" />
-          Buy Area Share
+          Buy Share
         </button>
       </div>
 
