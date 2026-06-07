@@ -73,7 +73,7 @@ export default function LandingFooter() {
               <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#FF9100]" />
             </h3>
             <ul className="space-y-3 text-gray-600 text-base">
-              {["Tops", "Bottoms", "Outerwear", "New In", "About", "Blog", "Contact"].map(item => (
+              {["About", "Blog", "Contact"].map(item => (
                 <li key={item} className="hover:text-[#FF9100] cursor-pointer transition-colors font-medium">{item}</li>
               ))}
             </ul>
@@ -87,11 +87,11 @@ export default function LandingFooter() {
             </h3>
             <ul className="space-y-3 text-gray-600 text-base">
               {[
-                { name: "Cookies", path: "/cookies" },
-                { name: "Payments", path: "/payments" },
-                { name: "Terms & Conditions", path: "/terms" },
-                { name: "Privacy Policy", path: "/privacy" },
-                { name: "Security", path: "/security" },
+                { name: "Cookies", path: "/help/cookies" }, // Updated to sit under the /help parent layout
+                { name: "Payments", path: "/help/payments" },
+                { name: "Terms & Conditions", path: "/help/terms" },
+                { name: "Privacy Policy", path: "/help/privacy" }, // Matches router's path: 'privacy'
+                { name: "Security", path: "/help/security" },
               ].map((item) => (
                 <li key={item.name}>
                   <Link

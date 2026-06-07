@@ -214,7 +214,7 @@ const Register: React.FC = () => {
       });
 
       const data = await response.json();
-      
+
       if (response.ok || data.success) {
         setOtp(["", "", "", ""]);
         setResendTimer(5);
@@ -298,15 +298,40 @@ const Register: React.FC = () => {
                 </button>
               </div>
             </div>
-
             <div className="flex flex-col gap-3">
               <label className="flex items-center gap-3 cursor-pointer group">
-                <input type="checkbox" name="acceptTerms" checked={formData.acceptTerms} onChange={handleChange} className="w-5 h-5 rounded border-slate-300 text-orange-500 focus:ring-orange-500" />
-                <span className="text-sm text-slate-600 font-medium">I accept the Terms & Conditions</span>
+                <input
+                  type="checkbox"
+                  name="acceptTerms"
+                  checked={formData.acceptTerms}
+                  onChange={handleChange}
+                  className="w-5 h-5 rounded border-slate-300 text-orange-500 focus:ring-orange-500 cursor-pointer"
+                />
+                <span className="text-sm text-slate-600 font-medium select-none">
+                  I accept the{" "}
+                  <Link
+                    to="/help/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#F97316] font-bold hover:underline"
+                  >
+                    Privacy Policy
+                  </Link>{" "}
+                  &{" "}
+                  <Link
+                    to="/help/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#F97316] font-bold hover:underline"
+                  >
+                    Terms
+                  </Link>.
+                </span>
               </label>
-              {errors.acceptTerms && <p className="text-xs text-red-500 font-bold ml-8">{errors.acceptTerms}</p>}
+              {errors.acceptTerms && (
+                <p className="text-xs text-red-500 font-bold ml-8">{errors.acceptTerms}</p>
+              )}
             </div>
-
             <button type="submit" disabled={isLoading} className="w-full bg-[#FF8A00] hover:bg-orange-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl active:scale-[0.98] disabled:opacity-70 flex items-center justify-center gap-2">
               {isLoading ? <Loader2 className="animate-spin" /> : <ShieldCheck size={20} />}
               {isLoading ? "Creating Account..." : "Register Now"}
@@ -340,7 +365,7 @@ const Register: React.FC = () => {
                   </svg>
                 </div>
               </Link>
-              
+
               <Link
                 to="/instructor/register"
                 className="group flex items-center justify-between px-6 py-4 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 rounded-2xl text-sm font-bold text-slate-600 transition-all duration-300 shadow-sm hover:shadow-md w-full"
@@ -408,7 +433,7 @@ const Register: React.FC = () => {
                 disabled={isLoading || resendTimer > 0}
                 className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-orange-500 font-bold text-xs py-2 transition-colors disabled:opacity-50 disabled:hover:text-slate-400 disabled:cursor-not-allowed"
               >
-                <RefreshCcw size={14} className={isLoading ? "animate-spin" : ""} /> 
+                <RefreshCcw size={14} className={isLoading ? "animate-spin" : ""} />
                 {resendTimer > 0 ? `Resend OTP in ${resendTimer}s` : "Resend OTP"}
               </button>
             </div>

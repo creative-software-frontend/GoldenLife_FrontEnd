@@ -193,8 +193,24 @@ export const CheckoutModal = ({
               htmlFor="checkout_terms_final"
               className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold"
             >
-              I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
-                className="text-[#F97316]">Terms</Link>.
+              I accept the{" "}
+              <Link
+                to="/help/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#F97316]"
+              >
+                Privacy Policy
+              </Link>{" "}
+              &{" "}
+              <Link
+                to="/help/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#F97316]"
+              >
+                Terms
+              </Link>.
             </label>
           </div>
 

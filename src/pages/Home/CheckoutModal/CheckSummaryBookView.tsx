@@ -325,15 +325,32 @@ const CheckSummaryBookView = ({
                             className="w-6 h-6 text-[#5C9C72] border-gray-300 rounded-md focus:ring-0 accent-[#5C9C72] cursor-pointer shrink-0 shadow-sm"
                         />
                         <label htmlFor="terms-book" className="text-[15px] text-gray-800 leading-tight cursor-pointer select-none font-bold">
-                            I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
-                                className="text-[#F97316]">Terms</Link>.
+                            I accept the{" "}
+                            <Link
+                                to="/help/privacy"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#F97316]"
+                            >
+                                Privacy Policy
+                            </Link>{" "}
+                            &{" "}
+                            <Link
+                                to="/help/terms"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[#F97316]"
+                            >
+                                Terms
+                            </Link>.
                         </label>
                     </div>
                     {error && !termsAccepted && (
-                        <p className="text-red-500 text-[12px] font-black animate-bounce pl-9 mt-1">* You must accept terms to place order.</p>
+                        <p className="text-red-500 text-[12px] font-black animate-bounce pl-9 mt-1">
+                            * You must accept terms to place order.
+                        </p>
                     )}
                 </div>
-
                 <div className="flex flex-col gap-3">
                     <button
                         onClick={handleConfirm}

@@ -351,18 +351,39 @@ const InstructorRegister = () => {
                   <div className="pt-2">
                     <div className="flex items-center space-x-3">
                       <input
-                        type="checkbox" name="acceptTerms" id="acceptTerms"
-                        checked={formData.acceptTerms} onChange={handleChange} disabled={isSubmitting}
+                        type="checkbox"
+                        name="acceptTerms"
+                        id="acceptTerms"
+                        checked={formData.acceptTerms}
+                        onChange={handleChange}
+                        disabled={isSubmitting}
                         className="h-5 w-5 text-[#FF8A00] border-gray-300 rounded focus:ring-[#FF8A00] cursor-pointer"
                       />
                       <label htmlFor="acceptTerms" className="text-sm text-gray-600 cursor-pointer select-none">
-                        I accept the <Link to="/dashboard/help/privacy-policy" className="text-[#F97316]">Privacy Policy</Link> & <Link to="/dashboard/help/terms"
-                          className="text-[#F97316]">Terms</Link>.
+                        I accept the{" "}
+                        <Link
+                          to="/help/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#F97316]"
+                        >
+                          Privacy Policy
+                        </Link>{" "}
+                        &{" "}
+                        <Link
+                          to="/help/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#F97316]"
+                        >
+                          Terms
+                        </Link>.
                       </label>
                     </div>
-                    {fieldErrors.acceptTerms && <p className="text-xs text-red-500 font-medium mt-1.5">{fieldErrors.acceptTerms}</p>}
+                    {fieldErrors.acceptTerms && (
+                      <p className="text-xs text-red-500 font-medium mt-1.5">{fieldErrors.acceptTerms}</p>
+                    )}
                   </div>
-
                   {/* Submit */}
                   <div className="pt-4">
                     <button

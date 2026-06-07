@@ -4,7 +4,7 @@ import OrderDetails from "@/pages/Home/OrderDetails/OrderDetails";
 import Story from "@/pages/Help/Story/Story";
 import Career from "@/pages/Help/Career/Career";
 import Contact from "@/pages/Help/Contact/Contact";
-import PrivacyPolicy from "@/pages/Help/PrivacyPolicy/PrivacyPolicy";
+
 import UserLayout from "@/layout/userlayout/UserLayout";
 import HelpLayout from "@/layout/HelpLayout/HelpLayout";
 import Faq from "@/pages/Home/Faq/Faq";
@@ -123,9 +123,12 @@ import FAQPage from "@/pages/Help/FAQPage";
 import AISupportPage from "@/pages/Help/AISupportPage";
 
 
-
+import PrivacyPolicy from "@/pages/Help/PrivacyPolicy/PrivacyPolicy";
 import InstructorInfo from "@/pages/Home/InstructorInfo/InstructorInfo";
 import AllCoursesListView from "@/pages/Home/AllCourses/AllCoursesListView";
+import CookiesPage from "@/pages/Help/CookiesPage/CookiesPage";
+import PaymentsPage from "@/pages/Help/PaymentsPage/PaymentsPage";
+import SecurityPage from "@/pages/Help/SecurityPage/SecurityPage";
 
 
 export const routes = createBrowserRouter([
@@ -354,9 +357,20 @@ export const routes = createBrowserRouter([
                                 element: <Contact />,
                             },
                             {
-                                path: 'privacy-policy',
+                                path: 'contact',
+                                element: <Contact />,
+                            },
+                            {
+                                path: 'contact',
+                                element: <Contact />,
+                            },
+                            {
+                                path: 'privacy',
                                 element: <PrivacyPolicy />,
                             },
+
+
+
                             {
                                 path: 'terms',
                                 element: <TermsOfUse />,
@@ -369,6 +383,29 @@ export const routes = createBrowserRouter([
                     }
                 ]
             }
+        ]
+    },
+    {
+        path: '/help',
+        element: <HelpLayout />,
+        children: [
+            { index: true, element: <HelpLanding /> },
+            { path: 'faq', element: <FAQPage /> },
+            { path: 'ticket', element: <SupportTicketPage /> },
+            { path: 'hotline', element: <HotlinePage /> },
+            { path: 'ai', element: <AISupportPage /> },
+            { path: 'our-story', element: <Story /> },
+            { path: 'career', element: <Career /> },
+            { path: 'contact', element: <Contact /> },
+            { path: 'terms', element: <TermsOfUse /> },
+
+            // FIXED & ADDED TO MATCH YOUR LINKS:
+            { path: 'privacy', element: <PrivacyPolicy /> },
+            { path: 'cookies', element: <CookiesPage /> },
+            { path: 'payments', element: <PaymentsPage /> },
+            { path: "security", element: <SecurityPage /> }
+
+
         ]
     },
     {
