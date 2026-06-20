@@ -202,14 +202,15 @@ const Register: React.FC = () => {
     setIsLoading(true);
     setOtpError('');
     try {
-      const response = await fetch(`${baseURL}/api/login/send-otp`, {
+      const response = await fetch(`${baseURL}/api/resend-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          mobile: formData.mobile
+          mobile: formData.mobile,
+          purpose: "Login"
         }),
       });
 
@@ -219,9 +220,24 @@ const Register: React.FC = () => {
         setOtp(["", "", "", ""]);
         setResendTimer(5);
         setIsResent(true);
+
+        setTimeout(() => {
+          setApiError('');
+          setOtpError('');
+          // no UI message state here; reuse existing button flow via resend timer
+          // If you need a toast/message, integrate into existing UI.
+        }, 5000);
+
+        setApiError('');
       } else {
         throw new Error(data.message || "Failed to resend OTP.");
       }
+
+      // Show message after 5s
+      setTimeout(() => {
+        // Use OTP modal error slot as success message (existing UI)
+        setIsResent(true);
+      }, 5000);
     } catch (error: any) {
       setOtpError(error.message);
     } finally {

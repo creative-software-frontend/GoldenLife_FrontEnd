@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
@@ -24,6 +25,13 @@ const Login: React.FC = () => {
   const [isOtpLoading, setIsOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -73,6 +81,7 @@ const Login: React.FC = () => {
 
         if (response.status === 200 || response.data.success) {
           setShowOtpModal(true);
+          setCountdown(5);
         } else {
           throw new Error(response.data.message || "Failed to send OTP.");
         }
@@ -335,13 +344,52 @@ const Login: React.FC = () => {
               ))}
             </div>
 
-            <button onClick={handleOtpSubmit} disabled={isOtpLoading} className="w-full bg-[#FF8A00] text-white font-bold text-lg py-4 rounded-xl shadow-lg active:scale-95 transition-all">
+            <div className="text-center my-4 flex justify-center items-center min-h-[24px]">
+              <AnimatePresence mode="wait">
+                {countdown > 0 ? (
+                  <motion.p
+                    key="countdown"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm text-gray-500 font-medium"
+                  >
+                    Resend code in {countdown}s
+                  </motion.p>
+                ) : (
+                  <motion.button
+                    key="resend"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    onClick={async () => {
+                      try {
+                        const response = await axios.post(`${baseURL}/api/resend-otp`, {
+                          mobile: formData.mobile,
+                          purpose: "Login"
+                        });
+                        const data = response.data;
+                        if (data?.success) {
+                          setCountdown(5);
+                          setOtpError('');
+                        }
+                      } catch (e) {
+                        // ignore
+                      }
+                      handleSubmit();
+                    }}
+                    className="text-[#FF8A00] hover:text-orange-600 font-bold text-sm transition-all hover:underline"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Resend OTP
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <button onClick={handleOtpSubmit} disabled={isOtpLoading || otp.join('').length < 4} className="w-full bg-[#FF8A00] text-white font-bold text-lg py-4 rounded-xl shadow-lg active:scale-95 transition-all disabled:opacity-50">
               {isOtpLoading ? "Verifying..." : "Verify & Continue"}
             </button>
-
-            <p className="text-center text-sm text-gray-500 mt-6">
-              Didn't receive the code? <button type="button" onClick={() => handleSubmit()} className="text-[#FF8A00] font-bold hover:underline">Resend</button>
-            </p>
           </div>
         </div>
       )}

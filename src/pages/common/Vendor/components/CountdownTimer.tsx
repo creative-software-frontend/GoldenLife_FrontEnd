@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface CountdownTimerProps {
   duration?: number;
-  onComplete: () => void;
+  onComplete?: () => void;
   onResend: () => void;
   isLoading?: boolean;
 }
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({
-  duration = 60,
+  duration = 5,
   onComplete,
   onResend,
   isLoading = false,
@@ -18,7 +18,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      onComplete();
+      if (onComplete) onComplete();
       return;
     }
 
@@ -29,13 +29,14 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     return () => clearInterval(timer);
   }, [timeLeft, onComplete]);
 
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  const handleResend = () => {
+    if (isLoading) return;
+    onResend();
+    setTimeLeft(duration);
+  };
 
   return (
-    <div className="text-center mt-6">
-      <p className="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
-      
+    <div className="text-center my-4 flex justify-center items-center min-h-[24px]">
       <AnimatePresence mode="wait">
         {timeLeft > 0 ? (
           <motion.p
@@ -43,38 +44,22 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-sm text-gray-500"
+            className="text-sm text-gray-500 font-medium"
           >
-            Resend available in{' '}
-            <span className="font-bold text-[#FF8A00]">
-              {minutes}:{seconds.toString().padStart(2, '0')}
-            </span>
+            Resend code in {timeLeft}s
           </motion.p>
         ) : (
           <motion.button
             key="resend"
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            onClick={onResend}
+            onClick={handleResend}
             disabled={isLoading}
-            className="inline-flex items-center gap-2 text-[#FF8A00] hover:text-orange-700 font-bold text-sm transition-colors disabled:opacity-50"
+            className="text-[#FF8A00] hover:text-orange-600 font-bold text-sm transition-all hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <svg 
-              className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-              />
-            </svg>
-            Resend OTP
+            {isLoading ? 'Sending...' : 'Resend OTP'}
           </motion.button>
         )}
       </AnimatePresence>

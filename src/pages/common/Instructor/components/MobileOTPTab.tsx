@@ -208,6 +208,14 @@ const MobileOTPTab: React.FC<MobileOTPTabProps> = ({
             error={otpError || undefined}
           />
 
+          {/* Countdown Timer */}
+          {showCountdown && (
+            <CountdownTimer
+              onResend={handleResendOtp}
+              isLoading={isLoading}
+            />
+          )}
+
           {/* Verify Button */}
           <motion.button
             onClick={() => {
@@ -225,16 +233,6 @@ const MobileOTPTab: React.FC<MobileOTPTabProps> = ({
               'Verify & Continue'
             )}
           </motion.button>
-
-          {/* Countdown Timer */}
-          {showCountdown && (
-            <CountdownTimer
-              duration={60}
-              onComplete={() => {}}
-              onResend={handleResendOtp}
-              isLoading={isLoading}
-            />
-          )}
         </motion.div>
       )}
     </AnimatePresence>

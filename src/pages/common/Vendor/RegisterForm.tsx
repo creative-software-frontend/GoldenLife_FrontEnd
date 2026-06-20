@@ -223,29 +223,40 @@ const RegisterForm = () => {
   };
 
   // --- RESEND OTP ---
-  const handleResendOtp = async () => {
+const handleResendOtp = async () => {
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
-      const endpoint = `${baseUrl}/api/vendor/login/send-otp?mobile=${encodeURIComponent(formData.mobile)}`;
+      // New resend OTP API
+      const endpoint = `${baseUrl}/api/resend-otp`;
 
       console.log('🔵 [Register] Resending OTP to:', formData.mobile);
 
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           "Accept": "application/json"
-        }
+        },
+        body: JSON.stringify({
+          mobile: formData.mobile,
+          purpose: "Login"
+        })
       });
 
       const data = await response.json();
 
-      if (data.success) {
-        setSuccessMessage("OTP resent successfully!");
+      if (data?.success) {
         setOtp(["", "", "", ""]); // Reset OTP inputs
         setResendTimer(60); // Reset timer to 60s
+
+        // After 5s show the OTP resent message
+        setTimeout(() => {
+          setSuccessMessage("একটি নতুন OTP সফলভাবে পাঠানো হয়েছে।");
+        }, 5000);
+
         console.log('✅ [Register] OTP resent successfully');
       } else {
-        setOtpError(data.message || "Failed to resend OTP");
+        setOtpError(data?.message || "Failed to resend OTP");
       }
     } catch (error: any) {
       console.error('❌ [Register] Failed to resend OTP:', error);

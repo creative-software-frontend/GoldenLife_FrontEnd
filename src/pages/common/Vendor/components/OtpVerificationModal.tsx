@@ -108,6 +108,14 @@ const OTPVerificationModal: React.FC<OTPVerificationModalProps> = ({
           error={otpError || undefined}
         />
 
+        {/* Countdown Timer & Resend */}
+        {showCountdown && (
+          <CountdownTimer
+            onResend={handleResend}
+            isLoading={isLoading}
+          />
+        )}
+
         {/* Verify Button */}
         <motion.button
           onClick={() => {
@@ -125,16 +133,6 @@ const OTPVerificationModal: React.FC<OTPVerificationModalProps> = ({
             'Verify & Continue'
           )}
         </motion.button>
-
-        {/* Countdown Timer & Resend */}
-        {showCountdown && (
-          <CountdownTimer
-            duration={60}
-            onComplete={() => {}}
-            onResend={handleResend}
-            isLoading={isLoading}
-          />
-        )}
 
         {/* Success Indicator */}
         <div className="mt-4 pt-4 border-t border-gray-100">

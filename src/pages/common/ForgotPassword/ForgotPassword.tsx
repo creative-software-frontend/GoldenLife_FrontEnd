@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -25,6 +26,13 @@ const ForgotPassword: React.FC = () => {
   const [isOtpLoading, setIsOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   // ✅ 1. HANDLE REQUEST OTP (FormData ব্যবহার করে)
   const handleRequestOTP = async (e: React.FormEvent) => {
@@ -42,25 +50,22 @@ const ForgotPassword: React.FC = () => {
     setMobileError('');
 
     try {
-      const formData = new FormData();
-      formData.append('mobile', mobile);
-
+      // New resend OTP API also used here for forgot password
       const response = await axios.post(
-        `${baseURL}/api/password/forgot`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            'Accept': 'application/json'
-          }
-        }
+        `${baseURL}/api/resend-otp`,
+        { mobile, purpose: 'Password Reset' },
+        { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' } }
       );
 
       console.log('🟢 [Send OTP] Response:', response.data);
 
       if (response.data?.success) {
-        toast.success('OTP sent successfully! Please check your mobile.');
         setShowOtpModal(true);
+        setCountdown(5);
+        // Show message after 5s
+        setTimeout(() => {
+          toast.success('একটি নতুন OTP সফলভাবে পাঠানো হয়েছে।');
+        }, 5000);
       } else {
         throw new Error(response.data?.message || 'Failed to send OTP');
       }
@@ -396,6 +401,35 @@ const ForgotPassword: React.FC = () => {
                   className="w-14 h-16 text-center text-2xl font-black text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-[#FF8A00] focus:bg-white transition-all shadow-inner"
                 />
               ))}
+            </div>
+
+            <div className="text-center my-4 flex justify-center items-center min-h-[24px]">
+              <AnimatePresence mode="wait">
+                {countdown > 0 ? (
+                  <motion.p
+                    key="countdown"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="text-sm text-gray-500 font-medium"
+                  >
+                    Resend code in {countdown}s
+                  </motion.p>
+                ) : (
+                  <motion.button
+                    key="resend"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    onClick={handleRequestOTP as any}
+                    disabled={isLoading}
+                    className="text-[#FF8A00] hover:text-orange-600 font-bold text-sm transition-all hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {isLoading ? 'Sending...' : 'Resend OTP'}
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </div>
 
             <button

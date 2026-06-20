@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CountdownTimerProps {
-  duration: number; // in seconds
+  duration?: number;
   onComplete?: () => void;
   onResend: () => void;
   isLoading?: boolean;
 }
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({
-  duration,
+  duration = 5,
   onComplete,
   onResend,
   isLoading = false,
 }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
-  const [canResend, setCanResend] = useState(false);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      setCanResend(true);
       if (onComplete) onComplete();
       return;
     }
@@ -31,41 +30,39 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   }, [timeLeft, onComplete]);
 
   const handleResend = () => {
-    if (!canResend || isLoading) return;
+    if (isLoading) return;
     onResend();
     setTimeLeft(duration);
-    setCanResend(false);
-  };
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
-    <div className="text-center">
-      <p className="text-sm text-gray-500 mb-2">
-        {canResend ? (
-          "Didn't receive the code?"
+    <div className="text-center my-4 flex justify-center items-center min-h-[24px]">
+      <AnimatePresence mode="wait">
+        {timeLeft > 0 ? (
+          <motion.p
+            key="countdown"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-sm text-gray-500 font-medium"
+          >
+            Resend code in {timeLeft}s
+          </motion.p>
         ) : (
-          <>
-            Resend code in <span className="font-bold text-gray-800">{formatTime(timeLeft)}</span>
-          </>
+          <motion.button
+            key="resend"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={handleResend}
+            disabled={isLoading}
+            className="text-[#FF8A00] hover:text-orange-600 font-bold text-sm transition-all hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isLoading ? 'Sending...' : 'Resend OTP'}
+          </motion.button>
         )}
-      </p>
-      <button
-        type="button"
-        disabled={!canResend || isLoading}
-        onClick={handleResend}
-        className={`text-sm font-bold transition-all ${
-          canResend && !isLoading
-            ? 'text-[#FF8A00] hover:text-orange-700 hover:underline'
-            : 'text-gray-400 cursor-not-allowed'
-        }`}
-      >
-        {isLoading ? 'Sending...' : 'Resend OTP'}
-      </button>
+      </AnimatePresence>
     </div>
   );
 };

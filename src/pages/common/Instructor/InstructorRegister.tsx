@@ -169,10 +169,34 @@ const InstructorRegister = () => {
   const handleResendOtp = async () => {
     setOtpError("");
     try {
-      await resendOtpMutation.mutateAsync({ mobile: formData.mobile });
-      toast.success("OTP resent successfully!");
+      // Call new resend OTP API (replaces old resendOtpMutation)
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
+      const endpoint = `${baseUrl}/api/resend-otp`;
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          mobile: formData.mobile,
+          purpose: "Login"
+        })
+      });
+
+      const data = await response.json();
+
+      if (!data?.success) {
+        throw new Error(data?.message || "Failed to resend OTP");
+      }
+
       setOtp(["", "", "", ""]); // Reset OTP inputs
       setResendTimer(60); // Reset timer to 60s
+
+      setTimeout(() => {
+        toast.success("একটি নতুন OTP সফলভাবে পাঠানো হয়েছে।");
+      }, 5000);
     } catch (error: any) {
       setOtpError(error.message || "Failed to resend OTP. Please try again.");
     }

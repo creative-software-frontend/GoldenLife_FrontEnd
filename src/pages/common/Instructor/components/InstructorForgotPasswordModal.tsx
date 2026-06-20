@@ -71,7 +71,7 @@ const InstructorForgotPasswordModal = ({ isOpen, onClose }: InstructorForgotPass
       await forgotMutation.mutateAsync({ mobile });
       toast.success('OTP sent! Check your mobile.');
       setStep('otp');
-      setCountdown(60);
+      setCountdown(5);
     } catch (err: any) {
       setMobileError(err.message || 'Failed to send OTP.');
       toast.error(err.message || 'Failed to send OTP.');
@@ -91,7 +91,7 @@ const InstructorForgotPasswordModal = ({ isOpen, onClose }: InstructorForgotPass
     try {
       await forgotMutation.mutateAsync({ mobile });
       toast.success('OTP resent!');
-      setCountdown(60);
+      setCountdown(5);
     } catch (err: any) {
       toast.error(err.message || 'Failed to resend OTP.');
     }
@@ -311,6 +311,36 @@ const InstructorForgotPasswordModal = ({ isOpen, onClose }: InstructorForgotPass
                       ))}
                     </div>
 
+                    {/* Countdown & Resend */}
+                    <div className="text-center my-4 flex justify-center items-center min-h-[24px]">
+                      <AnimatePresence mode="wait">
+                        {countdown > 0 ? (
+                          <motion.p
+                            key="countdown"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="text-sm text-gray-500 font-medium"
+                          >
+                            Resend code in {countdown}s
+                          </motion.p>
+                        ) : (
+                          <motion.button
+                            key="resend"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            onClick={handleResendOTP}
+                            disabled={isSendingOtp}
+                            className="text-[#FF8A00] hover:text-orange-600 font-bold text-sm transition-all hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {isSendingOtp ? 'Sending...' : 'Resend OTP'}
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
                     <motion.button
                       onClick={handleOtpNext}
                       disabled={otp.join('').length !== 4}
@@ -320,27 +350,6 @@ const InstructorForgotPasswordModal = ({ isOpen, onClose }: InstructorForgotPass
                     >
                       Continue
                     </motion.button>
-
-                    {/* Countdown & Resend */}
-                    <div className="text-center">
-                      <p className="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
-                      {countdown > 0 ? (
-                        <p className="text-sm text-gray-500">
-                          Resend in{' '}
-                          <span className="font-bold text-[#FF8A00]">0:{countdown.toString().padStart(2, '0')}</span>
-                        </p>
-                      ) : (
-                        <motion.button
-                          onClick={handleResendOTP}
-                          disabled={isSendingOtp}
-                          className="text-[#FF8A00] hover:text-orange-700 font-bold text-sm transition-colors disabled:opacity-50"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          {isSendingOtp ? 'Sending...' : 'Resend OTP'}
-                        </motion.button>
-                      )}
-                    </div>
                   </motion.div>
                 )}
 
