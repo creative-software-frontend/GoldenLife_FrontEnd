@@ -600,9 +600,17 @@ export default function UserLayout() {
                                                         <HelpCircle size={18} className="text-slate-400" />
                                                         <span className="text-[13px] font-bold">Support Center</span>
                                                     </Link>
-                                                    <button onClick={handleLogout} className="flex items-center gap-3 w-full p-2.5 rounded-xl hover:bg-red-50 text-red-500 transition-all mt-1">
-                                                        <LogOut size={18} />
-                                                        <span className="text-[13px] font-bold">Sign Out</span>
+                                                    <button 
+                                                        onClick={handleLogout} 
+                                                        className="flex items-center justify-between w-full p-3 rounded-xl bg-slate-100 hover:bg-red-500 text-slate-500 hover:text-white transition-all duration-300 group/logout shadow-sm border border-transparent hover:border-red-200 mt-1"
+                                                    >
+                                                        <span className="text-[11px] font-black uppercase tracking-widest pl-1">
+                                                            Sign Out
+                                                        </span>
+                                                        <LogOut 
+                                                            size={16} 
+                                                            className="group-hover/logout:translate-x-1 transition-transform"
+                                                        />
                                                     </button>
                                                 </div>
                                             </div>

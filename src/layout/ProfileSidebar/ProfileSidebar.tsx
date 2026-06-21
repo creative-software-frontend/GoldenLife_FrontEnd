@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import {
-    LayoutDashboard, User, FileText, FileBadge, Info, ShieldCheck, UserCircle2, Facebook, Send, Twitter, Youtube, Linkedin, Users, Star
+    LayoutDashboard, User, FileText, FileBadge, Info, ShieldCheck, UserCircle2, Facebook, Send, Twitter, Youtube, Linkedin, Users, Star, Wallet
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { baseURL } from '@/store/utils';
@@ -11,7 +11,7 @@ import { baseURL } from '@/store/utils';
 interface DashboardStats {
     boucher: string | number;
     earning: string | number;
-    recharge: string | number;
+
     designation: string;
     starCount: number;
 }
@@ -45,6 +45,39 @@ export default function ProfileSidebar() {
     const walletBalance = useAppStore(s => s.walletBalance);
     const isProfileLoading = useAppStore(s => s.isProfileLoading);
 
+    const { data: shareData, isLoading: isShareLoading } = useQuery({
+        queryKey: ['myShareDetails'],
+        queryFn: async () => {
+            const session = sessionStorage.getItem("student_session");
+            const token = session ? JSON.parse(session).token : null;
+            if (!token) throw new Error("No token found");
+
+            try {
+                const response = await axios.get(`${baseURL}/api/my-share-details`, {
+                    headers: { 'X-Auth-Token': `Bearer ${token}` }
+                });
+
+                if (response.data?.success) {
+                    return response.data.data;
+                }
+            } catch (error) {
+                // Silently handle the error (likely 404/403 for non-shareholders)
+                return null;
+            }
+            return null;
+        },
+        staleTime: 1000 * 60 * 5,
+    });
+
+    const getTargetArea = (hierarchy: any) => {
+        if (!hierarchy) return null;
+        if (hierarchy.union) return `${hierarchy.union.name} / ${hierarchy.union.bn_name}`;
+        if (hierarchy.upazila) return `${hierarchy.upazila.name} / ${hierarchy.upazila.bn_name}`;
+        if (hierarchy.district) return `${hierarchy.district.name} / ${hierarchy.district.bn_name}`;
+        if (hierarchy.division) return `${hierarchy.division.name} / ${hierarchy.division.bn_name}`;
+        return null;
+    };
+
     // TanStack Query configured with case-insensitive payload parsing and automatic UI propagation
     const { data: dashboardData, isLoading: isDashboardLoading } = useQuery({
         queryKey: ['studentDashboardStats'],
@@ -61,7 +94,6 @@ export default function ProfileSidebar() {
             let starCount = 0;
             let boucher = 0;
             let earning = 0;
-            let recharge = 0;
 
             if (dashboardRes.data?.success) {
                 const data = dashboardRes.data.data;
@@ -119,7 +151,7 @@ export default function ProfileSidebar() {
     });
 
     // Fallbacks point directly to Zustand store properties or default data blocks instead of localStorage
-    const currentDesignation = dashboardData?.designation || studentProfile?.designation || "";
+    const currentDesignation = shareData?.designation || dashboardData?.designation || studentProfile?.designation || "";
     const currentStarCount = dashboardData?.starCount || studentProfile?.star_count || 0;
     const combinedLoading = isProfileLoading || isDashboardLoading;
 
@@ -136,7 +168,10 @@ export default function ProfileSidebar() {
         { path: 'nominee-info', label: 'Nominee Information', icon: UserCircle2 },
         { path: 'Additional-info', label: 'Additional Information', icon: Info },
         { path: 'Change-passward', label: 'Change Password', icon: ShieldCheck },
+        { path: 'ShareDetails', label: 'ShareDetails', icon: Users },
         { path: 'referrals', label: 'Refer', icon: Users },
+
+
     ];
 
     return (
@@ -222,9 +257,18 @@ export default function ProfileSidebar() {
                     <p className="text-sm font-black text-slate-800">{walletBalance ?? dashboardData?.earning ?? 0}</p>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Earning</p>
                 </div>
+
                 <div className="space-y-1.5">
-                    <p className="text-sm font-black text-slate-800">{dashboardData?.recharge ?? 0}</p>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Recharge</p>
+                    <div className="text-sm font-black text-slate-800 flex justify-center items-center h-5">
+                        {isShareLoading ? (
+                            <div className="h-4 w-10 bg-slate-200 rounded animate-pulse" />
+                        ) : shareData?.amount_paid ? (
+                            <span>{Number(shareData.amount_paid).toLocaleString()} ৳</span>
+                        ) : (
+                            <span>0 ৳</span>
+                        )}
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Amount</p>
                 </div>
             </div>
 

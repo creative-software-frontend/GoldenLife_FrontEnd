@@ -106,6 +106,7 @@ import AdditionalInfoTab from "@/components/profile/AdditionalInfoTab/Additional
 import ProjectOverviewTab from "@/components/profile/ProjectOverviewTab/ProjectOverviewTab";
 import ChangePassward from "@/components/profile/ChangePassward/ChangePassward";
 import ReferralsTab from "@/components/profile/ReferralsTab/ReferralsTab";
+import ShareDetailsTab from "@/components/profile/ShareDetailsTab/ShareDetailsTab";
 
 // Vendor Wallet
 import VendorAddMoney from "@/pages/Vendor/Wallet/VendorAddMoney";
@@ -313,6 +314,7 @@ export const routes = createBrowserRouter([
                             { path: "Additional-info", element: <AdditionalInfoTab /> },
                             { path: "Change-passward", element: <ChangePassward /> },
                             { path: "referrals", element: <ReferralsTab /> },
+                            { path: "ShareDetails", element: <ShareDetailsTab /> },
                         ]
                     },
                     {
