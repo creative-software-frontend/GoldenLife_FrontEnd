@@ -78,7 +78,7 @@ export default function ShareDetailsTab() {
                 </div>
             </div>
 
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-xl bg-white rounded-3xl space-y-3"
@@ -89,12 +89,12 @@ export default function ShareDetailsTab() {
                         {shareData.share_type}
                     </span>
                 </div>
-                
+
                 <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Designation</span>
                     <span className="text-sm font-black text-slate-800">{shareData.designation}</span>
                 </div>
-                
+
                 <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Payment</span>
                     <span className="text-sm font-bold text-slate-800 capitalize flex items-center gap-2">
@@ -102,7 +102,7 @@ export default function ShareDetailsTab() {
                         {shareData.payment_method}
                     </span>
                 </div>
-                
+
                 {getTargetArea(shareData.location_hierarchy) && (
                     <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
                         <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Target Area</span>
@@ -111,9 +111,9 @@ export default function ShareDetailsTab() {
                         </span>
                     </div>
                 )}
-                
+
                 <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
-                    <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Date</span>
+                    <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Purchase Date & time</span>
                     <span className="text-sm font-bold text-slate-800">
                         {new Date(shareData.purchased_at).toLocaleDateString('en-GB', {
                             day: '2-digit', month: 'short', year: 'numeric'

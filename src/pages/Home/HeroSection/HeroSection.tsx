@@ -8,12 +8,12 @@ import { Pagination, Autoplay, EffectFade } from "swiper/modules";
 import banner1 from '../../../../public/image/Banner/1.png';
 import banner2 from '../../../../public/image/Banner/2.png';
 import banner3 from '../../../../public/image/Banner/3.png';
-import banner3 from '../../../../public/image/Banner/4.png';
-import banner3 from '../../../../public/image/Banner/5.png';
-import banner3 from '../../../../public/image/Banner/6.png';
-import banner3 from '../../../../public/image/Banner/7.png';
-import banner3 from '../../../../public/image/Banner/8.png';
-import banner3 from '../../../../public/image/Banner/9.png';
+import banner4 from '../../../../public/image/Banner/4.png';
+import banner5 from '../../../../public/image/Banner/5.png';
+import banner6 from '../../../../public/image/Banner/6.png';
+import banner7 from '../../../../public/image/Banner/7.png';
+import banner8 from '../../../../public/image/Banner/8.png';
+import banner9 from '../../../../public/image/Banner/9.png';
 
 
 const HeroSection = () => {
@@ -54,7 +54,7 @@ const HeroSection = () => {
                ========================================= */}
             <section className="block lg:hidden w-full px-3 py-3">
                 <div className="relative rounded-xl overflow-hidden shadow-lg bg-gray-900">
-                    
+
                     {/* MOBILE SWIPER ADDED HERE */}
                     <Swiper
                         modules={[Pagination, Autoplay, EffectFade]}
@@ -68,20 +68,20 @@ const HeroSection = () => {
                         {banners.map((banner) => (
                             <SwiperSlide key={banner.id} className="relative w-full h-full">
                                 {/* Background Image */}
-                                <img 
-                                    src={banner.image} 
-                                    alt={banner.title} 
-                                    className="w-full h-full object-left-top" 
+                                <img
+                                    src={banner.image}
+                                    alt={banner.title}
+                                    className="w-full h-full object-left-top"
                                 />
                                 {/* Dark overlay to match desktop */}
                                 <div className="absolute inset-0 bg-black/20" />
-                                
+
                                 {/* If you want to add the middle image back in later, put it right here inside the SwiperSlide */}
                             </SwiperSlide>
                         ))}
                     </Swiper>
                 </div>
-                
+
                 {/* Compact Stats Grid */}
                 <div className="grid grid-cols-2 gap-2 mt-2">
                     <div className="bg-emerald-50 p-2.5 rounded-lg text-center">

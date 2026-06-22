@@ -263,12 +263,12 @@ export default function ProfileSidebar() {
                         {isShareLoading ? (
                             <div className="h-4 w-10 bg-slate-200 rounded animate-pulse" />
                         ) : shareData?.amount_paid ? (
-                            <span>{Number(shareData.amount_paid).toLocaleString()} ৳</span>
+                            <span>{Number(shareData.amount_paid)}</span>
                         ) : (
-                            <span>0 ৳</span>
+                            <span>0</span>
                         )}
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Amount</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Share Value</p>
                 </div>
             </div>
 
