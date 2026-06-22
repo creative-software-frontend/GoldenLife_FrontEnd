@@ -492,7 +492,7 @@ export default function WalletWithdraw() {
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 {['bkash', 'nagad', 'rocket', 'bank'].map((method) => {
                                     const config = getGatewayConfig(method);
-                                    const isComingSoon = method === 'rocket' || method === 'bank'; // Added Coming Soon Condition
+                                    const isComingSoon = method === 'rocket'; // Added Coming Soon Condition
 
                                     return (
                                         <label

@@ -62,8 +62,25 @@ export default function VendorAddMoney() {
         { id: 'bkash', label: 'bKash', icon: <Smartphone className="w-6 h-6 mb-1" />, active: true },
         { id: 'nagad', label: 'Nagad', icon: <Smartphone className="w-6 h-6 mb-1" />, active: true },
         { id: 'rocket', label: 'Rocket', icon: <Smartphone className="w-6 h-6 mb-1" />, active: false },
-        { id: 'bank', label: 'Bank', icon: <Building2 className="w-6 h-6 mb-1" />, active: false }
+        { id: 'bank', label: 'Bank', icon: <Building2 className="w-6 h-6 mb-1" />, active: true }
     ];
+
+    const [banks, setBanks] = useState<any[]>([]);
+    const [selectedBank, setSelectedBank] = useState<string>('');
+
+    useEffect(() => {
+        const fetchBanks = async () => {
+            try {
+                const { data } = await axios.get(`${baseURL}/api/banks`);
+                if (data?.status === 'success') {
+                    setBanks(data.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch banks", err);
+            }
+        };
+        fetchBanks();
+    }, [baseURL]);
 
     // --- Helpers ---
     const getAuthToken = () => {
@@ -110,6 +127,15 @@ export default function VendorAddMoney() {
             const mobileRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
             if (!mobileRegex.test(accountNumber)) {
                 setError(t('error_invalid_number', "Invalid sender number. Use format: 01XXXXXXXXX"));
+                return false;
+            }
+        } else {
+            if (!selectedBank) {
+                setError(t('error_invalid_bank', "Please select a bank to send money to."));
+                return false;
+            }
+            if (!accountNumber.trim()) {
+                setError(t('error_invalid_account', "Please enter your sender account number."));
                 return false;
             }
         }
@@ -411,15 +437,55 @@ export default function VendorAddMoney() {
 
                             {/* Input Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {paymentMethod === 'bank' && banks.length > 0 && (
+                                    <div className="md:col-span-2 bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Select Bank to Send Money To</label>
+                                        <select 
+                                            className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-4"
+                                            value={selectedBank}
+                                            onChange={(e) => setSelectedBank(e.target.value)}
+                                        >
+                                            <option value="">-- Choose a Bank --</option>
+                                            {banks.map(b => (
+                                                <option key={b.id} value={b.id}>{b.name}</option>
+                                            ))}
+                                        </select>
+
+                                        {selectedBank && (
+                                            <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-xl border border-blue-100 text-sm">
+                                                {banks.filter(b => String(b.id) === String(selectedBank)).map(b => (
+                                                    <React.Fragment key={b.id}>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Account Name</p>
+                                                            <p className="font-bold text-slate-700">{b.account_name}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Account No</p>
+                                                            <p className="font-bold text-slate-700">{b.account_no}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Routing Number</p>
+                                                            <p className="font-bold text-slate-700">{b.routing_number}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Branch</p>
+                                                            <p className="font-bold text-slate-700">{b.address}</p>
+                                                        </div>
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">
-                                        {paymentMethod === 'bank' ? t('reference_account', 'Reference/Account') : t('sender_number', 'Sender Number')}
+                                        {paymentMethod === 'bank' ? t('reference_account', 'Sender Bank Account No') : t('sender_number', 'Sender Number')}
                                     </label>
                                     <input
                                         type="text"
                                         value={accountNumber}
                                         onChange={paymentMethod === 'bank' ? (e) => setAccountNumber(e.target.value) : handlePhoneInput}
-                                        placeholder={paymentMethod === 'bank' ? t('account_no', "Account No") : "01XXXXXXXXX"}
+                                        placeholder={paymentMethod === 'bank' ? t('account_no', "Your Account No") : "01XXXXXXXXX"}
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
                                     />
                                 </div>

@@ -41,9 +41,9 @@ const HeroSection = () => {
                         slidesPerView={1}
                         // Use autoHeight to let the image's aspect ratio dictate the container size
                         autoHeight={true}
-                        pagination={{ 
-                            clickable: true, 
-                            dynamicBullets: true 
+                        pagination={{
+                            clickable: true,
+                            dynamicBullets: true
                         }}
                         autoplay={{ delay: 5000, disableOnInteraction: false }}
                         // Using Tailwind child selectors for pagination to avoid space character crashes
