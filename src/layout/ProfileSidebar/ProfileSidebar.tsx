@@ -151,8 +151,22 @@ export default function ProfileSidebar() {
     });
 
     // Fallbacks point directly to Zustand store properties or default data blocks instead of localStorage
-    const { data: referralResponse } = useQuery({ queryKey: ['referrals'] });
+    const { data: referralResponse } = useQuery({
+        queryKey: ['referrals'],
+        queryFn: async () => {
+            const session = sessionStorage.getItem("student_session");
+            const token = session ? JSON.parse(session).token : null;
+            if (!token) return null;
+            const response = await axios.get(`${baseURL}/api/referred-students`, {
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
+            });
+            return response.data?.success ? response.data : null;
+        },
+        staleTime: 1000 * 60 * 5
+    });
+
     const currentDesignation = shareData?.designation || dashboardData?.designation || studentProfile?.designation || "";
+    // Prioritize the direct referralResponse star count over the dashboard cache
     const currentStarCount = referralResponse?.star_count || dashboardData?.starCount || studentProfile?.star_count || 0;
     const combinedLoading = isProfileLoading || isDashboardLoading;
 
