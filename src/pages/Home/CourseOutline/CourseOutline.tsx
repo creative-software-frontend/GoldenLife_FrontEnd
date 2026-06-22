@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Heart, ShoppingCart, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import course1 from "../../../../public/image/Banner/Screenshot_3.png"; // Ensure this path is correct
+import course1 from "../../../../public/image/Banner/1.png"; // Ensure this path is correct
 import CourseFeature from "../CourseFeature/CourseFeature";
 
 const CourseOutline = () => {
