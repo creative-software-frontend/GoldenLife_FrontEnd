@@ -5,9 +5,16 @@ import "swiper/css/effect-fade";
 import { Pagination, Autoplay, EffectFade } from "swiper/modules";
 
 // Import your images
-import banner1 from '../../../../public/image/Banner/Screenshot_3.png';
-import banner2 from '../../../../public/image/Banner/Screenshot_4.png';
-import banner3 from '../../../../public/image/Banner/Screenshot_7.png';
+import banner1 from '../../../../public/image/Banner/1.png';
+import banner2 from '../../../../public/image/Banner/2.png';
+import banner3 from '../../../../public/image/Banner/3.png';
+import banner3 from '../../../../public/image/Banner/4.png';
+import banner3 from '../../../../public/image/Banner/5.png';
+import banner3 from '../../../../public/image/Banner/6.png';
+import banner3 from '../../../../public/image/Banner/7.png';
+import banner3 from '../../../../public/image/Banner/8.png';
+import banner3 from '../../../../public/image/Banner/9.png';
+
 
 const HeroSection = () => {
     const banners = [

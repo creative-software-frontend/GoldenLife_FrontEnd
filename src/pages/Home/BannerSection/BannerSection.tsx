@@ -1,7 +1,13 @@
 import React from 'react';
-import sampleImage1 from '../../../../public/image/Banner/Screenshot_6.png';
-import sampleImage2 from '../../../../public/image/Banner/Screenshot_5.png';
-import sampleImage3 from '../../../../public/image/Banner/Screenshot_7.png';
+import banner1 from '../../../../public/image/Banner/1.png';
+import banner2 from '../../../../public/image/Banner/2.png';
+import banner3 from '../../../../public/image/Banner/3.png';
+import banner3 from '../../../../public/image/Banner/4.png';
+import banner3 from '../../../../public/image/Banner/5.png';
+import banner3 from '../../../../public/image/Banner/6.png';
+import banner3 from '../../../../public/image/Banner/7.png';
+import banner3 from '../../../../public/image/Banner/8.png';
+import banner3 from '../../../../public/image/Banner/9.png';
 
 const Banner: React.FC = () => {
     return (
