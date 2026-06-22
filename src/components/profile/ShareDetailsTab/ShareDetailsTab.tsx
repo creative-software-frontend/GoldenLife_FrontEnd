@@ -103,6 +103,13 @@ export default function ShareDetailsTab() {
                     </span>
                 </div>
 
+                {shareData.amount_paid && (
+                    <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
+                        <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Share Value</span>
+                        <span className="text-sm font-black text-slate-800">৳{Number(shareData.amount_paid)}</span>
+                    </div>
+                )}
+
                 {getTargetArea(shareData.location_hierarchy) && (
                     <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
                         <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Target Area</span>

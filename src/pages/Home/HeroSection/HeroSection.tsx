@@ -15,86 +15,67 @@ import banner7 from '../../../../public/image/Banner/7.png';
 import banner8 from '../../../../public/image/Banner/8.png';
 import banner9 from '../../../../public/image/Banner/9.png';
 
-
 const HeroSection = () => {
+    // Include all banners
     const banners = [
-        { id: 1, image: banner1, title: "Welcome to Our Website", description: "Discover amazing features and great content." },
-        { id: 2, image: banner2, title: "Explore Our Services", description: "We offer a wide range of services to suit your needs." },
-        { id: 3, image: banner3, title: "Join Us Today", description: "Become part of our community and enjoy exclusive benefits." },
+        { id: 1, image: banner1 },
+        { id: 2, image: banner2 },
+        { id: 3, image: banner3 },
+        { id: 4, image: banner4 },
+        { id: 5, image: banner5 },
+        { id: 6, image: banner6 },
+        { id: 7, image: banner7 },
+        { id: 8, image: banner8 },
+        { id: 9, image: banner9 },
     ];
 
     return (
-        <>
-            {/* =========================================
-                DESKTOP VIEW (Visible on lg+ screens)
-               ========================================= */}
-            <section className="hidden lg:block w-full px-4 py-6">
-                <div className="max-w-container mx-auto overflow-hidden rounded-2xl shadow-xl bg-gray-900">
+        <section className="w-full px-2 py-3 lg:px-4 lg:py-6">
+            <div className="max-w-[1400px] mx-auto">
+                {/* Unified Responsive Banner Slider */}
+                <div className="relative rounded-2xl lg:rounded-[2rem] overflow-hidden shadow-xl bg-slate-900 border border-slate-100">
                     <Swiper
                         modules={[Pagination, Autoplay, EffectFade]}
                         effect="fade"
                         spaceBetween={0}
                         slidesPerView={1}
-                        pagination={{ clickable: true, dynamicBullets: true }}
+                        // Use autoHeight to let the image's aspect ratio dictate the container size
+                        autoHeight={true}
+                        pagination={{ 
+                            clickable: true, 
+                            dynamicBullets: true 
+                        }}
                         autoplay={{ delay: 5000, disableOnInteraction: false }}
-                        className="h-[400px]"
+                        // Using Tailwind child selectors for pagination to avoid space character crashes
+                        className="w-full [&_.swiper-pagination-bullet]:bg-white [&_.swiper-pagination-bullet]:opacity-50 [&_.swiper-pagination-bullet-active]:bg-emerald-500 [&_.swiper-pagination-bullet-active]:opacity-100"
                     >
                         {banners.map((banner) => (
-                            <SwiperSlide key={banner.id} className="relative group">
-                                <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-black/20" />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                </div>
-            </section>
-
-            {/* =========================================
-                MOBILE & TABLET VIEW (Visible below lg)
-               ========================================= */}
-            <section className="block lg:hidden w-full px-3 py-3">
-                <div className="relative rounded-xl overflow-hidden shadow-lg bg-gray-900">
-
-                    {/* MOBILE SWIPER ADDED HERE */}
-                    <Swiper
-                        modules={[Pagination, Autoplay, EffectFade]}
-                        effect="fade"
-                        spaceBetween={0}
-                        slidesPerView={1}
-                        pagination={{ clickable: true, dynamicBullets: true }}
-                        autoplay={{ delay: 5000, disableOnInteraction: false }}
-                        className="h-[200px] w-full"
-                    >
-                        {banners.map((banner) => (
-                            <SwiperSlide key={banner.id} className="relative w-full h-full">
-                                {/* Background Image */}
+                            <SwiperSlide key={banner.id} className="relative w-full">
+                                {/* Using w-full h-auto ensures the image scales perfectly without any side cropping */}
                                 <img
                                     src={banner.image}
-                                    alt={banner.title}
-                                    className="w-full h-full object-left-top"
+                                    alt={`Banner ${banner.id}`}
+                                    className="w-full h-auto block"
                                 />
-                                {/* Dark overlay to match desktop */}
-                                <div className="absolute inset-0 bg-black/20" />
-
-                                {/* If you want to add the middle image back in later, put it right here inside the SwiperSlide */}
+                                {/* No dark overlays applied so the banner text remains 100% bright and clear */}
                             </SwiperSlide>
                         ))}
                     </Swiper>
                 </div>
 
-                {/* Compact Stats Grid */}
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                    <div className="bg-emerald-50 p-2.5 rounded-lg text-center">
-                        <h3 className="text-emerald-800 font-bold text-base">100+</h3>
-                        <p className="text-emerald-600 text-[10px]">Courses</p>
+                {/* Compact Stats Grid - Only on mobile/tablet */}
+                <div className="grid grid-cols-2 gap-3 mt-4 lg:hidden">
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-xl text-center border border-emerald-100 shadow-sm">
+                        <h3 className="text-emerald-700 font-black text-xl mb-0.5">100+</h3>
+                        <p className="text-emerald-600/80 text-xs font-bold uppercase tracking-wider">Courses</p>
                     </div>
-                    <div className="bg-orange-50 p-2.5 rounded-lg text-center">
-                        <h3 className="text-orange-800 font-bold text-base">50k+</h3>
-                        <p className="text-orange-600 text-[10px]">Students</p>
+                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl text-center border border-amber-100 shadow-sm">
+                        <h3 className="text-amber-700 font-black text-xl mb-0.5">50k+</h3>
+                        <p className="text-amber-600/80 text-xs font-bold uppercase tracking-wider">Students</p>
                     </div>
                 </div>
-            </section>
-        </>
+            </div>
+        </section>
     );
 };
 

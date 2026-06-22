@@ -151,8 +151,9 @@ export default function ProfileSidebar() {
     });
 
     // Fallbacks point directly to Zustand store properties or default data blocks instead of localStorage
+    const { data: referralResponse } = useQuery({ queryKey: ['referrals'] });
     const currentDesignation = shareData?.designation || dashboardData?.designation || studentProfile?.designation || "";
-    const currentStarCount = dashboardData?.starCount || studentProfile?.star_count || 0;
+    const currentStarCount = referralResponse?.star_count || dashboardData?.starCount || studentProfile?.star_count || 0;
     const combinedLoading = isProfileLoading || isDashboardLoading;
 
     const cacheBreaker = Date.now();
