@@ -71,7 +71,7 @@ const SHARE_TYPES: ShareTypeOption[] = [
     value: "union",
     label: "Union - Ambassador",
     bn_label: "ইউনিয়ন অ্যাম্বাসেডর",
-    price: 5000,
+    price: 10000,
     description: "Become a shareholder for a Union area (5,000 ৳)",
     color: "text-green-700",
     bgColor: "bg-green-50 border-green-200",
