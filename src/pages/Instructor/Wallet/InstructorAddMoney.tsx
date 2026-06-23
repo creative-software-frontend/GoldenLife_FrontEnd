@@ -8,6 +8,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useInstructorWallet } from '@/hooks/useInstructorWallet';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { baseURL } from '@/store/utils';
 
 export default function InstructorAddMoney() {
     const navigate = useNavigate();
@@ -23,12 +25,40 @@ export default function InstructorAddMoney() {
     const [showGuideModal, setShowGuideModal] = useState(false);
     const [guideTab, setGuideTab] = useState<'bkash' | 'nagad'>('bkash');
 
+    const [banks, setBanks] = useState<any[]>([]);
+    const [selectedBank, setSelectedBank] = useState<string>('');
+
+    React.useEffect(() => {
+        const fetchBanks = async () => {
+            try {
+                const { data } = await axios.get(`${baseURL}/api/banks`);
+                if (data?.status === 'success') {
+                    setBanks(data.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch banks", err);
+            }
+        };
+        fetchBanks();
+    }, []);
+
     const addTransactions = transactions.filter((t: any) => t.type === 'add');
     const presetAmounts = [500, 1000, 2000, 5000];
 
     const handleAddFunds = async (e: React.FormEvent) => {
         e.preventDefault();
         
+        if (paymentMethod === 'bank') {
+            if (!selectedBank) {
+                alert("Please select a bank to send money to.");
+                return;
+            }
+            if (!accountNumber.trim()) {
+                alert("Please enter your sender account number.");
+                return;
+            }
+        }
+
         const formData = new FormData();
         formData.append('type', 'add');
         formData.append('amount', amount);
@@ -146,9 +176,12 @@ export default function InstructorAddMoney() {
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     {[
-                                        { id: 'bkash', label: 'bKash', color: 'text-[#e2136e]' },
-                                        { id: 'nagad', label: 'Nagad', color: 'text-[#ed1c24]' }
-                                    ].map((method) => (
+                                        { id: 'bkash', label: 'bKash', color: 'text-[#e2136e]', icon: Smartphone },
+                                        { id: 'nagad', label: 'Nagad', color: 'text-[#ed1c24]', icon: Smartphone },
+                                        { id: 'bank', label: 'Bank', color: 'text-blue-600', icon: Building2 }
+                                    ].map((method) => {
+                                        const Icon = method.icon;
+                                        return (
                                         <label
                                             key={method.id}
                                             className={cn(
@@ -162,22 +195,64 @@ export default function InstructorAddMoney() {
                                                 onChange={() => setPaymentMethod(method.id)}
                                                 checked={paymentMethod === method.id}
                                             />
-                                            <Smartphone className={cn("w-6 h-6 mb-1", method.color)} />
+                                            <Icon className={cn("w-6 h-6 mb-1", method.color)} />
                                             {method.label}
                                         </label>
-                                    ))}
+                                    )})}
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {paymentMethod === 'bank' && banks.length > 0 && (
+                                    <div className="md:col-span-2 bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Select Bank to Send Money To</label>
+                                        <select 
+                                            className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-4"
+                                            value={selectedBank}
+                                            onChange={(e) => setSelectedBank(e.target.value)}
+                                        >
+                                            <option value="">-- Choose a Bank --</option>
+                                            {banks.map(b => (
+                                                <option key={b.id} value={b.id}>{b.name}</option>
+                                            ))}
+                                        </select>
+
+                                        {selectedBank && (
+                                            <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-xl border border-blue-100 text-sm">
+                                                {banks.filter(b => String(b.id) === String(selectedBank)).map(b => (
+                                                    <React.Fragment key={b.id}>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Account Name</p>
+                                                            <p className="font-bold text-slate-700">{b.account_name}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Account No</p>
+                                                            <p className="font-bold text-slate-700">{b.account_no}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Routing Number</p>
+                                                            <p className="font-bold text-slate-700">{b.routing_number}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-bold text-slate-400">Branch</p>
+                                                            <p className="font-bold text-slate-700">{b.address}</p>
+                                                        </div>
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">Sender Number</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">
+                                        {paymentMethod === 'bank' ? t('reference_account', 'Sender Bank Account No') : 'Sender Number'}
+                                    </label>
                                     <input
                                         type="tel"
                                         value={accountNumber}
-                                        onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ''))}
-                                        placeholder="01XXXXXXXXX"
-                                        maxLength={11}
+                                        onChange={(e) => setAccountNumber(paymentMethod === 'bank' ? e.target.value : e.target.value.replace(/\D/g, ''))}
+                                        placeholder={paymentMethod === 'bank' ? t('account_no', "Your Account No") : "01XXXXXXXXX"}
+                                        maxLength={paymentMethod === 'bank' ? 50 : 11}
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
                                         required
                                     />

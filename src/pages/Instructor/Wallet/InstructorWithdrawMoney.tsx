@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     ArrowLeft, Wallet, Landmark, Smartphone, Minus,
-    CheckCircle2, AlertCircle, Loader2, Clock, X, HelpCircle, KeyRound
+    CheckCircle2, AlertCircle, Loader2, Clock, X, HelpCircle, KeyRound, Building2, ShieldCheck, User
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { toast } from 'react-toastify';
@@ -26,6 +26,12 @@ export default function InstructorWithdrawMoney() {
     const [amount, setAmount] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('bkash');
     const [mfsNumber, setMfsNumber] = useState('');
+    const [bankDetails, setBankDetails] = useState({
+        bankName: '',
+        branchName: '',
+        accountName: '',
+        accountNumber: ''
+    });
     const [showGuideModal, setShowGuideModal] = useState(false);
     const [guideTab, setGuideTab] = useState<'bkash' | 'nagad'>('bkash');
     
@@ -69,6 +75,12 @@ export default function InstructorWithdrawMoney() {
                 setErrorMessage(msg);
                 return;
             }
+        } else if (paymentMethod === 'bank') {
+            if (!bankDetails.bankName || !bankDetails.branchName || !bankDetails.accountName || !bankDetails.accountNumber) {
+                const msg = "Please fill in all required bank details.";
+                setErrorMessage(msg);
+                return;
+            }
         }
 
         setIsConfirmModalOpen(true);
@@ -98,7 +110,7 @@ export default function InstructorWithdrawMoney() {
                 onSuccess={handleWithdrawSuccess}
                 onError={setErrorMessage}
                 amount={amount}
-                accountNumber={mfsNumber}
+                accountNumber={paymentMethod === 'bank' ? `${bankDetails.accountNumber} (${bankDetails.bankName} - ${bankDetails.branchName})` : mfsNumber}
                 paymentMethod={paymentMethod}
                 chargePercentage={parseFloat(String(withdrawCharge).replace(/[^0-9.-]/g, '')) || 0}
                 currentBalance={Number(balance)}
@@ -106,7 +118,7 @@ export default function InstructorWithdrawMoney() {
                     try {
                         const payload = {
                             amount,
-                            number: mfsNumber,
+                            number: paymentMethod === 'bank' ? `${bankDetails.accountNumber} (${bankDetails.bankName} - ${bankDetails.branchName})` : mfsNumber,
                             payment_method: paymentMethod,
                             password: pinCode,
                             pin_code: pinCode
@@ -217,9 +229,13 @@ export default function InstructorWithdrawMoney() {
                             </div>
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {[
-                                    { id: 'bkash', label: 'bKash', color: 'text-[#e2136e]' },
-                                    { id: 'nagad', label: 'Nagad', color: 'text-[#ed1c24]' }
-                                ].map((method) => (
+                                    { id: 'bkash', label: 'bKash', color: 'text-[#e2136e]', icon: Smartphone },
+                                    { id: 'nagad', label: 'Nagad', color: 'text-[#ed1c24]', icon: Smartphone },
+                                    { id: 'rocket', label: 'Rocket', color: 'text-[#8c1515]', icon: Smartphone },
+                                    { id: 'bank', label: 'Bank', color: 'text-blue-600', icon: Landmark }
+                                ].map((method) => {
+                                    const Icon = method.icon;
+                                    return (
                                     <label
                                         key={method.id}
                                         className={cn(
@@ -227,32 +243,66 @@ export default function InstructorWithdrawMoney() {
                                             paymentMethod === method.id ? "border-secondary bg-secondary/5" : "border-slate-100 bg-white hover:border-slate-200"
                                         )}
                                     >
-                                        <input type="radio" className="hidden" onChange={() => setPaymentMethod(method.id)} checked={paymentMethod === method.id} />
-                                        <Smartphone className={cn("w-6 h-6", method.color)} />
+                                        <input type="radio" className="hidden" onChange={() => { setPaymentMethod(method.id); setMfsNumber(''); }} checked={paymentMethod === method.id} />
+                                        <Icon className={cn("w-6 h-6", method.color)} />
                                         {method.label}
                                     </label>
-                                ))}
-                                {['rocket', 'bank'].map(method => (
-                                    <div key={method} className="relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 border-slate-50 bg-slate-50/50 opacity-60 cursor-not-allowed">
-                                        <span className="absolute top-2 right-2 bg-slate-200 text-slate-500 text-[8px] font-black px-1.5 py-0.5 rounded uppercase">Soon</span>
-                                        {method === 'bank' ? <Landmark className="w-6 h-6 text-slate-400" /> : <Smartphone className="w-6 h-6 text-slate-400" />}
-                                        <span className="text-[10px] font-black text-slate-400 uppercase">{method}</span>
-                                    </div>
-                                ))}
+                                )})}
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-xs font-bold text-slate-500 uppercase">{paymentMethod} Account Number</label>
-                            <input
-                                type="tel"
-                                value={mfsNumber}
-                                onChange={(e) => setMfsNumber(e.target.value.replace(/\D/g, ''))}
-                                placeholder="01XXXXXXXXX"
-                                maxLength={11}
-                                className="w-full px-6 py-4 text-base font-semibold bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-secondary outline-none transition-all"
-                                required
-                            />
+                        <div className="space-y-3 p-5 rounded-2xl border border-slate-100 bg-slate-50/50">
+                            {['bkash', 'nagad', 'rocket'].includes(paymentMethod) ? (
+                                <>
+                                    <label className="text-sm font-bold text-slate-700 uppercase">{paymentMethod} Account Number</label>
+                                    <input
+                                        type="tel"
+                                        value={mfsNumber}
+                                        onChange={(e) => setMfsNumber(e.target.value.replace(/\D/g, ''))}
+                                        placeholder="01XXXXXXXXX"
+                                        maxLength={paymentMethod === 'rocket' ? 12 : 11}
+                                        className="w-full px-6 py-4 text-base font-semibold bg-white border border-slate-200 rounded-xl focus:bg-white focus:border-secondary outline-none transition-all"
+                                        required
+                                    />
+                                    <p className="text-[11px] font-medium text-slate-500">
+                                        {paymentMethod === 'rocket' ? "Must be a valid 11 or 12-digit mobile number." : "Must be a valid 11-digit mobile number."}
+                                    </p>
+                                </>
+                            ) : (
+                                <div className="space-y-4">
+                                    <label className="text-sm font-bold text-slate-700 uppercase">Bank Account Details</label>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-slate-500">Bank Name</label>
+                                            <div className="relative">
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Building2 size={16} /></span>
+                                                <input type="text" value={bankDetails.bankName} onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })} placeholder="e.g. City Bank" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-slate-500">Branch Name</label>
+                                            <div className="relative">
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Landmark size={16} /></span>
+                                                <input type="text" value={bankDetails.branchName} onChange={(e) => setBankDetails({ ...bankDetails, branchName: e.target.value })} placeholder="e.g. Gulshan Branch" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-slate-500">Account Name</label>
+                                            <div className="relative">
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><User size={16} /></span>
+                                                <input type="text" value={bankDetails.accountName} onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })} placeholder="e.g. John Doe" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-slate-500">Account Number</label>
+                                            <div className="relative">
+                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><ShieldCheck size={16} /></span>
+                                                <input type="text" value={bankDetails.accountNumber} onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })} placeholder="e.g. 112233445566" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <button

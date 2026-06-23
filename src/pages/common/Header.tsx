@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logo from "./Logo";
 import AuthButtons from "./AuthButtons";
 import { Link } from 'react-router-dom';
+import { Download } from 'lucide-react';
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -22,8 +23,15 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Desktop Auth Buttons */}
-        <div className="hidden md:block">
+        {/* Desktop Auth & Download Buttons */}
+        <div className="hidden md:flex items-center gap-4">
+          <a
+            href="/golden_life.apk"
+            download="golden_life.apk"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all"
+          >
+            <Download size={18} /> Download App
+          </a>
           <AuthButtons />
         </div>
 
@@ -53,8 +61,17 @@ export default function Header() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 py-4">
-          <div className="container mx-auto px-5 flex justify-center">
-            <AuthButtons />
+          <div className="container mx-auto px-5 flex flex-col items-center gap-4">
+            <a
+              href="/golden_life.apk"
+              download="golden_life.apk"
+              className="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-all w-full justify-center"
+            >
+              <Download size={18} /> Download App
+            </a>
+            <div className="w-full flex justify-center">
+              <AuthButtons />
+            </div>
           </div>
         </div>
       )}

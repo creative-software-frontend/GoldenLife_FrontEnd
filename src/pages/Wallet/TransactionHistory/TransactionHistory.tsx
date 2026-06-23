@@ -135,7 +135,7 @@ export default function TransactionHistory() {
                     ) : (
                         <div className="grid grid-cols-1 gap-3 md:gap-4">
                             {transactions.map((tx, idx) => {
-                                const isPositive = tx.type === 'add';
+                                const isPositive = tx.type === 'add' || String(tx.type).toUpperCase() === 'CHECKIN_BONUS';
                                 const isPurchase = tx.type === 'purchase';
                                 const { date, time } = formatDate(tx.created_at);
 

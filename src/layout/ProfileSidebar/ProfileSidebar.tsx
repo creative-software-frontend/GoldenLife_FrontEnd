@@ -151,8 +151,23 @@ export default function ProfileSidebar() {
     });
 
     // Fallbacks point directly to Zustand store properties or default data blocks instead of localStorage
+    const { data: referralResponse } = useQuery({
+        queryKey: ['referrals'],
+        queryFn: async () => {
+            const session = sessionStorage.getItem("student_session");
+            const token = session ? JSON.parse(session).token : null;
+            if (!token) return null;
+            const response = await axios.get(`${baseURL}/api/referred-students`, {
+                headers: { 'X-Auth-Token': `Bearer ${token}` }
+            });
+            return response.data?.success ? response.data : null;
+        },
+        staleTime: 1000 * 60 * 5
+    });
+
     const currentDesignation = shareData?.designation || dashboardData?.designation || studentProfile?.designation || "";
-    const currentStarCount = dashboardData?.starCount || studentProfile?.star_count || 0;
+    // Prioritize the direct referralResponse star count over the dashboard cache
+    const currentStarCount = referralResponse?.star_count || dashboardData?.starCount || studentProfile?.star_count || 0;
     const combinedLoading = isProfileLoading || isDashboardLoading;
 
     const cacheBreaker = Date.now();
@@ -263,12 +278,12 @@ export default function ProfileSidebar() {
                         {isShareLoading ? (
                             <div className="h-4 w-10 bg-slate-200 rounded animate-pulse" />
                         ) : shareData?.amount_paid ? (
-                            <span>{Number(shareData.amount_paid).toLocaleString()} ৳</span>
+                            <span>{Number(shareData.amount_paid)}</span>
                         ) : (
-                            <span>0 ৳</span>
+                            <span>0</span>
                         )}
                     </div>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Amount</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Share Value</p>
                 </div>
             </div>
 
