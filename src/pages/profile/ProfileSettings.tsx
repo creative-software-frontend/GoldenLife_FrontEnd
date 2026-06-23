@@ -93,14 +93,7 @@ export default function ProfileSettings() {
             });
             if (response.data?.success) {
                 toast.success(response.data.message || "Successfully checked in!");
-                setCheckInStatus((prev: any) => ({
-                    ...prev,
-                    is_claimed_today: true,
-                    current_streak_count: prev.current_streak_count + 1,
-                    streak_timeline: prev.streak_timeline.map((day: any) => 
-                        day.day === prev.current_streak_count + 1 ? { ...day, status: 'completed' } : day
-                    )
-                }));
+                handleManualRefresh();
             } else {
                 toast.error(response.data.message || "Failed to check in.");
             }
@@ -327,7 +320,7 @@ export default function ProfileSettings() {
                                     {checkInStatus?.streak_timeline?.map((day: any, i: number) => {
                                         const isCompleted = day.status === 'completed';
                                         return (
-                                            <div key={i} className="flex flex-col items-center gap-2 relative z-10 min-w-[48px]">
+                                            <div key={day.day || i} className="flex flex-col items-center gap-2 relative z-10 min-w-[48px]">
                                                 <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isCompleted ? 'bg-emerald-500 border-emerald-500 text-white shadow-md shadow-emerald-200' : 'bg-slate-50 border-slate-200 text-slate-300'}`}>
                                                     {isCompleted ? <Check size={18} strokeWidth={3} /> : <Lock size={16} />}
                                                 </div>

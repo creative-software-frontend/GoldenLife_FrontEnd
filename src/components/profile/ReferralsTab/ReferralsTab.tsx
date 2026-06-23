@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { baseURL } from '@/store/utils';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
-import { Loader2, Users, User, Phone, CheckCircle, XCircle, Star } from 'lucide-react';
+import { Loader2, Users, User, Phone, CheckCircle, XCircle, Star, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ReferredStudent {
@@ -20,6 +20,7 @@ interface ReferredStudent {
 
 export default function ReferralsTab() {
     const { t } = useTranslation("global");
+    const [searchQuery, setSearchQuery] = useState('');
     const { data: referralResponse, isLoading, error: queryError } = useQuery({
         queryKey: ['referrals'],
         queryFn: async () => {
@@ -48,6 +49,15 @@ export default function ReferralsTab() {
     const activeReferred = referralResponse?.active_referred ?? 0;
     const discountPercentage = referralResponse?.discount_percentage ?? "0%";
     const starCount = referralResponse?.star_count ?? 0;
+
+    const filteredReferrals = referrals.filter((r) => {
+        const q = searchQuery.toLowerCase();
+        return (
+            r.name.toLowerCase().includes(q) ||
+            (r.affiliate_id || '').toLowerCase().includes(q) ||
+            (r.mobile || '').includes(q)
+        );
+    });
 
     const avatarUrl = (img: string | null, name: string) => {
         if (img) return img.startsWith('http') ? img : `${baseURL}/uploads/student/image/${img}`;
@@ -150,6 +160,28 @@ export default function ReferralsTab() {
                 </div>
             </div>
 
+            {/* Search Bar */}
+            <div className="relative mb-6">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                    <Search size={16} />
+                </span>
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by name, affiliate ID, or phone…"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:border-emerald-400 focus:bg-white transition-all"
+                />
+                {searchQuery && (
+                    <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold px-2 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+                    >
+                        Clear
+                    </button>
+                )}
+            </div>
+
             {referrals.length === 0 ? (
                 <div className="text-center py-16">
                     <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -168,13 +200,19 @@ export default function ReferralsTab() {
                                 <tr className="border-b-2 border-slate-100">
                                     <th className="pb-4 font-bold text-slate-400 uppercase text-[11px] tracking-wider">Student</th>
                                     <th className="pb-4 font-bold text-slate-400 uppercase text-[11px] tracking-wider">Affiliate ID</th>
-                                    <th className="pb-4 font-bold text-slate-400 uppercase text-[11px] tracking-wider">Contact</th>
                                     <th className="pb-4 font-bold text-slate-400 uppercase text-[11px] tracking-wider">Joined Date</th>
                                     <th className="pb-4 font-bold text-slate-400 uppercase text-[11px] tracking-wider text-right">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-50">
-                                {referrals.map((req, idx) => (
+                                {filteredReferrals.length === 0 && searchQuery ? (
+                                <tr>
+                                    <td colSpan={4} className="py-12 text-center text-slate-400 font-medium">
+                                        No results found for &quot;{searchQuery}&quot;
+                                    </td>
+                                </tr>
+                            ) : null}
+                {filteredReferrals.map((req, idx) => (
                                     <motion.tr
                                         key={req.id}
                                         initial={{ opacity: 0, y: 10 }}
@@ -193,7 +231,9 @@ export default function ReferralsTab() {
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-slate-800 capitalize">{req.name}</p>
-                                                    <p className="text-xs text-slate-400 font-medium max-w-[150px] truncate">{req.email}</p>
+                                                    <p className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                                                        <Phone size={11} className="text-slate-300" />{req.mobile}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </td>
@@ -202,11 +242,7 @@ export default function ReferralsTab() {
                                                 {req.affiliate_id}
                                             </div>
                                         </td>
-                                        <td className="py-4 font-medium text-slate-600">
-                                            <div className="flex items-center gap-1 whitespace-nowrap">
-                                                <Phone size={14} className="text-slate-400" /> {req.mobile}
-                                            </div>
-                                        </td>
+
                                         <td className="py-4 font-medium text-slate-600">
                                             {format(new Date(req.created_at), 'dd MMM yyyy')}
                                         </td>
@@ -227,7 +263,7 @@ export default function ReferralsTab() {
 
                     {/* Mobile View: Cards */}
                     <div className="grid gap-4 md:hidden">
-                        {referrals.map((req, idx) => (
+                        {filteredReferrals.map((req, idx) => (
                             <motion.div
                                 key={req.id}
                                 initial={{ opacity: 0, scale: 0.98 }}
@@ -246,7 +282,9 @@ export default function ReferralsTab() {
                                         </div>
                                         <div>
                                             <p className="font-bold text-slate-800 capitalize leading-tight">{req.name}</p>
-                                            <p className="text-xs text-slate-400 font-medium truncate max-w-[120px]">{req.email}</p>
+                                            <p className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                                                <Phone size={11} className="text-slate-300" />{req.mobile}
+                                            </p>
                                         </div>
                                     </div>
                                     <span className={`shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${req.status.toLowerCase() === 'active'
@@ -260,12 +298,6 @@ export default function ReferralsTab() {
                                     <div>
                                         <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Affiliate ID</p>
                                         <p className="font-mono text-slate-700 font-bold">{req.affiliate_id}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Contact</p>
-                                        <p className="text-slate-700 font-bold flex items-center gap-1">
-                                            <Phone size={12} className="text-slate-400" /> {req.mobile}
-                                        </p>
                                     </div>
                                     <div className="col-span-2">
                                         <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Joined Date</p>

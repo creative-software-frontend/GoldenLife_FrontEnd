@@ -165,7 +165,20 @@ export default function ProfileSidebar() {
         staleTime: 1000 * 60 * 5
     });
 
-    const currentDesignation = shareData?.designation || dashboardData?.designation || studentProfile?.designation || "";
+    // Clean designation string: remove leading *, replace spaces between words with /
+    const cleanDesignation = (raw: string): string => {
+        if (!raw) return '';
+        return raw
+            .replace(/^[*\s]+/, '')       // strip leading asterisks and spaces
+            .replace(/\s*\*\s*/g, '/')    // replace any remaining " * " separators with /
+            .replace(/\s+/g, '/')         // replace remaining spaces with /
+            .replace(/\/+/g, '/')         // collapse multiple slashes
+            .replace(/\/$/, '');          // strip trailing slash
+    };
+
+    const currentDesignation = cleanDesignation(
+        shareData?.designation || dashboardData?.designation || studentProfile?.designation || ''
+    );
     // Prioritize the direct referralResponse star count over the dashboard cache
     const currentStarCount = referralResponse?.star_count || dashboardData?.starCount || studentProfile?.star_count || 0;
     const combinedLoading = isProfileLoading || isDashboardLoading;
@@ -183,7 +196,7 @@ export default function ProfileSidebar() {
         { path: 'nominee-info', label: 'Nominee Information', icon: UserCircle2 },
         { path: 'Additional-info', label: 'Additional Information', icon: Info },
         { path: 'Change-passward', label: 'Change Password', icon: ShieldCheck },
-        { path: 'ShareDetails', label: 'ShareDetails', icon: Users },
+        { path: 'ShareDetails', label: 'Share Details', icon: Users },
         { path: 'referrals', label: 'Refer', icon: Users },
 
 
@@ -226,14 +239,22 @@ export default function ProfileSidebar() {
                             </h3>
 
                             {(currentDesignation || currentStarCount > 0) && (
-                                <div className="flex items-center justify-center gap-2 mt-1 flex-wrap">
+                                <div className="inline-flex items-center gap-1.5 mt-1 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm">
+                                    {/* Designation first */}
                                     {currentDesignation && (
-                                        <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 text-xs font-black rounded-full border border-emerald-100 uppercase tracking-wider">
+                                        <span className="text-[11px] font-black text-emerald-700 uppercase tracking-wider leading-none">
                                             {currentDesignation}
                                         </span>
                                     )}
+
+                                    {/* Divider */}
+                                    {currentStarCount > 0 && currentDesignation && (
+                                        <span className="text-slate-300 font-black text-sm leading-none">/</span>
+                                    )}
+
+                                    {/* Stars second */}
                                     {currentStarCount > 0 && (
-                                        <div className="flex items-center gap-0.5 bg-amber-50 text-amber-700 px-2 py-1 rounded-full border border-amber-100 text-xs font-black">
+                                        <div className="flex items-center gap-0.5">
                                             {Array.from({ length: currentStarCount }).map((_, i) => (
                                                 <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                                             ))}

@@ -22,6 +22,7 @@ export default function InstructorAddMoney() {
     const [accountNumber, setAccountNumber] = useState<string>('');
     const [trxId, setTrxId] = useState<string>('');
     const [attachment, setAttachment] = useState<File | null>(null);
+    const [senderBankName, setSenderBankName] = useState<string>('');
     const [showGuideModal, setShowGuideModal] = useState(false);
     const [guideTab, setGuideTab] = useState<'bkash' | 'nagad'>('bkash');
 
@@ -47,10 +48,14 @@ export default function InstructorAddMoney() {
 
     const handleAddFunds = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (paymentMethod === 'bank') {
             if (!selectedBank) {
                 alert("Please select a bank to send money to.");
+                return;
+            }
+            if (!senderBankName) {
+                alert("Please select your bank name.");
                 return;
             }
             if (!accountNumber.trim()) {
@@ -65,6 +70,9 @@ export default function InstructorAddMoney() {
         formData.append('number', accountNumber);
         formData.append('Transaction_ID', trxId.toUpperCase());
         formData.append('payment_method', paymentMethod);
+        if (paymentMethod === 'bank') {
+            formData.append('sender_bank_name', senderBankName);
+        }
         formData.append('role', '4'); // Instructor role
 
         if (attachment) {
@@ -76,6 +84,7 @@ export default function InstructorAddMoney() {
             setAmount('');
             setAccountNumber('');
             setTrxId('');
+            setSenderBankName('');
             setAttachment(null);
         } catch (err) {
             // Error handled by mutation
@@ -182,31 +191,32 @@ export default function InstructorAddMoney() {
                                     ].map((method) => {
                                         const Icon = method.icon;
                                         return (
-                                        <label
-                                            key={method.id}
-                                            className={cn(
-                                                "relative flex flex-col items-center justify-center gap-2 py-6 px-4 rounded-2xl border-2 cursor-pointer transition-all uppercase text-[12px] font-black bg-white",
-                                                paymentMethod === method.id ? "border-green-600 bg-green-50/30" : "border-slate-100 hover:border-slate-200 shadow-sm"
-                                            )}
-                                        >
-                                            <input
-                                                type="radio"
-                                                className="hidden"
-                                                onChange={() => setPaymentMethod(method.id)}
-                                                checked={paymentMethod === method.id}
-                                            />
-                                            <Icon className={cn("w-6 h-6 mb-1", method.color)} />
-                                            {method.label}
-                                        </label>
-                                    )})}
+                                            <label
+                                                key={method.id}
+                                                className={cn(
+                                                    "relative flex flex-col items-center justify-center gap-2 py-6 px-4 rounded-2xl border-2 cursor-pointer transition-all uppercase text-[12px] font-black bg-white",
+                                                    paymentMethod === method.id ? "border-green-600 bg-green-50/30" : "border-slate-100 hover:border-slate-200 shadow-sm"
+                                                )}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    className="hidden"
+                                                    onChange={() => setPaymentMethod(method.id)}
+                                                    checked={paymentMethod === method.id}
+                                                />
+                                                <Icon className={cn("w-6 h-6 mb-1", method.color)} />
+                                                {method.label}
+                                            </label>
+                                        )
+                                    })}
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {paymentMethod === 'bank' && banks.length > 0 && (
                                     <div className="md:col-span-2 bg-blue-50 border border-blue-100 rounded-2xl p-5 mb-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Select Bank to Send Money To</label>
-                                        <select 
+                                        <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Receiver bank </label>
+                                        <select
                                             className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-4"
                                             value={selectedBank}
                                             onChange={(e) => setSelectedBank(e.target.value)}
@@ -243,6 +253,33 @@ export default function InstructorAddMoney() {
                                         )}
                                     </div>
                                 )}
+
+                                {paymentMethod === 'bank' && (
+                                    <div className="space-y-2 md:col-span-2">
+                                        <label className="text-xs font-bold text-slate-500 uppercase">Bank Sender Name (Your Bank)</label>
+                                        <select
+                                            value={senderBankName}
+                                            onChange={(e) => setSenderBankName(e.target.value)}
+                                            className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all text-slate-700 font-medium"
+                                        >
+                                            <option value="">-- Select Your Bank --</option>
+                                            {[
+                                                "AB Bank PLC", "Agrani Bank PLC", "Bangladesh Krishi Bank", "Bank Asia PLC", "BRAC Bank PLC",
+                                                "City Bank PLC", "Dhaka Bank PLC", "Dutch Bangla Bank PLC", "Eastern Bank PLC", "Global Islami Bank PLC",
+                                                "HSBC", "ICB Islamic Bank", "IFIC Bank PLC", "Islami Bank Bangladesh PLC", "Jamuna Bank PLC",
+                                                "Janata Bank PLC", "Meghna Bank PLC", "Mercantile Bank PLC", "Midland Bank PLC", "Modhumoti Bank PLC",
+                                                "Mutual Trust Bank PLC", "National Bank PLC", "NCC Bank PLC", "NRB Bank PLC", "One Bank PLC",
+                                                "Padma Bank PLC", "Premier Bank PLC", "Prime Bank PLC", "Pubali Bank PLC", "Rajshahi Krishi Unnayan Bank",
+                                                "Rupali Bank PLC", "SBAC Bank PLC", "Shahjalal Islami Bank PLC", "Social Islami Bank PLC", "Sonali Bank PLC",
+                                                "South Bangla Agriculture Bank PLC", "Southeast Bank PLC", "Standard Chartered Bank", "State Bank of India",
+                                                "Trust Bank PLC", "Union Bank PLC", "United Commercial Bank PLC", "Uttara Bank PLC", "Others (International / Local)"
+                                            ].map(bank => (
+                                                <option key={bank} value={bank}>{bank}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                )}
+
                                 <div className="space-y-2">
                                     <label className="text-xs font-bold text-slate-500 uppercase">
                                         {paymentMethod === 'bank' ? t('reference_account', 'Sender Bank Account No') : 'Sender Number'}

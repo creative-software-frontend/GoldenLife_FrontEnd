@@ -20,12 +20,26 @@ export default function InstructorWithdrawMoney() {
 
     useEffect(() => {
         fetchCharges();
+        const fetchBanks = async () => {
+            try {
+                // @ts-ignore - wait we need to import axios or use fetch. Let's use fetch.
+                const response = await fetch('https://admin.goldenlifeltd.com/api/banks');
+                const data = await response.json();
+                if (data?.status === 'success') {
+                    setBanks(data.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch banks", err);
+            }
+        };
+        fetchBanks();
     }, []);
 
     const [activeTab, setActiveTab] = useState<'withdraw' | 'history'>('withdraw');
     const [amount, setAmount] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('bkash');
     const [mfsNumber, setMfsNumber] = useState('');
+    const [banks, setBanks] = useState<any[]>([]);
     const [bankDetails, setBankDetails] = useState({
         bankName: '',
         branchName: '',
@@ -276,7 +290,17 @@ export default function InstructorWithdrawMoney() {
                                             <label className="text-xs font-semibold text-slate-500">Bank Name</label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Building2 size={16} /></span>
-                                                <input type="text" value={bankDetails.bankName} onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })} placeholder="e.g. City Bank" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                                <select
+                                                    value={bankDetails.bankName}
+                                                    onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
+                                                    className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all appearance-none"
+                                                    required
+                                                >
+                                                    <option value="">-- Select Bank --</option>
+                                                    {banks.map((b) => (
+                                                        <option key={b.id} value={b.name}>{b.name}</option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
