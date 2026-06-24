@@ -178,7 +178,7 @@ export default function ProjectOverviewTab() {
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 px-4 sm:px-10 py-4 lg:py-6">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/40 bg-primary/10 text-[10px] font-black uppercase tracking-widest text-primary-light backdrop-blur-sm">
                                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                                Official Student
+                                {student.status === 'active' ? 'Verified' : 'Unverified'}
                             </span>
                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest backdrop-blur-sm ${student.status === 'Active' ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400' : 'border-rose-500/40 bg-rose-500/10 text-rose-400'}`}>
                                 <span className={`w-1.5 h-1.5 rounded-full ${student.status === 'Active' ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
