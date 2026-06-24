@@ -122,8 +122,9 @@ export default function ShareDetailsTab() {
                 <div className="flex justify-between items-center p-4 sm:p-5 bg-slate-50 rounded-2xl">
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Purchase Date & time</span>
                     <span className="text-sm font-bold text-slate-800">
-                        {new Date(shareData.purchased_at).toLocaleDateString('en-GB', {
-                            day: '2-digit', month: 'short', year: 'numeric'
+                        {new Date(shareData.purchased_at).toLocaleString('en-GB', {
+                            day: '2-digit', month: 'short', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit', hour12: true
                         })}
                     </span>
                 </div>

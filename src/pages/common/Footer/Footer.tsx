@@ -99,7 +99,7 @@ const Footer = () => {
                         <p className="text-xl md:text-2xl font-black tracking-tighter">09649 866 966</p>
                     </div>
                     <p className="text-gray-500 text-sm font-medium italic opacity-80">
-                        or support@goldenlife.com
+                        or support@goldenlife.vercel.app
                     </p>
                 </div>
             </div>

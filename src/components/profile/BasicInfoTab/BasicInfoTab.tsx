@@ -49,9 +49,22 @@ export default function BasicInfoTab() {
                     <div className="text-center sm:text-left space-y-1">
                         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{student?.name || 'Loading...'}</h2>
                         <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-2">
-                            <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest rounded-lg border border-primary/10">
-                                Verified Member
-                            </span>
+                            {student?.status?.toLowerCase() === 'active' ? (
+                                <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-blue-100 flex items-center gap-1.5">
+                                    <span className="relative flex h-1.5 w-1.5">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-500"></span>
+                                    </span>
+                                    Verified Member
+                                </span>
+                            ) : (
+                                <span className="px-3 py-1 bg-rose-50 text-rose-600 text-[10px] font-black uppercase tracking-widest rounded-lg border border-rose-100 flex items-center gap-1.5">
+                                    <span className="relative flex h-1.5 w-1.5">
+                                        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
+                                    </span>
+                                    Unverified Member
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

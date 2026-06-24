@@ -5,14 +5,14 @@ import { Phone, Mail, MapPin, Send } from 'lucide-react';
 const Contact = () => {
     return (
         <div className="min-h-[70vh] bg-transparent py-8 px-4 sm:px-6 lg:px-8">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-6xl mx-auto space-y-16"
             >
                 {/* Hero Section */}
                 <section className="text-center max-w-3xl mx-auto">
-                    <motion.h1 
+                    <motion.h1
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="text-4xl md:text-5xl font-black mb-6 text-gray-800 tracking-tight"
@@ -30,10 +30,10 @@ const Contact = () => {
                     <div className="lg:col-span-1 space-y-4">
                         {[
                             { icon: Phone, title: "Phone", info: "+1 123-456-7890", color: "text-blue-500", bg: "bg-blue-50" },
-                            { icon: Mail, title: "Email", info: "support@goldenlife.com", color: "text-emerald-500", bg: "bg-emerald-50" },
+                            { icon: Mail, title: "Email", info: "support@goldenlife.vercel.app", color: "text-emerald-500", bg: "bg-emerald-50" },
                             { icon: MapPin, title: "Address", info: "123 Golden Life Street, City", color: "text-purple-500", bg: "bg-purple-50" }
                         ].map((item, idx) => (
-                            <motion.div 
+                            <motion.div
                                 key={idx}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -52,7 +52,7 @@ const Contact = () => {
                     </div>
 
                     {/* Contact Form */}
-                    <motion.section 
+                    <motion.section
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 }}
@@ -61,7 +61,7 @@ const Contact = () => {
                         <h2 className="text-2xl font-bold mb-8 text-gray-800 flex items-center gap-2">
                             Send a Message
                         </h2>
-                        
+
                         <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div>

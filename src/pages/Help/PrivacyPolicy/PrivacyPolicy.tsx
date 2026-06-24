@@ -4,14 +4,14 @@ import { motion } from 'framer-motion';
 const PrivacyPolicy = () => {
     return (
         <div className="min-h-[70vh] bg-transparent py-8 px-4 sm:px-6 lg:px-8">
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-4xl mx-auto space-y-12"
             >
                 {/* Header */}
                 <header className="text-center">
-                    <motion.h1 
+                    <motion.h1
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="text-4xl md:text-5xl font-black mb-4 text-gray-800 tracking-tight"
@@ -24,14 +24,14 @@ const PrivacyPolicy = () => {
                 </header>
 
                 {/* Content */}
-                <motion.section 
+                <motion.section
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.2 }}
                     className="bg-white p-8 md:p-12 shadow-sm border border-gray-100 rounded-[2rem] space-y-10 relative overflow-hidden"
                 >
                     <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
-                    
+
                     {[
                         {
                             title: "1. Introduction",
@@ -96,11 +96,11 @@ const PrivacyPolicy = () => {
                         </p>
                         <div className="space-y-2 bg-gray-50 p-6 rounded-2xl">
                             <p className="text-gray-800 font-bold flex items-center">
-                                <span className="text-gray-500 w-16">Email:</span> 
-                                <a href="mailto:support@goldenlife.com" className="text-emerald-600 hover:underline">support@goldenlife.com</a>
+                                <span className="text-gray-500 w-16">Email:</span>
+                                <a href="mailto:support@goldenlife.vercel.app" className="text-emerald-600 hover:underline">support@goldenlife.vercel.app</a>
                             </p>
                             <p className="text-gray-800 font-bold flex items-center">
-                                <span className="text-gray-500 w-16">Phone:</span> 
+                                <span className="text-gray-500 w-16">Phone:</span>
                                 +1 123-456-7890
                             </p>
                         </div>

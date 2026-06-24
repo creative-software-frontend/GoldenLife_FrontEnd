@@ -234,9 +234,20 @@ export default function ProfileSidebar() {
                         <div className="h-6 w-32 bg-slate-200 rounded-lg animate-pulse mb-1" />
                     ) : (
                         <>
-                            <h3 className="font-black text-xl text-slate-800 tracking-tight capitalize">
-                                {studentProfile?.name || "Student"}
-                            </h3>
+                            <div className="flex items-center justify-center gap-2">
+                                <h3 className="font-black text-xl text-slate-800 tracking-tight capitalize">
+                                    {studentProfile?.name || "Student"}
+                                </h3>
+                                <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full border ${studentProfile?.status?.toLowerCase() === 'active' ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-rose-50 border-rose-200 text-rose-600'}`}>
+                                    <span className={`relative flex h-1.5 w-1.5`}>
+                                        {studentProfile?.status?.toLowerCase() === 'active' && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>}
+                                        <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${studentProfile?.status?.toLowerCase() === 'active' ? 'bg-blue-500' : 'bg-rose-500'}`}></span>
+                                    </span>
+                                    <span className="text-[9px] font-black uppercase tracking-wider">
+                                        {studentProfile?.status?.toLowerCase() === 'active' ? 'Verified' : 'Unverified'}
+                                    </span>
+                                </div>
+                            </div>
 
                             {(currentDesignation || currentStarCount > 0) && (
                                 <div className="inline-flex items-center gap-1.5 mt-1 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm">
@@ -332,7 +343,14 @@ export default function ProfileSidebar() {
                                         className={`transition-all duration-300 ${isActive ? 'text-primary scale-110' : 'text-slate-300 group-hover:text-primary group-hover:scale-110'
                                             }`}
                                     />
-                                    {link.label}
+                                    <span className="flex-1">{link.label}</span>
+                                    {link.path === 'project-overview-info' && (
+                                        <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full border ${studentProfile?.status?.toLowerCase() === 'active' ? 'bg-blue-50 border-blue-200 text-blue-600' : 'bg-rose-50 border-rose-200 text-rose-600'}`}>
+                                            <span className="text-[9px] font-black uppercase tracking-wider">
+                                                {studentProfile?.status?.toLowerCase() === 'active' ? 'Verified' : 'Unverified'}
+                                            </span>
+                                        </div>
+                                    )}
                                 </>
                             )}
                         </NavLink>
