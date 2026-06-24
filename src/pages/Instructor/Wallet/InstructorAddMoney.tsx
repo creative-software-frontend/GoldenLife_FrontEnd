@@ -10,6 +10,7 @@ import { useInstructorWallet } from '@/hooks/useInstructorWallet';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { baseURL } from '@/store/utils';
+import { BANGLADESHI_BANKS } from '@/data/banksData';
 
 export default function InstructorAddMoney() {
     const navigate = useNavigate();
@@ -255,7 +256,7 @@ export default function InstructorAddMoney() {
                                 )}
 
                                 {paymentMethod === 'bank' && (
-                                    <div className="space-y-2 md:col-span-2">
+                                    <div className="space-y-2 md:col-span-2">Sender Bank Name
                                         <label className="text-xs font-bold text-slate-500 uppercase">Bank Sender Name (Your Bank)</label>
                                         <select
                                             value={senderBankName}
@@ -263,17 +264,7 @@ export default function InstructorAddMoney() {
                                             className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all text-slate-700 font-medium"
                                         >
                                             <option value="">-- Select Your Bank --</option>
-                                            {[
-                                                "AB Bank PLC", "Agrani Bank PLC", "Bangladesh Krishi Bank", "Bank Asia PLC", "BRAC Bank PLC",
-                                                "City Bank PLC", "Dhaka Bank PLC", "Dutch Bangla Bank PLC", "Eastern Bank PLC", "Global Islami Bank PLC",
-                                                "HSBC", "ICB Islamic Bank", "IFIC Bank PLC", "Islami Bank Bangladesh PLC", "Jamuna Bank PLC",
-                                                "Janata Bank PLC", "Meghna Bank PLC", "Mercantile Bank PLC", "Midland Bank PLC", "Modhumoti Bank PLC",
-                                                "Mutual Trust Bank PLC", "National Bank PLC", "NCC Bank PLC", "NRB Bank PLC", "One Bank PLC",
-                                                "Padma Bank PLC", "Premier Bank PLC", "Prime Bank PLC", "Pubali Bank PLC", "Rajshahi Krishi Unnayan Bank",
-                                                "Rupali Bank PLC", "SBAC Bank PLC", "Shahjalal Islami Bank PLC", "Social Islami Bank PLC", "Sonali Bank PLC",
-                                                "South Bangla Agriculture Bank PLC", "Southeast Bank PLC", "Standard Chartered Bank", "State Bank of India",
-                                                "Trust Bank PLC", "Union Bank PLC", "United Commercial Bank PLC", "Uttara Bank PLC", "Others (International / Local)"
-                                            ].map(bank => (
+                                            {BANGLADESHI_BANKS.map(bank => (
                                                 <option key={bank} value={bank}>{bank}</option>
                                             ))}
                                         </select>

@@ -189,15 +189,15 @@ export default function ProfileSidebar() {
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(studentProfile?.name || 'Student')}&background=FF8A00&color=fff&bold=true`;
 
     const links = [
-        { path: 'project-overview-info', label: 'Project Overview', icon: LayoutDashboard },
+        { path: 'project-overview-info', label: 'Overview', icon: LayoutDashboard },
         { path: 'basic-info', label: 'Basic Information', icon: User },
         { path: 'personal-info', label: 'Personal Information', icon: FileText },
         { path: 'document-info', label: 'Document Information', icon: FileBadge },
         { path: 'nominee-info', label: 'Nominee Information', icon: UserCircle2 },
         { path: 'Additional-info', label: 'Additional Information', icon: Info },
         { path: 'Change-passward', label: 'Change Password', icon: ShieldCheck },
-        { path: 'ShareDetails', label: 'Share Details', icon: Share },
-        { path: 'referrals', label: 'Refer', icon: Users },
+        { path: 'ShareDetails', label: 'Share Information', icon: Users },
+        { path: 'referrals', label: 'Refer Information', icon: Users },
 
 
     ];
@@ -249,7 +249,7 @@ export default function ProfileSidebar() {
 
                                     {/* Divider */}
                                     {currentStarCount > 0 && currentDesignation && (
-                                        <span className="text-slate-300 font-black text-sm leading-none">/</span>
+                                        <span className="text-slate-300 font-black text-sm leading-none">|</span>
                                     )}
 
                                     {/* Stars second */}

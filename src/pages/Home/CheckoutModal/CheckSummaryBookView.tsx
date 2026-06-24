@@ -354,8 +354,8 @@ const CheckSummaryBookView = ({
                 <div className="flex flex-col gap-3">
                     <button
                         onClick={handleConfirm}
-                        disabled={isPlacingOrder || isInsufficientBalance}
-                        className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase transition-all flex items-center justify-center gap-2 ${(isPlacingOrder || isInsufficientBalance)
+                        disabled={isPlacingOrder || isInsufficientBalance || !termsAccepted || paymentMethod !== 'Wallet'}
+                        className={`w-full h-14 rounded-2xl text-[14px] font-black uppercase transition-all flex items-center justify-center gap-2 ${(isPlacingOrder || isInsufficientBalance || !termsAccepted || paymentMethod !== 'Wallet')
                             ? "bg-gray-300 text-gray-500 cursor-not-allowed border-none"
                             : "bg-[#5C9C72] hover:bg-[#4a855d] shadow-xl shadow-green-100 text-white active:scale-[0.97]"
                             }`}

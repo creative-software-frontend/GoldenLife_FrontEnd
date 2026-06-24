@@ -256,8 +256,8 @@ export const BuyShareModal = ({ isOpen, onClose }: BuyShareModalProps) => {
         fetchProfile(true);
         handleClose();
       },
-      onError: (err) => {
-        toast.error(err.message ?? "Failed to purchase share.");
+      onError: (err: any) => {
+        toast.error(err.response?.data?.message || err.message || "Failed to purchase share.");
       },
     });
   };

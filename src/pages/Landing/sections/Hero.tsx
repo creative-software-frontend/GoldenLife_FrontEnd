@@ -3,7 +3,7 @@ import { Download, Smartphone } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative z-10 min-h-[calc(100vh-120px)] flex items-center px-5 md:px-8 py-16 md:py-24">
+    <section className="relative z-10 px-5 md:px-8 py-16 md:py-24">
       <div className="container mx-auto">
         <div className="max-w-3xl">
 
@@ -38,8 +38,8 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Customer App */}
             <a
-              href="/golden_life_customer.apk"
-              download="golden_life_customer.apk"
+              href="/goldenlife_customer.apk"
+              download="goldenlife_customer.apk"
               id="hero-download-customer-apk"
               className="group flex items-center gap-3 px-6 py-4 bg-[#FF8A00] hover:bg-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-orange-300/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto justify-center"
             >
@@ -55,8 +55,8 @@ export default function Hero() {
 
             {/* Vendor App */}
             <a
-              href="/golden_life_vendor.apk"
-              download="golden_life_vendor.apk"
+              href="/goldenlife_vendor.apk"
+              download="goldenlife_vendor.apk"
               id="hero-download-vendor-apk"
               className="group flex items-center gap-3 px-6 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-2xl shadow-lg shadow-slate-900/30 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto justify-center border border-white/10"
             >
@@ -80,4 +80,4 @@ export default function Hero() {
       </div>
     </section>
   );
-}
+}

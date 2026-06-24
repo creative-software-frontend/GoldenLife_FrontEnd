@@ -12,6 +12,7 @@ import ConfirmWithdrawModal from '@/pages/Wallet/ConfirmWithdrawModal/ConfirmWit
 import { useAppStore } from '@/store/useAppStore';
 import { useTimedMessage } from '@/hooks/useTimedMessage';
 import type { Transaction } from '@/store/slices/walletSlice';
+import { BANGLADESHI_BANKS } from '@/data/banksData';
 
 
 
@@ -572,22 +573,19 @@ export default function VendorWithdraw() {
                                 <div className="space-y-4">
                                     <label className="text-sm font-bold text-slate-700 uppercase">Bank Account Details</label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-slate-500">Bank Name</label>
-                                            <div className="relative">
-                                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Building2 size={16} /></span>
-                                                <select
-                                                    value={bankDetails.bankName}
-                                                    onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
-                                                    className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all appearance-none"
-                                                    required
-                                                >
-                                                    <option value="">-- Select Bank --</option>
-                                                    {banks.map((b) => (
-                                                        <option key={b.id} value={b.name}>{b.name}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                        <div className="space-y-2 md:col-span-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Bank Receiver Name (Your Bank)</label>
+                                            <select
+                                                value={bankDetails.bankName}
+                                                onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all text-slate-700 font-medium"
+                                                required
+                                            >
+                                                <option value="">-- Select Your Bank --</option>
+                                                {BANGLADESHI_BANKS.map(bank => (
+                                                    <option key={bank} value={bank}>{bank}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                         <div className="space-y-1.5">
                                             <label className="text-xs font-semibold text-slate-500">Branch Name</label>
