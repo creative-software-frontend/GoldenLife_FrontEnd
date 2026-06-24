@@ -26,3 +26,6 @@ dist-ssr
 config.bat
 
 public/golden_life.apk
+
+public/apk/goldenlife_customer.apk
+public/apk/goldenlife_vendor.apk
