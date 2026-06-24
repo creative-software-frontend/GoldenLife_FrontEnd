@@ -38,8 +38,8 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Customer App */}
             <a
-              href="/goldenlife_customer.apk"
-              download="goldenlife_customer.apk"
+              href="/golden_life_customer.apk"
+              download="golden_life_customer.apk"
               id="hero-download-customer-apk"
               className="group flex items-center gap-3 px-6 py-4 bg-[#FF8A00] hover:bg-orange-600 text-white font-bold rounded-2xl shadow-lg shadow-orange-300/40 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto justify-center"
             >
