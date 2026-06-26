@@ -25,7 +25,7 @@ export default function Stats() {
 
             {/* DESCRIPTION */}
             <p className="text-gray-600 leading-relaxed mb-10">
-              Golden Life is one of the largest Multi Vendor and reselling platforms in Banglades. We provide verified products, instant
+              Golden Life is one of the largest Multi Vendor and reselling platforms in Bangladesh. We provide verified products, instant
               payments, fast delivery, and 24/7 customer support to help you
               grow your online business with confidence.
             </p>
