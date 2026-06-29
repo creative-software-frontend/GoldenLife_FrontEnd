@@ -65,7 +65,15 @@ export function InstructorForm({
               {imagePreview ? (
                 <img src={imagePreview} alt="Profile preview" className="w-full h-full object-cover" />
               ) : instructor?.image ? (
-                <img src={`https://admin.goldenlifeltd.com/uploads/instructor/image/${instructor.image}`} alt="Current profile" className="w-full h-full object-cover" />
+                <img 
+                  src={
+                    instructor.image.startsWith('http') 
+                      ? instructor.image 
+                      : `https://admin.goldenlifeltd.com/uploads/instructor/image/${instructor.image.replace(/^\/?(uploads\/instructor\/image\/)?/, '')}`
+                  } 
+                  alt="Current profile" 
+                  className="w-full h-full object-cover" 
+                />
               ) : (
                 <Upload size={40} className="text-gray-400" />
               )}

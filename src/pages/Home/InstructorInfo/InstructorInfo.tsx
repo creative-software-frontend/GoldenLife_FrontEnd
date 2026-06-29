@@ -77,7 +77,7 @@ export default function InstructorInfo() {
 
     const profileImg = instructor.image?.startsWith('http')
         ? instructor.image
-        : `${baseURL}/uploads/instructor/image/${instructor.image?.replace('uploads/instructor/image/', '')}`;
+        : `${baseURL}/uploads/instructor/image/${instructor.image?.replace(/^\/?(uploads\/instructor\/image\/)?/, '')}`;
 
     const bannerImg = instructor.banner?.startsWith('http')
         ? instructor.banner
