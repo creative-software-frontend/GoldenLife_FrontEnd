@@ -236,7 +236,7 @@ const InstrutorCourseList: React.FC = () => {
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-none shadow-2xl">
               <SelectItem value="All" className="font-bold">All Types</SelectItem>
-              <SelectItem value="Course (Video)" className="font-bold">Course (Video)</SelectItem>
+              <SelectItem value="Course Video" className="font-bold">Course Video</SelectItem>
               <SelectItem value="Live Class" className="font-bold">Live Class</SelectItem>
               <SelectItem value="Ebook" className="font-bold">Ebook</SelectItem>
             </SelectContent>
@@ -352,7 +352,7 @@ const InstrutorCourseList: React.FC = () => {
                                 <Edit size={18} className="text-emerald-500 group-hover:scale-110 transition-transform" /> Edit Course
                               </DropdownMenuItem>
 
-                              {course.course_type === 'Course (Video)' && (
+                              {course.course_type === 'Course Video' && (
                                 <>
                                   <DropdownMenuSeparator className="bg-gray-50" />
                                   <DropdownMenuItem
@@ -423,7 +423,7 @@ const InstrutorCourseList: React.FC = () => {
                             <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/view/${course.id}`)}>
                               <Eye size={16} className="mr-2" /> View
                             </DropdownMenuItem>
-                            {course.course_type === 'Course (Video)' && (
+                            {course.course_type === 'Course Video' && (
                               <>
                                 <DropdownMenuSeparator className="bg-gray-50" />
                                 <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/curriculum/${course.id}`)}>

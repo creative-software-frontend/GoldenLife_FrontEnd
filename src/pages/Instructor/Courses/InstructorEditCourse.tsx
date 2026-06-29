@@ -24,7 +24,7 @@ interface Lesson { id: number; title: string; videos: VideoItem[]; duration: str
 interface Module { id: number; title: string; lessons: Lesson[]; open: boolean; }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const COURSE_TYPES = ['Course (Video)', 'Live Class', 'Ebook'];
+const COURSE_TYPES = ['Course Video', 'Live Class', 'Ebook'];
 
 // ─── Styled helpers ───────────────────────────────────────────────────────────
 const inp = 'w-full h-12 px-5 rounded-2xl border border-gray-200 bg-gray-50/50 text-black font-semibold placeholder-gray-400 outline-none focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm shadow-sm';
@@ -133,7 +133,16 @@ const InstructorEditCourse: React.FC = () => {
 
     updateMutation.mutate(fd, {
       onSuccess: () => { toast.success('Course updated successfully!'); handleBack(); },
-      onError: (err) => toast.error(err.message || 'Something went wrong'),
+      onError: (err: any) => {
+        const errors = err.response?.data?.errors;
+        if (errors && typeof errors === 'object') {
+          const errorMessages = Object.values(errors).flat().join(' \u2022 ');
+          toast.error(errorMessages);
+        } else {
+          const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Something went wrong';
+          toast.error(errorMsg);
+        }
+      },
     });
   };
 
