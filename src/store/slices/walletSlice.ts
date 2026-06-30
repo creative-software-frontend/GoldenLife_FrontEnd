@@ -24,6 +24,7 @@ export interface Transaction {
 export interface WalletSlice {
     walletBalance: string;
     transactions: Transaction[];
+    isHistoryLoading: boolean;
     fetchWallet: (silent?: boolean) => Promise<void>;
     fetchHistory: (silent?: boolean) => Promise<void>;
     withdrawFunds: (formData: FormData) => Promise<{ success: boolean; message: string }>;
@@ -38,6 +39,7 @@ export interface WalletSlice {
 export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (set, get) => ({
     walletBalance: "0.00",
     transactions: [],
+    isHistoryLoading: false,
     sendMoneyCharge: "0.00",
     withdrawCharge: "0.00",
 
@@ -76,12 +78,15 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
     },
 
     fetchHistory: async (silent = false) => {
-        // Guard: Use fetched flag for transactions too
-        if (get().isWalletLoading || (get().transactions.length > 0 && !silent)) return;
+        // Use its own loading flag — never block on isWalletLoading (fetchWallet's flag)
+        if (get().isHistoryLoading) return;
+        // If we already have data and this isn't a forced refresh (silent=true), skip
+        if (get().transactions.length > 0 && !silent) return;
 
         const token = getAuthToken();
         if (!token) return;
 
+        set({ isHistoryLoading: true });
         if (!silent) set({ isWalletLoading: true });
 
         try {
@@ -94,8 +99,12 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
                 headers: { 'X-Auth-Token': `Bearer ${token}` }
             });
 
+            // Debug: log raw response to verify structure and 'type' field values
+            console.log('[fetchHistory] raw response:', response.data);
+
             if (response.data?.status === "success" || response.data?.transactions || response.data?.data) {
                 const history = response.data.transactions || response.data.data || [];
+                console.log('[fetchHistory] parsed history count:', history.length, 'sample type:', history[0]?.type);
                 set({
                     transactions: history,
                     isWalletFetched: true
@@ -104,6 +113,7 @@ export const createWalletSlice: StateCreator<AppState, [], [], WalletSlice> = (s
         } catch (error) {
             console.error("History Fetch Error:", error);
         } finally {
+            set({ isHistoryLoading: false });
             if (!silent) set({ isWalletLoading: false });
         }
     },

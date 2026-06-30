@@ -66,6 +66,7 @@ export default function WalletAdd() {
     // --- Helpers ---
     const walletBalance = useAppStore(s => s.walletBalance);
     const isWalletLoading = useAppStore(s => s.isWalletLoading);
+    const isHistoryLoading = useAppStore(s => s.isHistoryLoading);
     const fetchWallet = useAppStore(s => s.fetchWallet);
     const transactions = useAppStore(s => s.transactions);
     const fetchHistory = useAppStore(s => s.fetchHistory);
@@ -74,10 +75,10 @@ export default function WalletAdd() {
         fetchWallet(); // Ensure this is called on mount!
     }, []);
 
-    // Fetch history when switching to history tab
+    // Fetch history when switching to history tab — always force a fresh fetch (silent=true bypasses the stale-data guard)
     useEffect(() => {
         if (activeTab === 'history') {
-            fetchHistory();
+            fetchHistory(true);
         }
     }, [activeTab]);
 
@@ -193,10 +194,8 @@ export default function WalletAdd() {
                 // 4. Update the Zustand Store (Silent fetch for balance so the UI doesn't flash)
                 await fetchWallet(true); // This updates the balance everywhere
 
-                // If on history tab, refresh history too
-                if (activeTab === 'history') {
-                    await fetchHistory();
-                }
+                // Always refresh history after a successful submission so it's ready when user switches tabs
+                await fetchHistory(true);
 
 
 
@@ -593,9 +592,9 @@ export default function WalletAdd() {
                     <div className="flex items-center justify-between px-8 py-6 bg-slate-50/50 border-b border-slate-100 shrink-0">
                         <h3 className="text-sm font-black uppercase tracking-widest text-slate-500 flex items-center gap-3">
                             {t('transaction_history', 'Add money History')}
-                            {!isWalletLoading && (
+                            {!isHistoryLoading && (
                                 <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-[10px]">
-                                    {transactions.filter(t => t.type === 'add').length} {t('records_found', 'Records Found')}
+                                    {transactions.filter(t => t?.type?.toLowerCase() === 'add').length} {t('records_found', 'Records Found')}
                                 </span>
                             )}
                         </h3>
@@ -612,7 +611,7 @@ export default function WalletAdd() {
                     </div>
 
                     <div className="flex-1 overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-                        {isWalletLoading ? (
+                        {isHistoryLoading ? (
                             <div className="p-4 md:p-6 space-y-3">
                                 {Array.from({ length: 5 }).map((_, i) => (
                                     <div key={i} className="grid md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1.2fr] items-center gap-3 px-6 py-4 border border-slate-100 rounded-2xl bg-white shadow-sm">
@@ -634,7 +633,7 @@ export default function WalletAdd() {
                                     </div>
                                 ))}
                             </div>
-                        ) : transactions.filter(t => t.type === 'add').length === 0 ? (
+                        ) : transactions.filter(t => t?.type?.toLowerCase() === 'add').length === 0 ? (
                             <div className="text-center py-24">
                                 <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-5">
                                     <History className="w-10 h-10 text-slate-200" />
@@ -643,7 +642,7 @@ export default function WalletAdd() {
                             </div>
                         ) : (
                             <div className="p-4 md:p-6 space-y-3">
-                                {transactions.filter(t => t.type === 'add').map((item) => {
+                                {transactions.filter(t => t?.type?.toLowerCase() === 'add').map((item) => {
                                     const chargeVal = parseFloat(item.charge || '0');
                                     return (
                                         <div

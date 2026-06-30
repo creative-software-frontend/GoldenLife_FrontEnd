@@ -127,6 +127,7 @@ export default function WalletWithdraw() {
     const walletBalanceValue = useAppStore(s => s.walletBalance);
     const transactions = useAppStore(s => s.transactions);
     const isWalletLoading = useAppStore(s => s.isWalletLoading);
+    const isHistoryLoading = useAppStore(s => s.isHistoryLoading);
     const fetchWallet = useAppStore(s => s.fetchWallet);
     const fetchHistory = useAppStore(s => s.fetchHistory);
     const fetchCharges = useAppStore(s => s.fetchCharges);
@@ -160,7 +161,7 @@ export default function WalletWithdraw() {
 
     useEffect(() => {
         if (activeTab === 'history') {
-            fetchHistory();
+            fetchHistory(true);
         }
     }, [activeTab, fetchHistory]);
 
@@ -229,7 +230,7 @@ export default function WalletWithdraw() {
         setMfsNumber('');
         setBankDetails({ bankName: '', branchName: '', accountName: '', accountNumber: '' });
         await fetchWallet(true); // Silent refresh
-        if (activeTab === 'history') fetchHistory(true);
+        await fetchHistory(true); // Always refresh history
         triggerWalletUpdate(); // Global Sync
     };
 
@@ -632,12 +633,12 @@ export default function WalletWithdraw() {
                 {/* --- History Tab Content --- */}
                 {activeTab === 'history' && (
                     <div className="animate-in fade-in slide-in-from-left-4 duration-300 w-full flex flex-col">
-                        {isWalletLoading ? (
+                        {isHistoryLoading ? (
                             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                                 <Loader2 className="w-8 h-8 animate-spin mb-4" />
                                 <p className="text-sm font-medium">Loading history...</p>
                             </div>
-                        ) : transactions.filter(t => t.type === 'withdraw').length === 0 ? (
+                        ) : transactions.filter(t => t?.type?.toLowerCase()?.includes('withdraw')).length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-20 m-4 md:m-6 text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                                 <Clock className="w-12 h-12 mb-4 text-slate-300" />
                                 <p className="text-sm font-medium">No transactions found.</p>
@@ -649,7 +650,7 @@ export default function WalletWithdraw() {
                                 <div className="flex flex-row items-center justify-between md:justify-start gap-4 px-8 py-6 border-b border-slate-100 bg-slate-50/30">
                                     <h2 className="text-sm font-black text-slate-600 tracking-wider uppercase">Withdrawal History</h2>
                                     <span className="px-3 py-1 bg-amber-50 text-amber-600 text-[10px] font-bold rounded-full tracking-wider uppercase shrink-0">
-                                        {transactions.filter(t => t.type === 'withdraw').length} Records
+                                        {transactions.filter(t => t?.type?.toLowerCase()?.includes('withdraw')).length} Records
                                     </span>
                                 </div>
 
@@ -664,7 +665,7 @@ export default function WalletWithdraw() {
 
                                 {/* Transactions List with Scrollbar */}
                                 <div className="p-4 md:p-6 space-y-3 bg-[#f8fafc]/50 overflow-y-auto max-h-[600px] scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
-                                    {transactions.filter(t => t.type === 'withdraw').map((trx, idx) => {
+                                    {transactions.filter(t => t?.type?.toLowerCase()?.includes('withdraw')).map((trx, idx) => {
                                         const chargeVal = parseFloat(trx.charge || '0');
                                         return (
                                             <div key={trx.id || idx} className="grid grid-cols-2 md:grid-cols-[1.8fr_1fr_1fr_1fr_1.2fr] items-center gap-x-3 gap-y-4 px-6 py-4 border border-slate-100 rounded-2xl bg-white shadow-sm hover:shadow-md transition-all duration-200 hover:border-amber-200">
