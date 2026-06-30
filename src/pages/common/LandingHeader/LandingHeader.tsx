@@ -6,9 +6,19 @@ export default function LandingHeader() {
   return (
     <div className="flex flex-col w-full">
       <Header />
-      <div className="relative overflow-hidden">
-        {/* FULL BACKGROUND IMAGE WITH OVERLAY */}
-        <div className="absolute inset-0 z-0">
+      
+      {/* MOBILE & TABLET: Standalone Banner Image */}
+      <div className="block lg:hidden w-full bg-slate-900">
+        <img 
+          src="/image/Banner/banner_images.png" 
+          alt="Golden Life Banner" 
+          className="w-full h-auto object-contain"
+        />
+      </div>
+
+      <div className="relative overflow-hidden bg-slate-50 lg:bg-transparent">
+        {/* DESKTOP ONLY: FULL BACKGROUND IMAGE WITH OVERLAY */}
+        <div className="hidden lg:block absolute inset-0 z-0">
           <div 
             className="w-full h-full bg-cover bg-top bg-no-repeat"
             style={{ 
