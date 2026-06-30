@@ -3,9 +3,9 @@ import { Download, Smartphone } from "lucide-react";
 
 export default function Hero() {
   return (
-    <section className="relative z-10 px-5 md:px-8 py-16 md:py-24">
+    <section className="relative z-10 px-5 md:px-8 py-10 md:py-16 min-h-[500px] flex items-center">
       <div className="container mx-auto">
-        <div className="max-w-3xl">
+        <div className="max-w-4xl">
 
           {/* Badge */}
           <div className="mb-6">
@@ -72,8 +72,8 @@ export default function Hero() {
           </div>
 
           {/* Trust note */}
-          <p className="mt-6 text-xs font-semibold text-slate-600/80 flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block" />
+          <p className="mt-6 text-sm md:text-base font-bold text-white flex items-center gap-2" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>
+            <span className="w-3 h-3 rounded-full bg-emerald-500 inline-block shadow-sm" />
             Free download · No registration required to install
           </p>
         </div>
