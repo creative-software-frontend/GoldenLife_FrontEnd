@@ -104,7 +104,7 @@ export default function SendMoney() {
                                 <div className="flex items-start gap-3 p-4 bg-amber-50 rounded-2xl border border-amber-100">
                                     <Info className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                                     <p className="text-xs font-bold text-amber-700 leading-relaxed">
-                                        A charge of <span className="text-secondary">৳{parseFloat(sendMoneyCharge || '5').toFixed(2)}</span> will be applicable for each transfer. Please ensure you have sufficient balance.
+                                        A charge of <span className="text-secondary">{parseFloat(sendMoneyCharge || '10').toFixed(0)}%</span> will be deducted from your sending amount. Please ensure you have sufficient balance.
                                     </p>
                                 </div>
 

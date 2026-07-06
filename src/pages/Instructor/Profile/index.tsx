@@ -164,6 +164,18 @@ export default function InstructorProfile() {
                   </div>
                   <ShieldCheck size={18} className="text-emerald-500" />
                 </button>
+                <button
+                  onClick={() => navigate('/instructor/dashboard/reset-pin')}
+                  className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-amber-50 rounded-2xl group transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-white rounded-xl shadow-sm text-amber-500">
+                      <Key size={18} />
+                    </div>
+                    <span className="font-bold text-slate-700">Reset PIN</span>
+                  </div>
+                  <ShieldCheck size={18} className="text-emerald-500" />
+                </button>
               </div>
 
               {/* Verification Status */}

@@ -269,8 +269,12 @@ export default function VendorProfile() {
                   >
                     Change Password
                   </button>
-
-
+                  <button
+                    onClick={() => navigate('/vendor/dashboard/reset-pin')}
+                    className="w-full px-6 py-3.5 bg-white border-2 border-amber-500 text-amber-500 font-bold rounded-xl hover:bg-amber-500 hover:text-white transition-all duration-300"
+                  >
+                    Reset PIN
+                  </button>
                 </div>
 
                 {/* Verification Status */}

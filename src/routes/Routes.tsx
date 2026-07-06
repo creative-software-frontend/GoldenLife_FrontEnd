@@ -105,6 +105,7 @@ import NomineeInfoTab from "@/components/profile/NomineeInfoTab/NomineeInfoTab";
 import AdditionalInfoTab from "@/components/profile/AdditionalInfoTab/AdditionalInfoTab";
 import ProjectOverviewTab from "@/components/profile/ProjectOverviewTab/ProjectOverviewTab";
 import ChangePassward from "@/components/profile/ChangePassward/ChangePassward";
+import ResetPinTab from "@/components/profile/ResetPinTab/ResetPinTab";
 import ReferralsTab from "@/components/profile/ReferralsTab/ReferralsTab";
 import ShareDetailsTab from "@/components/profile/ShareDetailsTab/ShareDetailsTab";
 
@@ -313,6 +314,7 @@ export const routes = createBrowserRouter([
                             { path: "nominee-info", element: <NomineeInfoTab /> },
                             { path: "Additional-info", element: <AdditionalInfoTab /> },
                             { path: "Change-passward", element: <ChangePassward /> },
+                            { path: "Reset-pin", element: <ResetPinTab /> },
                             { path: "referrals", element: <ReferralsTab /> },
                             { path: "ShareDetails", element: <ShareDetailsTab /> },
                         ]
@@ -439,6 +441,10 @@ export const routes = createBrowserRouter([
                             {
                                 path: 'change-password',
                                 element: <ChangePassword />
+                            },
+                            {
+                                path: 'reset-pin',
+                                element: <div className="p-8 max-w-4xl mx-auto"><ResetPinTab /></div>
                             },
 
                             // Vendor Products Route
@@ -568,6 +574,10 @@ export const routes = createBrowserRouter([
                             {
                                 path: 'change-password',
                                 element: <InstructorChangePassword />
+                            },
+                            {
+                                path: 'reset-pin',
+                                element: <div className="p-8 max-w-4xl mx-auto"><ResetPinTab /></div>
                             },
                             {
                                 path: 'courses',

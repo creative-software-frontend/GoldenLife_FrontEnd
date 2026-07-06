@@ -143,6 +143,13 @@ export default function WalletAdd() {
             return false;
         }
 
+        if (!attachment) {
+            const msg = t('error_missing_attachment', "Please upload a proof image.");
+            toast.error(msg);
+            setError(msg);
+            return false;
+        }
+
         return true;
     };
 
@@ -162,11 +169,16 @@ export default function WalletAdd() {
             // Append all fields
             formData.append('type', 'add');
             formData.append('amount', amount);
-            formData.append('number', accountNumber);
             formData.append('Transaction_ID', trxId.toUpperCase());
             formData.append('payment_method', paymentMethod);
             if (paymentMethod === 'bank') {
+                formData.append('receiver_bank_id', selectedBank);
                 formData.append('sender_bank_name', senderBankName);
+                formData.append('sender_account_number', accountNumber); // As seen in API response
+                formData.append('sender_account_no', accountNumber); // Fallback
+                formData.append('number', accountNumber); // Backend might still require 'number'
+            } else {
+                formData.append('number', accountNumber);
             }
             if (attachment) {
                 formData.append('attachment', attachment);
@@ -492,6 +504,8 @@ export default function WalletAdd() {
                                         value={accountNumber}
                                         onChange={paymentMethod === 'bank' ? (e) => setAccountNumber(e.target.value) : handlePhoneInput}
                                         placeholder={paymentMethod === 'bank' ? t('account_no', "Your Account No") : "01XXXXXXXXX"}
+                                        maxLength={paymentMethod === 'bank' ? 29 : 11}
+                                        minLength={paymentMethod === 'bank' ? 8 : 11}
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
                                     />
                                 </div>
@@ -509,7 +523,7 @@ export default function WalletAdd() {
 
                             {/* Attachment Section */}
                             <div className="space-y-4">
-                                <label className="text-sm font-bold text-slate-700">Attachment (Optional Proof Image)</label>
+                                <label className="text-sm font-bold text-slate-700">Attachment (Proof Image) <span className="text-red-500">*</span></label>
                                 <div
                                     className={cn(
                                         "relative flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-3xl transition-all cursor-pointer group",

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Loader2, ShieldCheck, Lock, ArrowRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAppStore } from '@/store/useAppStore';
@@ -14,10 +15,15 @@ interface ConfirmWithdrawModalProps {
     chargePercentage?: number;
     currentBalance: number;
     onSubmitOverride?: (pin: string) => Promise<{success: boolean; message: string}>;
+    // Bank-specific fields (required when paymentMethod === 'bank')
+    receiverBankId?: string;
+    senderBankName?: string;
+    senderAccountNo?: string;
 }
 
 export default function ConfirmWithdrawModal({ 
-    isOpen, onClose, onSuccess, onError, amount, accountNumber, paymentMethod, chargePercentage = 0, currentBalance, onSubmitOverride
+    isOpen, onClose, onSuccess, onError, amount, accountNumber, paymentMethod, chargePercentage = 0, currentBalance, onSubmitOverride,
+    receiverBankId, senderBankName, senderAccountNo
 }: ConfirmWithdrawModalProps) {
     const { withdrawFunds } = useAppStore();
     
@@ -28,7 +34,8 @@ export default function ConfirmWithdrawModal({
 
     const numAmount = parseFloat(amount) || 0;
     const chargeAmount = numAmount * (Number(chargePercentage || 0) / 100);
-    const totalDeduction = numAmount + chargeAmount;
+    const totalDeduction = numAmount;
+    const userReceives = numAmount - chargeAmount;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,8 +47,20 @@ export default function ConfirmWithdrawModal({
             const formData = new FormData();
             formData.append('type', 'withdraw');
             formData.append('amount', amount);
-            formData.append('number', accountNumber);
             formData.append('payment_method', paymentMethod);
+            
+            if (paymentMethod === 'bank') {
+                // Bank withdrawal: send specific bank fields
+                if (receiverBankId) formData.append('receiver_bank_id', receiverBankId);
+                if (senderBankName) formData.append('sender_bank_name', senderBankName);
+                if (senderAccountNo) {
+                    formData.append('sender_account_no', senderAccountNo);
+                    formData.append('sender_account_number', senderAccountNo);
+                    formData.append('number', senderAccountNo);
+                }
+            } else {
+                formData.append('number', accountNumber);
+            }
             
             // Sending as both to fix "Invalid password" issues
             formData.append('password', pinCode); 
@@ -78,9 +97,11 @@ export default function ConfirmWithdrawModal({
         onClose();
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/10 backdrop-blur-md animate-in fade-in duration-300">
-            <div className="relative bg-background rounded-[24px] p-6 w-full max-w-sm shadow-2xl border border-border/50 transform transition-all">
+    if (!isOpen) return null;
+
+    const modalContent = (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-foreground/10 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="relative bg-background rounded-[24px] p-6 w-full max-w-sm shadow-2xl border border-border/50 transform transition-all max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 
                 <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center gap-2 text-foreground">
@@ -127,16 +148,16 @@ export default function ConfirmWithdrawModal({
                             <span className="text-foreground">৳{(Number(currentBalance) || 0).toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-[11px] font-bold text-muted-foreground border-t border-border/10 pt-2.5">
-                            <span>Requested:</span>
+                            <span>Requested (To Deduct):</span>
                             <span className="text-foreground">৳{(Number(numAmount) || 0).toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between text-[11px] font-bold text-amber-600">
                             <span>Fee ({chargePercentage}%):</span>
-                            <span>+ ৳{(Number(chargeAmount) || 0).toFixed(2)}</span>
+                            <span>- ৳{(Number(chargeAmount) || 0).toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between pt-3 border-t border-border/50 items-baseline">
-                            <span className="text-[11px] font-black uppercase text-foreground tracking-wider">Total to Deduct:</span>
-                            <span className="text-2xl font-black text-emerald-600">৳{totalDeduction.toFixed(2)}</span>
+                            <span className="text-[11px] font-black uppercase text-foreground tracking-wider">You Will Receive:</span>
+                            <span className="text-2xl font-black text-emerald-600">৳{userReceives.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between pt-2 text-[10px] font-bold text-muted-foreground border-t border-dashed border-border/30 mt-1">
                             <span>Remaining Balance:</span>
@@ -190,4 +211,6 @@ export default function ConfirmWithdrawModal({
             </div>
         </div>
     );
+
+    return createPortal(modalContent, document.body);
 }

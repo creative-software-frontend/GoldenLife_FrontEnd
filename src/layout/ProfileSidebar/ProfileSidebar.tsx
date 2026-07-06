@@ -196,6 +196,7 @@ export default function ProfileSidebar() {
         { path: 'nominee-info', label: 'Nominee Information', icon: UserCircle2 },
         { path: 'Additional-info', label: 'Additional Information', icon: Info },
         { path: 'Change-passward', label: 'Change Password', icon: ShieldCheck },
+        { path: 'Reset-pin', label: 'Reset Pin', icon: ShieldCheck },
         { path: 'ShareDetails', label: 'Share Information', icon: Users },
         { path: 'referrals', label: 'Refer Information', icon: Users },
 

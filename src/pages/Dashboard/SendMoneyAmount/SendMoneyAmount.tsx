@@ -19,8 +19,10 @@ export default function SendMoneyAmount() {
     // Defensive setter
     const safeSetAmount = (val: number) => setAmount(Math.max(0, val));
 
-    const chargeVal = parseFloat(sendMoneyCharge || '5');
-    const totalDeduction = amount > 0 ? amount + chargeVal : 0;
+    const percent = parseFloat(sendMoneyCharge || '10');
+    const chargeAmount = amount > 0 ? amount * (percent / 100) : 0;
+    const totalDeduction = amount;
+    const receiverGets = amount > 0 ? amount - chargeAmount : 0;
     const isInsufficient = totalDeduction > parseFloat(walletBalance);
 
     return (
@@ -95,16 +97,20 @@ export default function SendMoneyAmount() {
                     {/* Charge Summary */}
                     <div className="border-t border-slate-100 pt-8 space-y-4">
                         <div className="flex justify-between items-center text-sm font-bold text-slate-500">
-                            <span>Transfer Charge</span>
-                            <span className="text-secondary">+ ৳{chargeVal.toFixed(2)}</span>
+                            <span>Amount to Deduct</span>
+                            <span className="text-slate-900">৳{totalDeduction.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm font-bold text-amber-500">
+                            <span>Transfer Charge ({percent}%)</span>
+                            <span>- ৳{chargeAmount.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-xs font-black uppercase text-slate-900 tracking-widest">Total Deduction</span>
+                            <span className="text-xs font-black uppercase text-slate-900 tracking-widest">Receiver Will Get</span>
                             <span className={cn(
                                 "text-2xl font-black",
                                 isInsufficient ? "text-rose-500" : "text-emerald-600"
                             )}>
-                                ৳{totalDeduction.toFixed(2)}
+                                ৳{receiverGets.toFixed(2)}
                             </span>
                         </div>
 

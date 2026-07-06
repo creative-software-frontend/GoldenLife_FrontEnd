@@ -1,5 +1,6 @@
 import { CheckCircle2, ChevronDown, ChevronUp, Star, MapPin, TrendingUp, Headphones, Users, BarChart2, Gift } from "lucide-react";
 import { useState } from "react";
+import { useAppStore } from "@/store/useAppStore";
 
 export interface SubscriptionPlan {
   id: number;
@@ -106,6 +107,8 @@ const FeatureRow = ({
 export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
   const isRecommended = plan.is_active === 1;
   const price = Number(plan.price);
+  const studentProfile = useAppStore((s) => s.studentProfile);
+  const isActive = studentProfile?.status?.toLowerCase() === "active";
 
   return (
     <div
@@ -148,13 +151,14 @@ export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
 
       <button
         onClick={() => onClick(plan)}
-        className={`flex items-center justify-center w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md ${
+        disabled={isActive}
+        className={`flex items-center justify-center w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
           isRecommended
             ? "bg-primary text-white hover:opacity-90 shadow-primary/30"
             : "bg-gray-800 text-white hover:bg-gray-700"
         }`}
       >
-        Subscribe Now
+        {isActive ? "Already Active" : "Subscribe Now"}
       </button>
     </div>
   );

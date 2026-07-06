@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { KeyRound, X, Loader2, ShieldCheck } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAppStore } from '@/store/useAppStore';
@@ -45,8 +46,10 @@ export default function SetPinModal({ isOpen, onClose, onSuccess, onError }: Set
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/10 backdrop-blur-md animate-in fade-in duration-300">
+    if (!isOpen) return null;
+
+    const modalContent = (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-foreground/10 backdrop-blur-md animate-in fade-in duration-300">
             {/* Modal Container */}
             <div className="relative bg-background rounded-[28px] p-8 w-full max-w-sm shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-border/50 transform transition-all">
                 
@@ -122,4 +125,6 @@ export default function SetPinModal({ isOpen, onClose, onSuccess, onError }: Set
             </div>
         </div>
     );
+
+    return createPortal(modalContent, document.body);
 }

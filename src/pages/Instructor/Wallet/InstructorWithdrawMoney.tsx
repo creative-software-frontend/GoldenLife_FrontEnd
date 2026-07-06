@@ -18,38 +18,23 @@ export default function InstructorWithdrawMoney() {
     const navigate = useNavigate();
     const { balance, transactions, withdrawMoney, isWithdrawingMoney, isBalanceLoading, refetchBalance, refetchTransactions } = useInstructorWallet();
     const { withdrawCharge, fetchCharges } = useAppStore();
-
-    useEffect(() => {
-        fetchCharges();
-        const fetchBanks = async () => {
-            try {
-                // @ts-ignore - wait we need to import axios or use fetch. Let's use fetch.
-                const response = await fetch('https://admin.goldenlifeltd.com/api/banks');
-                const data = await response.json();
-                if (data?.status === 'success') {
-                    setBanks(data.data);
-                }
-            } catch (err) {
-                console.error("Failed to fetch banks", err);
-            }
-        };
-        fetchBanks();
-    }, []);
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
 
     const [activeTab, setActiveTab] = useState<'withdraw' | 'history'>('withdraw');
     const [amount, setAmount] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('bkash');
     const [mfsNumber, setMfsNumber] = useState('');
     const [banks, setBanks] = useState<any[]>([]);
+    const [selectedBank, setSelectedBank] = useState<string>(''); // receiver_bank_id from API
     const [bankDetails, setBankDetails] = useState({
-        bankName: '',
+        bankName: '',      // sender_bank_name (user's own bank)
         branchName: '',
         accountName: '',
-        accountNumber: ''
+        accountNumber: '' // sender_account_no
     });
     const [showGuideModal, setShowGuideModal] = useState(false);
     const [guideTab, setGuideTab] = useState<'bkash' | 'nagad'>('bkash');
-    
+
     const [isPinModalOpen, setIsPinModalOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const {
@@ -59,6 +44,23 @@ export default function InstructorWithdrawMoney() {
         setErrorMessage,
         clearMessages
     } = useTimedMessage(5000);
+
+    useEffect(() => {
+        fetchCharges();
+        const fetchBanks = async () => {
+            try {
+                const response = await fetch(`${baseURL}/api/banks`);
+                const data = await response.json();
+                if (data?.status === 'success') {
+                    setBanks(data.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch banks", err);
+            }
+        };
+        fetchBanks();
+    }, [baseURL]);
+
 
     const withdrawTransactions = transactions.filter((t: any) => t.type === 'withdraw');
     const presetAmounts = [500, 1000, 2000, 5000];
@@ -91,6 +93,11 @@ export default function InstructorWithdrawMoney() {
                 return;
             }
         } else if (paymentMethod === 'bank') {
+            if (!selectedBank) {
+                const msg = "Please select a receiver bank.";
+                setErrorMessage(msg);
+                return;
+            }
             if (!bankDetails.bankName || !bankDetails.branchName || !bankDetails.accountName || !bankDetails.accountNumber) {
                 const msg = "Please fill in all required bank details.";
                 setErrorMessage(msg);
@@ -105,6 +112,8 @@ export default function InstructorWithdrawMoney() {
         setSuccessMessage(msg);
         setAmount('');
         setMfsNumber('');
+        setSelectedBank('');
+        setBankDetails({ bankName: '', branchName: '', accountName: '', accountNumber: '' });
         refetchBalance();
         refetchTransactions();
     };
@@ -129,17 +138,27 @@ export default function InstructorWithdrawMoney() {
                 paymentMethod={paymentMethod}
                 chargePercentage={parseFloat(String(withdrawCharge).replace(/[^0-9.-]/g, '')) || 0}
                 currentBalance={Number(balance)}
+                receiverBankId={paymentMethod === 'bank' ? selectedBank : undefined}
+                senderBankName={paymentMethod === 'bank' ? bankDetails.bankName : undefined}
+                senderAccountNo={paymentMethod === 'bank' ? bankDetails.accountNumber : undefined}
                 onSubmitOverride={async (pinCode) => {
                     try {
-                        const payload = {
+                        const payload: any = {
                             amount,
-                            number: paymentMethod === 'bank' ? `${bankDetails.accountNumber} (${bankDetails.bankName} - ${bankDetails.branchName})` : mfsNumber,
                             payment_method: paymentMethod,
                             password: pinCode,
                             pin_code: pinCode
                         };
+                        if (paymentMethod === 'bank') {
+                            payload.receiver_bank_id = selectedBank;
+                            payload.sender_bank_name = bankDetails.bankName;
+                            payload.sender_account_no = bankDetails.accountNumber;
+                            payload.sender_account_number = bankDetails.accountNumber;
+                            payload.number = bankDetails.accountNumber;
+                        } else {
+                            payload.number = mfsNumber;
+                        }
                         const res = await withdrawMoney(payload);
-                        // If we are here, mutation succeeded according to useInstructorWallet
                         return { success: true, message: res?.message || "Withdrawal successful!" };
                     } catch (err: any) {
                         return { success: false, message: err.response?.data?.message || err.message || "Withdrawal failed." };
@@ -251,18 +270,19 @@ export default function InstructorWithdrawMoney() {
                                 ].map((method) => {
                                     const Icon = method.icon;
                                     return (
-                                    <label
-                                        key={method.id}
-                                        className={cn(
-                                            "relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all uppercase text-[10px] font-black",
-                                            paymentMethod === method.id ? "border-secondary bg-secondary/5" : "border-slate-100 bg-white hover:border-slate-200"
-                                        )}
-                                    >
-                                        <input type="radio" className="hidden" onChange={() => { setPaymentMethod(method.id); setMfsNumber(''); }} checked={paymentMethod === method.id} />
-                                        <Icon className={cn("w-6 h-6", method.color)} />
-                                        {method.label}
-                                    </label>
-                                )})}
+                                        <label
+                                            key={method.id}
+                                            className={cn(
+                                                "relative flex flex-col items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all uppercase text-[10px] font-black",
+                                                paymentMethod === method.id ? "border-secondary bg-secondary/5" : "border-slate-100 bg-white hover:border-slate-200"
+                                            )}
+                                        >
+                                            <input type="radio" className="hidden" onChange={() => { setPaymentMethod(method.id); setMfsNumber(''); }} checked={paymentMethod === method.id} />
+                                            <Icon className={cn("w-6 h-6", method.color)} />
+                                            {method.label}
+                                        </label>
+                                    )
+                                })}
                             </div>
                         </div>
 
@@ -287,8 +307,35 @@ export default function InstructorWithdrawMoney() {
                                 <div className="space-y-4">
                                     <label className="text-sm font-bold text-slate-700 uppercase">Bank Account Details</label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Receiver Bank from API */}
+                                        {banks.length > 0 && (
+                                            <div className="space-y-2 md:col-span-2 bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                                                <label className="text-xs font-bold text-slate-500 uppercase block mb-1">Receiver Bank (Select from list)</label>
+                                                <select
+                                                    value={selectedBank}
+                                                    onChange={(e) => setSelectedBank(e.target.value)}
+                                                    className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-3"
+                                                    required
+                                                >
+                                                    <option value="">-- Choose Receiver Bank --</option>
+                                                    {banks.map(b => (
+                                                        <option key={b.id} value={b.id}>{b.name}</option>
+                                                    ))}
+                                                </select>
+                                                {selectedBank && (
+                                                    <div className="grid grid-cols-2 gap-2 bg-white p-3 rounded-xl border border-blue-100 text-sm">
+                                                        {banks.filter(b => String(b.id) === String(selectedBank)).map(b => (
+                                                            <React.Fragment key={b.id}>
+                                                                <div><p className="text-[10px] uppercase font-bold text-slate-400">Account Name</p><p className="font-bold text-slate-700">{b.account_name}</p></div>
+                                                                <div><p className="text-[10px] uppercase font-bold text-slate-400">Account No</p><p className="font-bold text-slate-700">{b.account_no}</p></div>
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Bank Receiver Name (Your Bank)</label>
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Your Bank Name (Sender)</label>
                                             <select
                                                 value={bankDetails.bankName}
                                                 onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
@@ -319,7 +366,7 @@ export default function InstructorWithdrawMoney() {
                                             <label className="text-xs font-semibold text-slate-500">Account Number</label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><ShieldCheck size={16} /></span>
-                                                <input type="text" value={bankDetails.accountNumber} onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })} placeholder="e.g. 112233445566" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                                <input type="text" value={bankDetails.accountNumber} maxLength={29} minLength={8} onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })} placeholder="e.g. 112233445566" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
                                             </div>
                                         </div>
                                     </div>

@@ -19,8 +19,10 @@ export default function SendMoneyConfirm() {
     const [pinCode, setPinCode] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const chargeVal = parseFloat(sendMoneyCharge || '5');
-    const totalDeduction = parseFloat(amount) + chargeVal;
+    const percent = parseFloat(sendMoneyCharge || '10');
+    const totalDeduction = parseFloat(amount);
+    const chargeAmount = totalDeduction * (percent / 100);
+    const receiverGets = totalDeduction - chargeAmount;
 
     const handleConfirm = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -85,12 +87,16 @@ export default function SendMoneyConfirm() {
 
                     <div className="p-8 space-y-4">
                         <div className="flex justify-between items-center text-sm font-bold text-slate-500">
-                            <span>Transfer Charge</span>
-                            <span className="text-slate-900">+ ৳{chargeVal.toFixed(2)}</span>
+                            <span>Amount Sent (To Deduct)</span>
+                            <span className="text-slate-900">৳{totalDeduction.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-sm font-bold text-amber-600">
+                            <span>Transfer Charge ({percent}%)</span>
+                            <span>- ৳{chargeAmount.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                            <span className="text-xs font-black uppercase text-slate-900 tracking-widest">Total Deduction</span>
-                            <span className="text-2xl font-black text-emerald-600">৳{totalDeduction.toFixed(2)}</span>
+                            <span className="text-xs font-black uppercase text-slate-900 tracking-widest">Receiver Will Get</span>
+                            <span className="text-2xl font-black text-emerald-600">৳{receiverGets.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center text-[10px] font-bold text-slate-400">
                             <span>Balance after transfer</span>

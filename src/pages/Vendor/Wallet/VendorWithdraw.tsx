@@ -109,11 +109,12 @@ export default function VendorWithdraw() {
     // Gateway-Specific States
     const [mfsNumber, setMfsNumber] = useState('');
     const [banks, setBanks] = useState<any[]>([]);
+    const [selectedBank, setSelectedBank] = useState<string>(''); // receiver_bank_id from API
     const [bankDetails, setBankDetails] = useState({
-        bankName: '',
+        bankName: '',      // sender_bank_name (user's own bank)
         branchName: '',
         accountName: '',
-        accountNumber: ''
+        accountNumber: '' // sender_account_no
     });
 
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
@@ -135,7 +136,7 @@ export default function VendorWithdraw() {
     useEffect(() => {
         fetchNavbarData(true);
         fetchCharges();
-        
+
         const fetchBanks = async () => {
             try {
                 const { data } = await axios.get(`${baseURL}/api/banks`);
@@ -206,6 +207,12 @@ export default function VendorWithdraw() {
                 return;
             }
         } else if (paymentMethod === 'bank') {
+            if (!selectedBank) {
+                const msg = "Please select a receiver bank.";
+                setErrorMessage(msg);
+                toast.error(msg);
+                return;
+            }
             if (!bankDetails.bankName || !bankDetails.branchName || !bankDetails.accountName || !bankDetails.accountNumber) {
                 const msg = "Please fill in all required bank details.";
                 setErrorMessage(msg);
@@ -221,6 +228,7 @@ export default function VendorWithdraw() {
         setSuccessMessage(msg);
         setAmount('');
         setMfsNumber('');
+        setSelectedBank('');
 
         fetchNavbarData(true);
         fetchHistory(true);
@@ -258,6 +266,9 @@ export default function VendorWithdraw() {
                 paymentMethod={paymentMethod}
                 chargePercentage={parseFloat(String(withdrawCharge).replace(/[^0-9.-]/g, '')) || 0}
                 currentBalance={currentBalance}
+                receiverBankId={paymentMethod === 'bank' ? selectedBank : undefined}
+                senderBankName={paymentMethod === 'bank' ? bankDetails.bankName : undefined}
+                senderAccountNo={paymentMethod === 'bank' ? bankDetails.accountNumber : undefined}
             />
             {/* --- Instruction Modal --- */}
             {showGuideModal && (
@@ -573,8 +584,35 @@ export default function VendorWithdraw() {
                                 <div className="space-y-4">
                                     <label className="text-sm font-bold text-slate-700 uppercase">Bank Account Details</label>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Receiver Bank from API */}
+                                        {banks.length > 0 && (
+                                            <div className="space-y-2 md:col-span-2 bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                                                <label className="text-xs font-bold text-slate-500 uppercase block mb-1">Receiver Bank (Select from list)</label>
+                                                <select
+                                                    value={selectedBank}
+                                                    onChange={(e) => setSelectedBank(e.target.value)}
+                                                    className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-3"
+                                                    required
+                                                >
+                                                    <option value="">-- Choose Receiver Bank --</option>
+                                                    {banks.map(b => (
+                                                        <option key={b.id} value={b.id}>{b.name}</option>
+                                                    ))}
+                                                </select>
+                                                {selectedBank && (
+                                                    <div className="grid grid-cols-2 gap-2 bg-white p-3 rounded-xl border border-blue-100 text-sm">
+                                                        {banks.filter(b => String(b.id) === String(selectedBank)).map(b => (
+                                                            <React.Fragment key={b.id}>
+                                                                <div><p className="text-[10px] uppercase font-bold text-slate-400">Account Name</p><p className="font-bold text-slate-700">{b.account_name}</p></div>
+                                                                <div><p className="text-[10px] uppercase font-bold text-slate-400">Account No</p><p className="font-bold text-slate-700">{b.account_no}</p></div>
+                                                            </React.Fragment>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Bank Receiver Name (Your Bank)</label>
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Your Bank Name (Sender)</label>
                                             <select
                                                 value={bankDetails.bankName}
                                                 onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
@@ -605,7 +643,7 @@ export default function VendorWithdraw() {
                                             <label className="text-xs font-semibold text-slate-500">Account Number</label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><ShieldCheck size={16} /></span>
-                                                <input type="text" value={bankDetails.accountNumber} onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })} placeholder="e.g. 112233445566" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
+                                                <input type="text" value={bankDetails.accountNumber} maxLength={29} minLength={8} onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })} placeholder="e.g. 112233445566" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
                                             </div>
                                         </div>
                                     </div>
