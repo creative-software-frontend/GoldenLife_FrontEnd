@@ -1,4 +1,16 @@
-import { CheckCircle2, ChevronDown, ChevronUp, Star, MapPin, TrendingUp, Headphones, Users, BarChart2, Gift } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Star,
+  MapPin,
+  TrendingUp,
+  Headphones,
+  Users,
+  BarChart2,
+  Gift,
+  X
+} from "lucide-react";
 import { useState } from "react";
 import { useAppStore } from "@/store/useAppStore";
 
@@ -69,14 +81,14 @@ const FeatureRow = ({
   return (
     <li className="rounded-md overflow-hidden border border-gray-100">
       <button
+        type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors duration-200 ${
-          open
-            ? isRecommended
-              ? "bg-primary/10"
-              : "bg-gray-50"
-            : "hover:bg-gray-50"
-        }`}
+        className={`w-full flex items-center gap-2 px-3 py-2 text-left transition-colors duration-200 ${open
+          ? isRecommended
+            ? "bg-primary/10"
+            : "bg-gray-50"
+          : "hover:bg-gray-50"
+          }`}
       >
         {feature.icon}
         <span className="flex-1 text-base font-semibold text-gray-800">
@@ -92,9 +104,8 @@ const FeatureRow = ({
         <div className="px-3 pb-3 pt-1.5 text-base text-gray-500 leading-relaxed bg-gray-50 border-t border-gray-100">
           <div className="flex items-start gap-1.5">
             <CheckCircle2
-              className={`w-3 h-3 flex-shrink-0 mt-0.5 ${
-                isRecommended ? "text-primary" : "text-gray-400"
-              }`}
+              className={`w-3 h-3 flex-shrink-0 mt-0.5 ${isRecommended ? "text-primary" : "text-gray-400"
+                }`}
             />
             <span>{feature.detail}</span>
           </div>
@@ -104,25 +115,59 @@ const FeatureRow = ({
   );
 };
 
+// Reusable banner component that dynamically adapts based on verification status
+export const AccountVerificationBanner = ({ verified }: { verified: boolean }) => {
+  return (
+    <div className={`w-full bg-white rounded-2xl p-6 border flex flex-col items-center text-center mt-4 shadow-sm ${verified ? "border-green-100" : "border-gray-100"}`}>
+      {/* Icon Badge Container */}
+      <div className="relative mb-4 flex items-center justify-center">
+        {verified ? (
+          <div className="w-12 h-12 bg-green-500 rounded-xl rotate-45 flex items-center justify-center shadow-md shadow-green-200">
+            <CheckCircle2 className="-rotate-45 w-6 h-6 text-white stroke-[2.5]" />
+          </div>
+        ) : (
+          <div className="w-12 h-12 bg-red-500 rounded-xl rotate-45 flex items-center justify-center shadow-md shadow-red-200">
+            <X className="-rotate-45 w-6 h-6 text-white stroke-[3]" />
+          </div>
+        )}
+      </div>
+
+      {/* Heading Text */}
+      <h3 className="text-xl font-bold text-gray-800 tracking-wide mb-2">
+        {verified ? "আপনার অ্যাকাউন্ট ভেরিফাইড।" : "আপনার অ্যাকাউন্ট ভেরিফাই করা হয়নি।"}
+      </h3>
+
+      {/* Description Text */}
+      <p className="text-gray-600 text-base leading-relaxed max-w-[90%]">
+        {verified
+          ? "আমাদের সকল সার্ভিস সফলভাবে সচল করা রয়েছে।"
+          : "আমাদের সকল সার্ভিস ব্যবহার করার জন্য অ্যাকাউন্ট ভেরিফাই করুন।"
+        }
+      </p>
+    </div>
+  );
+};
+
 export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
   const isRecommended = plan.is_active === 1;
   const price = Number(plan.price);
   const studentProfile = useAppStore((s) => s.studentProfile);
+
+  // Checking active user validation states
   const isActive = studentProfile?.status?.toLowerCase() === "active";
+  const isNotVerified = studentProfile && !studentProfile.is_verified;
 
   return (
     <div
-      className={`relative border-2 rounded-xl p-4 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
-        isRecommended
-          ? "border-primary bg-blue-50/40"
-          : "border-gray-200 bg-white"
-      }`}
+      className={`relative border-2 rounded-xl p-4 shadow-md flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isRecommended
+        ? "border-primary bg-blue-50/40"
+        : "border-gray-200 bg-white"
+        }`}
     >
       {/* Price Badge (top-right) */}
       <div
-        className={`absolute top-0 right-0 text-white text-xl font-bold px-4 py-2 rounded-bl-xl rounded-tr-xl flex items-center gap-1.5 ${
-          isRecommended ? "bg-primary" : "bg-gray-700"
-        }`}
+        className={`absolute top-0 right-0 text-white text-xl font-bold px-4 py-2 rounded-bl-xl rounded-tr-xl flex items-center gap-1.5 ${isRecommended ? "bg-primary" : "bg-gray-700"
+          }`}
       >
         <Star className="w-4 h-4" />
         <span>৳{price.toLocaleString()}</span>
@@ -131,9 +176,8 @@ export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
       {/* Header: Plan name */}
       <div className="pr-20">
         <h3
-          className={`text-lg font-bold capitalize leading-tight ${
-            isRecommended ? "text-primary" : "text-gray-800"
-          }`}
+          className={`text-lg font-bold capitalize leading-tight ${isRecommended ? "text-primary" : "text-gray-800"
+            }`}
         >
           {plan.name}
         </h3>
@@ -149,16 +193,32 @@ export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
         ))}
       </ul>
 
+      {/* Renders the status updates directly to the UI component conditional block */}
+      {(isNotVerified || isActive) && (
+        <AccountVerificationBanner verified={isActive} />
+      )}
+
+      {/* Core CTA Action Button with synced colors and attributes */}
       <button
-        onClick={() => onClick(plan)}
+        type="button"
+        onClick={() => {
+          if (isNotVerified) {
+            console.log("Trigger verification flow initiation context");
+          } else {
+            onClick(plan);
+          }
+        }}
         disabled={isActive}
-        className={`flex items-center justify-center w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed ${
-          isRecommended
-            ? "bg-primary text-white hover:opacity-90 shadow-primary/30"
-            : "bg-gray-800 text-white hover:bg-gray-700"
-        }`}
+        className={`flex items-center justify-center w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md disabled:cursor-not-allowed ${isActive
+          ? "bg-blue-400 text-white opacity-80"
+          : isNotVerified
+            ? "bg-[#0052cc] hover:bg-[#0043a8] text-white"
+            : isRecommended
+              ? "bg-primary text-white hover:opacity-90 shadow-primary/30"
+              : "bg-gray-800 text-white hover:bg-gray-700"
+          }`}
       >
-        {isActive ? "Already Active" : "Subscribe Now"}
+        {isActive ? "অ্যাকাউন্ট ভেরিফাইড" : isNotVerified ? "ভেরিফাই করুন" : "Subscribe Now"}
       </button>
     </div>
   );

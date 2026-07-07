@@ -110,8 +110,7 @@ interface CollaborationPanelProps {
 
 export const CollaborationPanel = ({ onClick }: CollaborationPanelProps) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const studentProfile = useAppStore((s) => s.studentProfile);
-  const isActive = studentProfile?.status?.toLowerCase() === "active";
+
 
   const handlePurchaseClick = () => {
     setModalOpen(true);
@@ -194,11 +193,10 @@ export const CollaborationPanel = ({ onClick }: CollaborationPanelProps) => {
 
         <button
           onClick={handlePurchaseClick}
-          disabled={isActive}
-          className="flex items-center justify-center gap-2 w-full mt-5 py-3 rounded-lg font-bold text-base transition-all shadow-md bg-primary text-white hover:opacity-90 shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center gap-2 w-full mt-5 py-3 rounded-lg font-bold text-base transition-all shadow-md bg-primary text-white hover:opacity-90 shadow-primary/30"
         >
           <Share2 className="w-4 h-4" />
-          {isActive ? "Already Active" : "Buy Share"}
+          Buy Share
         </button>
       </div>
 
