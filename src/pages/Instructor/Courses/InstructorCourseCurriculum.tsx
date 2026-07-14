@@ -14,7 +14,8 @@ import {
   Layers,
   Save,
   Clock,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,8 @@ import {
   useUpdateModuleMutation,
   useDeleteModuleMutation,
   useUpdateLessonMutation,
-  useDeleteLessonMutation
+  useDeleteLessonMutation,
+  useAddQuizMutation
 } from '@/hooks/useInstructorAuth';
 import { toast } from 'react-toastify';
 
@@ -167,6 +169,10 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
   const deleteModuleMutation = useDeleteModuleMutation();
   const updateLessonMutation = useUpdateLessonMutation();
   const deleteLessonMutation = useDeleteLessonMutation();
+  const addQuizMutation = useAddQuizMutation();
+
+  const [isAddingQuiz, setIsAddingQuiz] = useState<number | null>(null);
+  const [quizForm, setQuizForm] = useState({ question: '', option_a: '', option_b: '', option_c: '', option_d: '', correct_answer: 'option_a', points: 10 });
 
   const addVideoField = () => setLessonForm(f => ({ ...f, videos: [...f.videos, ''] }));
   const removeVideoField = (idx: number) => setLessonForm(f => ({ ...f, videos: f.videos.filter((_, i) => i !== idx) }));
@@ -249,6 +255,22 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
       </div>,
       { autoClose: false, closeOnClick: false, draggable: false }
     );
+  };
+
+  const handleAddQuiz = async (lessonId: number) => {
+    if (!quizForm.question.trim() || !courseId) return;
+    try {
+      await addQuizMutation.mutateAsync({
+        lessonId,
+        courseId,
+        data: quizForm
+      });
+      toast.success('Quiz added successfully');
+      setQuizForm({ question: '', option_a: '', option_b: '', option_c: '', option_d: '', correct_answer: 'option_a', points: 10 });
+      setIsAddingQuiz(null);
+    } catch (err) {
+      toast.error('Failed to add quiz');
+    }
   };
 
   const handleUpdateModule = async () => {
@@ -363,23 +385,90 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
               <div className="space-y-4">
                 {module.lessons?.map((lesson: any, lIdx: number) => (
                   <div key={lIdx} className="space-y-4">
-                    <div className="flex items-center justify-between p-6 rounded-3xl bg-gray-50/50 border border-gray-100 group hover:bg-white hover:border-emerald-500/20 transition-all">
-                      <div className="flex items-center gap-5">
-                        <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 text-gray-400 flex items-center justify-center font-black text-sm group-hover:text-emerald-500 transition-colors">
-                          {lIdx + 1}
+                    {editingLessonId === lesson.id ? (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="p-8 bg-gray-50 rounded-3xl border border-gray-100 space-y-6 overflow-hidden"
+                      >
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-black text-gray-700 uppercase tracking-widest">Edit Lesson</h4>
+                          <button onClick={() => { setIsAddingLesson(false); setEditingLessonId(null); }} className="text-gray-400 hover:text-gray-600 font-black text-xs">CANCEL</button>
                         </div>
-                        <div>
-                          <h4 className="font-black text-gray-700">{lesson.lesson_title}</h4>
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{lesson.videos?.length || 0} Videos</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button onClick={() => handleEditLessonClick(lesson)} variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-emerald-500">Edit</Button>
-                        <Button onClick={() => handleDeleteLesson(lesson.id)} disabled={deleteLessonMutation.isPending} variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-red-500">Delete</Button>
-                      </div>
-                    </div>
 
-                    {/* Video List */}
+                        {/* Lesson Title */}
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Lesson Title</label>
+                          <Input
+                            value={lessonForm.lesson_title}
+                            onChange={(e) => setLessonForm(f => ({ ...f, lesson_title: e.target.value }))}
+                            placeholder="e.g. Installing Laravel via Composer"
+                            className="bg-white border-none h-12 rounded-xl font-bold shadow-inner"
+                          />
+                        </div>
+
+                        {/* Video URLs */}
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Video URLs</label>
+                            <button
+                              onClick={addVideoField}
+                              className="flex items-center gap-1 text-[10px] font-black text-emerald-600 hover:text-emerald-700 uppercase tracking-widest"
+                            >
+                              <Plus size={12} strokeWidth={3} /> Add URL
+                            </button>
+                          </div>
+                          {lessonForm.videos.map((url, vIdx) => (
+                            <div key={vIdx} className="flex gap-3 items-center">
+                              <div className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-gray-400 flex items-center justify-center font-black text-xs shrink-0">
+                                {vIdx + 1}
+                              </div>
+                              <Input
+                                value={url}
+                                onChange={(e) => updateVideoField(vIdx, e.target.value)}
+                                placeholder="https://youtube.com/watch?v=..."
+                                className="bg-white border-none h-11 rounded-xl font-medium flex-1 shadow-inner"
+                              />
+                              {lessonForm.videos.length > 1 && (
+                                <button
+                                  onClick={() => removeVideoField(vIdx)}
+                                  className="text-red-400 hover:text-red-500 transition-colors"
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+
+                        <Button
+                          onClick={handleAddLesson}
+                          disabled={updateLessonMutation.isPending}
+                          className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl h-12 font-black"
+                        >
+                          {updateLessonMutation.isPending ? 'SAVING...' : 'UPDATE LESSON'}
+                        </Button>
+                      </motion.div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between p-6 rounded-3xl bg-gray-50/50 border border-gray-100 group hover:bg-white hover:border-emerald-500/20 transition-all">
+                          <div className="flex items-center gap-5">
+                            <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 text-gray-400 flex items-center justify-center font-black text-sm group-hover:text-emerald-500 transition-colors">
+                              {lIdx + 1}
+                            </div>
+                            <div>
+                              <h4 className="font-black text-gray-700">{lesson.lesson_title}</h4>
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{lesson.videos?.length || 0} Videos</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button onClick={() => handleEditLessonClick(lesson)} variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-emerald-500">Edit</Button>
+                            <Button onClick={() => handleDeleteLesson(lesson.id)} disabled={deleteLessonMutation.isPending} variant="ghost" size="sm" className="rounded-lg text-[10px] font-black uppercase text-gray-400 hover:text-red-500">Delete</Button>
+                          </div>
+                        </div>
+
+                        {/* Video List */}
                     <div className="ml-14 pl-6 border-l-2 border-gray-100 space-y-2">
                       {lesson.videos?.map((video: any, vIdx: number) => (
                         <div key={vIdx} className="flex items-center justify-between py-3 px-5 rounded-2xl hover:bg-emerald-50 transition-colors group/video">
@@ -387,22 +476,99 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
                             <Play size={14} className="text-gray-300 group-hover/video:text-emerald-500" />
                             <span className="text-sm font-bold text-gray-500 group-hover/video:text-emerald-700">{video.video_title || `Video ${vIdx + 1}`}</span>
                           </div>
-                          {/* <div className="flex items-center gap-4">
-                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{video.duration || '—'}</span>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 rounded-md opacity-0 group-hover/video:opacity-100 transition-opacity">
-                              <Trash2 size={12} className="text-red-400" />
-                            </Button>
-                          </div> */}
                         </div>
                       ))}
+                      {/* Quizzes List */}
+                      {lesson.quizzes?.map((quiz: any, qIdx: number) => (
+                        <div key={`q-${qIdx}`} className="p-4 rounded-2xl bg-amber-50/50 border border-amber-100 mt-2 space-y-3 group/quiz">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-black text-xs shrink-0 mt-0.5">Q</div>
+                              <div>
+                                <span className="text-sm font-bold text-amber-900">{quiz.question}</span>
+                                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  {[
+                                    { label: 'A', value: quiz.option_a },
+                                    { label: 'B', value: quiz.option_b },
+                                    { label: 'C', value: quiz.option_c },
+                                    { label: 'D', value: quiz.option_d },
+                                  ].map((opt) => (
+                                    <div
+                                      key={opt.label}
+                                      className={`px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
+                                        quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() || quiz.correct_answer === `option_${opt.label.toLowerCase()}`
+                                          ? 'bg-emerald-100 border-emerald-200 text-emerald-800'
+                                          : 'bg-white border-amber-100/50 text-amber-700/80'
+                                      }`}
+                                    >
+                                      <span className="opacity-50">{opt.label}:</span>
+                                      <span className="line-clamp-1">{opt.value}</span>
+                                      {(quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() || quiz.correct_answer === `option_${opt.label.toLowerCase()}`) && (
+                                        <CheckCircle2 size={12} className="text-emerald-600 ml-auto" />
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest whitespace-nowrap shrink-0">{quiz.points} pts</span>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Add Quiz Button */}
+                      {!isAddingQuiz || isAddingQuiz !== lesson.id ? (
+                        <Button 
+                          onClick={() => setIsAddingQuiz(lesson.id)} 
+                          variant="ghost" 
+                          size="sm" 
+                          className="mt-2 text-xs font-black text-emerald-600 hover:bg-emerald-50 w-auto rounded-xl"
+                        >
+                          <Plus size={14} className="mr-1" /> Add Quiz
+                        </Button>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mt-4 p-5 bg-white border border-gray-200 rounded-2xl shadow-sm space-y-4"
+                        >
+                          <h4 className="text-xs font-black text-gray-700 uppercase tracking-widest">New Quiz</h4>
+                          <Input value={quizForm.question} onChange={(e) => setQuizForm({...quizForm, question: e.target.value})} placeholder="Question..." className="bg-gray-50 border-none font-medium" />
+                          <div className="grid grid-cols-2 gap-3">
+                            <Input value={quizForm.option_a} onChange={(e) => setQuizForm({...quizForm, option_a: e.target.value})} placeholder="Option A" className="bg-gray-50 border-none text-sm" />
+                            <Input value={quizForm.option_b} onChange={(e) => setQuizForm({...quizForm, option_b: e.target.value})} placeholder="Option B" className="bg-gray-50 border-none text-sm" />
+                            <Input value={quizForm.option_c} onChange={(e) => setQuizForm({...quizForm, option_c: e.target.value})} placeholder="Option C" className="bg-gray-50 border-none text-sm" />
+                            <Input value={quizForm.option_d} onChange={(e) => setQuizForm({...quizForm, option_d: e.target.value})} placeholder="Option D" className="bg-gray-50 border-none text-sm" />
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <select value={quizForm.correct_answer} onChange={(e) => setQuizForm({...quizForm, correct_answer: e.target.value})} className="w-full bg-gray-50 border-none h-10 rounded-xl text-sm font-medium px-3 outline-none">
+                                <option value="option_a">Option A is correct</option>
+                                <option value="option_b">Option B is correct</option>
+                                <option value="option_c">Option C is correct</option>
+                                <option value="option_d">Option D is correct</option>
+                              </select>
+                            </div>
+                            <div className="w-24">
+                              <Input type="number" value={quizForm.points} onChange={(e) => setQuizForm({...quizForm, points: Number(e.target.value)})} placeholder="Points" className="bg-gray-50 border-none" />
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 pt-2">
+                            <Button onClick={() => handleAddQuiz(lesson.id)} disabled={addQuizMutation.isPending} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl h-9 text-xs font-black">Save Quiz</Button>
+                            <Button onClick={() => setIsAddingQuiz(null)} variant="ghost" className="h-9 text-xs font-black text-gray-500">Cancel</Button>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  </>
+                )}
+              </div>
+            ))}
               </div>
 
               <div className="space-y-4">
                 <AnimatePresence>
-                  {isAddingLesson && (
+                  {isAddingLesson && !editingLessonId && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
@@ -410,8 +576,8 @@ const ModuleEditor: React.FC<{ module: any; index: number }> = ({ module, index 
                       className="p-8 bg-gray-50 rounded-3xl border border-gray-100 space-y-6 overflow-hidden"
                     >
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-black text-gray-700 uppercase tracking-widest">{editingLessonId ? 'Edit Lesson' : 'New Lesson'}</h4>
-                        <button onClick={() => { setIsAddingLesson(false); setEditingLessonId(null); }} className="text-gray-400 hover:text-gray-600 font-black text-xs">CANCEL</button>
+                        <h4 className="text-sm font-black text-gray-700 uppercase tracking-widest">New Lesson</h4>
+                        <button onClick={() => setIsAddingLesson(false)} className="text-gray-400 hover:text-gray-600 font-black text-xs">CANCEL</button>
                       </div>
 
                       {/* Lesson Title */}

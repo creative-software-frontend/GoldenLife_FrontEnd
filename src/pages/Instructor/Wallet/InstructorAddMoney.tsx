@@ -26,6 +26,9 @@ export default function InstructorAddMoney() {
     const [trxId, setTrxId] = useState<string>('');
     const [attachment, setAttachment] = useState<File | null>(null);
     const [senderBankName, setSenderBankName] = useState<string>('');
+    const [invoiceNumber, setInvoiceNumber] = useState<string>('');
+    const [senderAccountName, setSenderAccountName] = useState<string>('');
+    const [senderBranchName, setSenderBranchName] = useState<string>('');
     const [showGuideModal, setShowGuideModal] = useState(false);
     const [guideTab, setGuideTab] = useState<'bkash' | 'nagad'>('bkash');
 
@@ -65,6 +68,19 @@ export default function InstructorAddMoney() {
                 alert("Please enter your sender account number.");
                 return;
             }
+            if (!senderAccountName.trim()) {
+                alert("Please enter your sender account name.");
+                return;
+            }
+            if (!senderBranchName.trim()) {
+                alert("Please enter your sender branch name.");
+                return;
+            }
+        }
+
+        if (!invoiceNumber.trim()) {
+            toast.error("Please enter your invoice number.");
+            return;
         }
 
         if (!attachment) {
@@ -83,10 +99,13 @@ export default function InstructorAddMoney() {
             formData.append('sender_account_number', accountNumber);
             formData.append('sender_account_no', accountNumber);
             formData.append('number', accountNumber);
+            formData.append('sender_account_name', senderAccountName);
+            formData.append('sender_branch_name', senderBranchName);
         } else {
             formData.append('number', accountNumber);
         }
         formData.append('role', '4'); // Instructor role
+        if (invoiceNumber) formData.append('invoiceNumber', invoiceNumber);
 
         if (attachment) {
             formData.append('attachment', attachment);
@@ -99,6 +118,9 @@ export default function InstructorAddMoney() {
             setTrxId('');
             setSenderBankName('');
             setAttachment(null);
+            setInvoiceNumber('');
+            setSenderAccountName('');
+            setSenderBranchName('');
         } catch (err) {
             // Error handled by mutation
         }
@@ -233,6 +255,7 @@ export default function InstructorAddMoney() {
                                             className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-4"
                                             value={selectedBank}
                                             onChange={(e) => setSelectedBank(e.target.value)}
+                                            required
                                         >
                                             <option value="">-- Choose a Bank --</option>
                                             {banks.map(b => (
@@ -268,12 +291,13 @@ export default function InstructorAddMoney() {
                                 )}
 
                                 {paymentMethod === 'bank' && (
-                                    <div className="space-y-2 md:col-span-2">Sender Bank Name
+                                    <div className="space-y-2 md:col-span-2">
                                         <label className="text-xs font-bold text-slate-500 uppercase">Bank Sender Name (Your Bank)</label>
                                         <select
                                             value={senderBankName}
                                             onChange={(e) => setSenderBankName(e.target.value)}
                                             className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all text-slate-700 font-medium"
+                                            required
                                         >
                                             <option value="">-- Select Your Bank --</option>
                                             {BANGLADESHI_BANKS.map(bank => (
@@ -281,6 +305,33 @@ export default function InstructorAddMoney() {
                                             ))}
                                         </select>
                                     </div>
+                                )}
+                                
+                                {paymentMethod === 'bank' && (
+                                    <>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Sender Account Name</label>
+                                            <input
+                                                type="text"
+                                                value={senderAccountName}
+                                                onChange={(e) => setSenderAccountName(e.target.value)}
+                                                placeholder="Account Name"
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Sender Branch Name</label>
+                                            <input
+                                                type="text"
+                                                value={senderBranchName}
+                                                onChange={(e) => setSenderBranchName(e.target.value)}
+                                                placeholder="Branch Name"
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
+                                                required
+                                            />
+                                        </div>
+                                    </>
                                 )}
 
                                 <div className="space-y-2">
@@ -305,6 +356,17 @@ export default function InstructorAddMoney() {
                                         value={trxId}
                                         onChange={(e) => setTrxId(e.target.value)}
                                         placeholder="TRX-XXXXXX"
+                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none uppercase transition-all"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Invoice Number <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        value={invoiceNumber}
+                                        onChange={(e) => setInvoiceNumber(e.target.value)}
+                                        placeholder="INV-XXXXXXXX"
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none uppercase transition-all"
                                         required
                                     />

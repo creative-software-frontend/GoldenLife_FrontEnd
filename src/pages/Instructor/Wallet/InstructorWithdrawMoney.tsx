@@ -75,12 +75,8 @@ export default function InstructorWithdrawMoney() {
             return;
         }
 
-        const chargePercent = parseFloat(String(withdrawCharge).replace(/[^0-9.-]/g, '')) || 0;
-        const chargeAmount = Number(amount) * (chargePercent / 100);
-        const totalDeduction = Number(amount) + chargeAmount;
-
-        if (totalDeduction > Number(balance)) {
-            const msg = `Insufficient funds! (Total including ${chargePercent}% fee: ৳${totalDeduction.toFixed(2)})`;
+        if (Number(amount) > Number(balance)) {
+            const msg = `Insufficient funds! Your balance is ৳${Number(balance).toFixed(2)}`;
             setErrorMessage(msg);
             return;
         }
@@ -93,11 +89,6 @@ export default function InstructorWithdrawMoney() {
                 return;
             }
         } else if (paymentMethod === 'bank') {
-            if (!selectedBank) {
-                const msg = "Please select a receiver bank.";
-                setErrorMessage(msg);
-                return;
-            }
             if (!bankDetails.bankName || !bankDetails.branchName || !bankDetails.accountName || !bankDetails.accountNumber) {
                 const msg = "Please fill in all required bank details.";
                 setErrorMessage(msg);
@@ -150,8 +141,9 @@ export default function InstructorWithdrawMoney() {
                             pin_code: pinCode
                         };
                         if (paymentMethod === 'bank') {
-                            payload.receiver_bank_id = selectedBank;
                             payload.sender_bank_name = bankDetails.bankName;
+                            payload.sender_account_name = bankDetails.accountName;
+                            payload.sender_branch_name = bankDetails.branchName;
                             payload.sender_account_no = bankDetails.accountNumber;
                             payload.sender_account_number = bankDetails.accountNumber;
                             payload.number = bankDetails.accountNumber;
@@ -335,7 +327,7 @@ export default function InstructorWithdrawMoney() {
                                             </div>
                                         )} */}
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-xs font-bold text-slate-500 uppercase">Your Bank Name (Receiver)</label>
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Receiver Bank Name</label>
                                             <select
                                                 value={bankDetails.bankName}
                                                 onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
@@ -350,21 +342,21 @@ export default function InstructorWithdrawMoney() {
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-slate-500">Account Name</label>
+                                            <label className="text-xs font-semibold text-slate-500">Receiver Account Name</label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><User size={16} /></span>
                                                 <input type="text" value={bankDetails.accountName} onChange={(e) => setBankDetails({ ...bankDetails, accountName: e.target.value })} placeholder="e.g. John Doe" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-slate-500">Account Number</label>
+                                            <label className="text-xs font-semibold text-slate-500">Receiver Account Number</label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><ShieldCheck size={16} /></span>
                                                 <input type="text" value={bankDetails.accountNumber} maxLength={29} minLength={8} onChange={(e) => setBankDetails({ ...bankDetails, accountNumber: e.target.value })} placeholder="e.g. 112233445566" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />
                                             </div>
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-slate-500">Branch Name</label>
+                                            <label className="text-xs font-semibold text-slate-500">Receiver Branch Name</label>
                                             <div className="relative">
                                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><Landmark size={16} /></span>
                                                 <input type="text" value={bankDetails.branchName} onChange={(e) => setBankDetails({ ...bankDetails, branchName: e.target.value })} placeholder="e.g. Gulshan Branch" className="w-full pl-10 pr-4 py-3 text-sm font-semibold bg-white border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all" required />

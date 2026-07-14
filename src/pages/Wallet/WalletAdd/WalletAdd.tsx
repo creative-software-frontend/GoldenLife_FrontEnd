@@ -29,6 +29,9 @@ export default function WalletAdd() {
     const [trxId, setTrxId] = useState<string>('');
     const [attachment, setAttachment] = useState<File | null>(null);
     const [senderBankName, setSenderBankName] = useState<string>('');
+    const [invoiceNumber, setInvoiceNumber] = useState<string>('');
+    const [senderAccountName, setSenderAccountName] = useState<string>('');
+    const [senderBranchName, setSenderBranchName] = useState<string>('');
 
 
     // Status States
@@ -136,10 +139,25 @@ export default function WalletAdd() {
                 setError(t('error_invalid_account', "Please enter your sender account number."));
                 return false;
             }
+            if (!senderAccountName.trim()) {
+                setError(t('error_invalid_account_name', "Please enter your sender account name."));
+                return false;
+            }
+            if (!senderBranchName.trim()) {
+                setError(t('error_invalid_branch_name', "Please enter your sender branch name."));
+                return false;
+            }
         }
 
         if (trxId.trim().length < 6) {
             setError(t('error_invalid_trx', "Transaction ID seems too short (minimum 6 characters)."));
+            return false;
+        }
+
+        if (!invoiceNumber.trim()) {
+            const msg = "Please enter your invoice number.";
+            toast.error(msg);
+            setError(msg);
             return false;
         }
 
@@ -177,9 +195,12 @@ export default function WalletAdd() {
                 formData.append('sender_account_number', accountNumber); // As seen in API response
                 formData.append('sender_account_no', accountNumber); // Fallback
                 formData.append('number', accountNumber); // Backend might still require 'number'
+                formData.append('sender_account_name', senderAccountName);
+                formData.append('sender_branch_name', senderBranchName);
             } else {
                 formData.append('number', accountNumber);
             }
+            if (invoiceNumber) formData.append('invoiceNumber', invoiceNumber);
             if (attachment) {
                 formData.append('attachment', attachment);
             }
@@ -202,6 +223,9 @@ export default function WalletAdd() {
                 setTrxId('');
                 setSenderBankName('');
                 setAttachment(null);
+                setInvoiceNumber('');
+                setSenderAccountName('');
+                setSenderBranchName('');
 
                 // 4. Update the Zustand Store (Silent fetch for balance so the UI doesn't flash)
                 await fetchWallet(true); // This updates the balance everywhere
@@ -445,6 +469,7 @@ export default function WalletAdd() {
                                             className="w-full px-4 py-3 bg-white border border-blue-200 rounded-xl focus:border-blue-500 outline-none transition-all font-bold text-slate-700 mb-4"
                                             value={selectedBank}
                                             onChange={(e) => setSelectedBank(e.target.value)}
+                                            required
                                         >
                                             <option value="">-- Choose a Bank --</option>
                                             {banks.map(b => (
@@ -480,19 +505,44 @@ export default function WalletAdd() {
                                 )}
 
                                 {paymentMethod === 'bank' && (
-                                    <div className="space-y-2 md:col-span-2">
-                                        <label className="text-xs font-bold text-slate-500 uppercase">Sender Bank Name(Your Bank)</label>
-                                        <select
-                                            value={senderBankName}
-                                            onChange={(e) => setSenderBankName(e.target.value)}
-                                            className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all text-slate-700 font-medium"
-                                        >
-                                            <option value="">-- Select Your Bank --</option>
-                                            {BANGLADESHI_BANKS.map(bank => (
-                                                <option key={bank} value={bank}>{bank}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    <>
+                                        <div className="space-y-2 md:col-span-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Sender Bank Name(Your Bank)</label>
+                                            <select
+                                                value={senderBankName}
+                                                onChange={(e) => setSenderBankName(e.target.value)}
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all text-slate-700 font-medium"
+                                                required
+                                            >
+                                                <option value="">-- Select Your Bank --</option>
+                                                {BANGLADESHI_BANKS.map(bank => (
+                                                    <option key={bank} value={bank}>{bank}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Sender Account Name</label>
+                                            <input
+                                                type="text"
+                                                value={senderAccountName}
+                                                onChange={(e) => setSenderAccountName(e.target.value)}
+                                                placeholder="Account Name"
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-slate-500 uppercase">Sender Branch Name</label>
+                                            <input
+                                                type="text"
+                                                value={senderBranchName}
+                                                onChange={(e) => setSenderBranchName(e.target.value)}
+                                                placeholder="Branch Name"
+                                                className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
+                                                required
+                                            />
+                                        </div>
+                                    </>
                                 )}
 
                                 <div className="space-y-2">
@@ -507,16 +557,29 @@ export default function WalletAdd() {
                                         maxLength={paymentMethod === 'bank' ? 29 : 11}
                                         minLength={paymentMethod === 'bank' ? 8 : 11}
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none transition-all"
+                                        required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('transaction_id', 'Transaction ID')}</label>
+                                    <label className="text-xs font-bold text-slate-500 uppercase">{t('transaction_id', 'Transaction ID')} <span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
                                         value={trxId}
                                         onChange={(e) => setTrxId(e.target.value)}
                                         placeholder="TRX-XXXXXX"
                                         className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none uppercase transition-all"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-500 uppercase">Invoice Number <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        value={invoiceNumber}
+                                        onChange={(e) => setInvoiceNumber(e.target.value)}
+                                        placeholder="INV-XXXXXXXX"
+                                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:border-secondary outline-none uppercase transition-all"
+                                        required
                                     />
                                 </div>
                             </div>

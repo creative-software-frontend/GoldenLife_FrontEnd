@@ -19,11 +19,13 @@ interface ConfirmWithdrawModalProps {
     receiverBankId?: string;
     senderBankName?: string;
     senderAccountNo?: string;
+    senderAccountName?: string;
+    senderBranchName?: string;
 }
 
 export default function ConfirmWithdrawModal({ 
     isOpen, onClose, onSuccess, onError, amount, accountNumber, paymentMethod, chargePercentage = 0, currentBalance, onSubmitOverride,
-    receiverBankId, senderBankName, senderAccountNo
+    receiverBankId, senderBankName, senderAccountNo, senderAccountName, senderBranchName
 }: ConfirmWithdrawModalProps) {
     const { withdrawFunds } = useAppStore();
     
@@ -51,8 +53,9 @@ export default function ConfirmWithdrawModal({
             
             if (paymentMethod === 'bank') {
                 // Bank withdrawal: send specific bank fields
-                if (receiverBankId) formData.append('receiver_bank_id', receiverBankId);
                 if (senderBankName) formData.append('sender_bank_name', senderBankName);
+                if (senderAccountName) formData.append('sender_account_name', senderAccountName);
+                if (senderBranchName) formData.append('sender_branch_name', senderBranchName);
                 if (senderAccountNo) {
                     formData.append('sender_account_no', senderAccountNo);
                     formData.append('sender_account_number', senderAccountNo);
@@ -100,7 +103,7 @@ export default function ConfirmWithdrawModal({
     if (!isOpen) return null;
 
     const modalContent = (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-foreground/10 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-foreground/10 backdrop-blur-md animate-in fade-in duration-300">
             <div className="relative bg-background rounded-[24px] p-6 w-full max-w-sm shadow-2xl border border-border/50 transform transition-all max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 
                 <div className="flex items-center justify-between mb-5">

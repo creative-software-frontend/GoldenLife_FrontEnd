@@ -754,8 +754,8 @@ export const useAddQuizMutation = () => {
   const token = getInstructorToken();
 
   return useMutation({
-    mutationFn: async ({ courseId, data }: { courseId: string | number; data: any }) => {
-      const response = await axios.post(`${baseURL}/api/courses/${courseId}/quizzes`, data, {
+    mutationFn: async ({ lessonId, courseId, data }: { lessonId: string | number; courseId: string | number; data: any }) => {
+      const response = await axios.post(`${baseURL}/api/lessons/${lessonId}/quizzes`, data, {
         headers: { 'X-Auth-Token': `Bearer ${token}` },
       });
       return response.data;

@@ -429,9 +429,7 @@ const InstrutorCourseList: React.FC = () => {
                                 <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/curriculum/${course.id}`)}>
                                   <Layout size={16} className="mr-2 text-purple-500" /> Modules
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="rounded-xl font-black py-3 px-4" onClick={() => navigate(`/instructor/dashboard/courses/quizzes/${course.id}`)}>
-                                  <FileText size={16} className="mr-2 text-orange-500" /> Quizzes
-                                </DropdownMenuItem>
+
                               </>
                             )}
                           </DropdownMenuContent>

@@ -66,7 +66,6 @@ const InstructorCourseDetails: React.FC = () => {
               {[
                 { id: 'overview', label: 'Overview', icon: Info },
                 { id: 'curriculum', label: 'Modules and Lessons', icon: Layout },
-                { id: 'assessments', label: 'Quizzes', icon: FileText },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -217,84 +216,6 @@ const InstructorCourseDetails: React.FC = () => {
               </div>
             </motion.div>
           )}
-
-          {activeTab === 'assessments' && (
-            <motion.div
-              key="assessments"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-4xl mx-auto space-y-10"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div>
-                  <h3 className="text-2xl font-black text-gray-900 tracking-tight">Quizzes & Assessments</h3>
-                  <p className="text-sm font-bold text-gray-400">{course.quizzes?.length || 0} Questions Total</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-6">
-                {course.quizzes && course.quizzes.length > 0 ? (
-                  course.quizzes.map((quiz, qIdx) => (
-                    <div key={quiz.id} className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm hover:shadow-xl transition-all group">
-                      <div className="flex items-start gap-6">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black text-lg shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                          {qIdx + 1}
-                        </div>
-                        <div className="space-y-6 flex-1">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-3">
-                              <Badge className="bg-gray-100 text-gray-400 border-none px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">Question</Badge>
-                              <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{quiz.points} POINTS</span>
-                            </div>
-                            <h4 className="text-xl font-black text-gray-900 leading-tight">{quiz.question}</h4>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {[
-                              { label: 'A', value: quiz.option_a },
-                              { label: 'B', value: quiz.option_b },
-                              { label: 'C', value: quiz.option_c },
-                              { label: 'D', value: quiz.option_d },
-                            ].map((opt) => (
-                              <div
-                                key={opt.label}
-                                className={`p-4 rounded-2xl border transition-all flex items-center gap-4 ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
-                                  ? 'bg-emerald-50 border-emerald-200 ring-2 ring-emerald-500/10'
-                                  : 'bg-gray-50/50 border-gray-100'
-                                  }`}
-                              >
-                                <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
-                                  ? 'bg-emerald-500 text-white'
-                                  : 'bg-white text-gray-400 border border-gray-100'
-                                  }`}>
-                                  {opt.label}
-                                </div>
-                                <span className={`text-sm font-bold ${quiz.correct_answer.toLowerCase() === opt.label.toLowerCase()
-                                  ? 'text-emerald-700'
-                                  : 'text-gray-600'
-                                  }`}>
-                                  {opt.value}
-                                </span>
-                                {quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() && (
-                                  <CheckCircle2 size={16} className="text-emerald-500 ml-auto" />
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
-                    <FileText className="mx-auto text-gray-200 mb-4" size={48} strokeWidth={1} />
-                    <p className="text-gray-400 font-bold">No quizzes found for this course.</p>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
         </AnimatePresence>
       </main>
     </motion.div >
@@ -363,6 +284,47 @@ const ModuleAccordion: React.FC<{ module: any; index: number }> = ({ module, ind
                           <Play size={14} className="text-gray-300 group-hover/video:text-emerald-500" />
                           <span className="text-xs font-bold text-gray-500 group-hover/video:text-emerald-700">{video.video_title || `Video ${vIdx + 1}`}</span>
                           <span className="text-[10px] font-black text-gray-300 ml-auto uppercase tracking-widest group-hover/video:text-emerald-300">{video.duration || '—'}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {/* Quizzes Sub-list */}
+                  {lesson.quizzes && lesson.quizzes.length > 0 && (
+                    <div className="ml-14 pl-6 border-l-2 border-amber-100 space-y-2 py-2">
+                      {lesson.quizzes.map((quiz: any, qIdx: number) => (
+                        <div key={`q-${qIdx}`} className="p-4 rounded-2xl bg-amber-50/50 border border-amber-100 mt-2 space-y-3 group/quiz">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-black text-xs shrink-0 mt-0.5">Q</div>
+                              <div>
+                                <span className="text-sm font-bold text-amber-900">{quiz.question}</span>
+                                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                  {[
+                                    { label: 'A', value: quiz.option_a },
+                                    { label: 'B', value: quiz.option_b },
+                                    { label: 'C', value: quiz.option_c },
+                                    { label: 'D', value: quiz.option_d },
+                                  ].map((opt) => (
+                                    <div
+                                      key={opt.label}
+                                      className={`px-3 py-2 rounded-xl border text-xs font-semibold flex items-center gap-2 ${
+                                        quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() || quiz.correct_answer === `option_${opt.label.toLowerCase()}`
+                                          ? 'bg-emerald-100 border-emerald-200 text-emerald-800'
+                                          : 'bg-white border-amber-100/50 text-amber-700/80'
+                                      }`}
+                                    >
+                                      <span className="opacity-50">{opt.label}:</span>
+                                      <span className="line-clamp-1">{opt.value}</span>
+                                      {(quiz.correct_answer.toLowerCase() === opt.label.toLowerCase() || quiz.correct_answer === `option_${opt.label.toLowerCase()}`) && (
+                                        <CheckCircle2 size={12} className="text-emerald-600 ml-auto" />
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-black text-amber-600 uppercase tracking-widest whitespace-nowrap shrink-0">{quiz.points} pts</span>
+                          </div>
                         </div>
                       ))}
                     </div>
