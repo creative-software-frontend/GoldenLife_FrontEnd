@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
@@ -91,5 +91,40 @@ export const useStudentCourseDetailsQuery = (id: string | undefined) => {
             return response.data;
         },
         enabled: !!id,
+    });
+};
+
+export interface SubmitQuizPayload {
+    quiz_id: number;
+    selected_option: string;
+}
+
+export interface SubmitQuizResponse {
+    status: boolean;
+    correct: boolean;
+    message: string;
+    data?: {
+        points_earned: number;
+        current_balance: number;
+    };
+}
+
+export const useSubmitQuizMutation = () => {
+    return useMutation<SubmitQuizResponse, Error, SubmitQuizPayload>({
+        mutationFn: async (payload) => {
+            const token = getStudentToken();
+            const headers: Record<string, string> = {
+                Accept: 'application/json',
+            };
+
+            if (token) {
+                headers['X-Auth-Token'] = `Bearer ${token}`;
+            }
+
+            const response = await axios.post<SubmitQuizResponse>(`${baseURL}/api/quiz/submit`, payload, {
+                headers
+            });
+            return response.data;
+        },
     });
 };

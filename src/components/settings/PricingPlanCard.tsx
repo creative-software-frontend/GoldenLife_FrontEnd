@@ -201,13 +201,7 @@ export const PricingPlanCard = ({ plan, onClick }: PricingPlanCardProps) => {
       {/* Core CTA Action Button with synced colors and attributes */}
       <button
         type="button"
-        onClick={() => {
-          if (isNotVerified) {
-            console.log("Trigger verification flow initiation context");
-          } else {
-            onClick(plan);
-          }
-        }}
+        onClick={() => onClick(plan)}
         disabled={isActive}
         className={`flex items-center justify-center w-full mt-4 py-3 rounded-lg font-bold text-base transition-all shadow-md disabled:cursor-not-allowed ${isActive
           ? "bg-blue-400 text-white opacity-80"

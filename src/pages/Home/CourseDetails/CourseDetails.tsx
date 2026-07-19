@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCourseDetailsQuery } from '@/hooks/useAllCourses';
-import { Loader2, ArrowLeft, Clock, BookOpen, Star, Users, CheckCircle, ShieldCheck, PlayCircle, ShoppingCart } from 'lucide-react';
+import { Loader2, ArrowLeft, Clock, BookOpen, PlayCircle, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
@@ -244,41 +244,7 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                                         </div>
                                     ))}
 
-                                    {/* Quizzes */}
-                                    {course.quizzes?.length > 0 && (
-                                        <div className="mt-8">
-                                            <h3 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-                                                <ShieldCheck className="w-6 h-6 text-amber-500" />
-                                                Assessments & Quizzes
-                                            </h3>
-                                            <div className="space-y-4">
-                                                {course.quizzes.map((quiz: any, idx: number) => (
-                                                    <div key={quiz.id || idx} className="border border-amber-100 bg-amber-50/30 rounded-xl p-4 flex flex-col gap-3">
-                                                        <div className="flex items-start gap-3">
-                                                            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-700 text-sm shrink-0 mt-0.5">
-                                                                Q{idx + 1}
-                                                            </span>
-                                                            <div className="flex-1">
-                                                                <p className="font-bold text-slate-800 leading-snug">{quiz.question || quiz.quiz_title || quiz.title || 'Quiz Assessment'}</p>
-                                                                {quiz.points && (
-                                                                    <p className="text-xs font-semibold text-amber-600 mt-1">Points: {quiz.points}</p>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                        
-                                                        {(quiz.option_a || quiz.option_b || quiz.option_c || quiz.option_d) && (
-                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 ml-11">
-                                                                {quiz.option_a && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">A. {quiz.option_a}</div>}
-                                                                {quiz.option_b && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">B. {quiz.option_b}</div>}
-                                                                {quiz.option_c && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">C. {quiz.option_c}</div>}
-                                                                {quiz.option_d && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">D. {quiz.option_d}</div>}
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
+                                    {/* Quizzes are only available after purchasing the course */}
                                 </div>
                             </div>
                         )}

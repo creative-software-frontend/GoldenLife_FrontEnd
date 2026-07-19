@@ -14,6 +14,7 @@ import {
   Video,
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { CourseActionButtons } from '@/components/course/CourseActionButtons';
 
 // --- Types ---
 interface Product {
@@ -312,42 +313,7 @@ const OrderHistory = () => {
 
                               {item.service_type === 'course' && (
                                 <div className="mt-2 flex flex-col items-end gap-1">
-                                  {(() => {
-                                    const type = (item.course_type || "").toLowerCase();
-                                    const hasLink = !!item.download_url;
-
-                                    if (type.includes("ebook")) {
-                                      return hasLink ? (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            window.open(item.download_url!, '_blank', 'noopener,noreferrer');
-                                          }}
-                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm shadow-emerald-100 no-print"
-                                        >
-                                          <Download size={12} />
-                                          Download PDF
-                                        </button>
-                                      ) : (
-                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider italic">PDF Pending</span>
-                                      );
-                                    } else {
-                                      return hasLink ? (
-                                        <button
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            window.open(item.download_url!, '_blank', 'noopener,noreferrer');
-                                          }}
-                                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all shadow-sm shadow-indigo-100 no-print"
-                                        >
-                                          <Video size={12} />
-                                          Watch Class
-                                        </button>
-                                      ) : (
-                                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider italic">Class Link Pending</span>
-                                      );
-                                    }
-                                  })()}
+                                  <CourseActionButtons item={item} />
                                 </div>
                               )}
                             </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStudentCourseDetailsQuery } from '@/hooks/useStudentCourses';
-import { Loader2, ArrowLeft, Clock, BookOpen, Star, Users, CheckCircle, ShieldCheck, PlayCircle, ShoppingCart, FileText, Calendar } from 'lucide-react';
+import { Loader2, ArrowLeft, Clock, BookOpen, CheckCircle, ShieldCheck, PlayCircle, ShoppingCart, FileText, Calendar } from 'lucide-react';
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,45 @@ interface StudentCourseDetailsProps {
     courseId?: string;
     onClose?: () => void;
 }
+
+const OPTION_KEYS = ['option_a', 'option_b', 'option_c', 'option_d'] as const;
+const OPTION_LABELS = ['A', 'B', 'C', 'D'];
+
+const QuizItem = ({ quiz }: { quiz: any }) => {
+    return (
+        <div className="border border-slate-200 bg-white rounded-2xl p-5 flex flex-col gap-3 shadow-sm">
+            {/* Question */}
+            <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 text-blue-600 shrink-0 mt-0.5">
+                    <FileText className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                    <p className="font-bold text-slate-800 leading-snug text-sm sm:text-base">
+                        {quiz.question || quiz.quiz_title || quiz.title || 'Quiz Assessment'}
+                    </p>
+                    {quiz.points && (
+                        <span className="inline-block mt-1 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                            Points: {quiz.points}
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {/* Options — read only */}
+            {OPTION_KEYS.some((k) => quiz[k]) && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ml-0 sm:ml-12">
+                    {OPTION_KEYS.map((opt, i) =>
+                        quiz[opt] ? (
+                            <div key={opt} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-700">
+                                <span className="font-bold text-slate-900">{OPTION_LABELS[i]}.</span> {quiz[opt]}
+                            </div>
+                        ) : null
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, onClose }) => {
     const { id: paramId } = useParams<{ id: string }>();
@@ -247,6 +286,15 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                                                     ))}
                                                                 </div>
                                                             )}
+                                                            
+                                                            {/* Render Quizzes if available */}
+                                                            {lesson.quizzes && lesson.quizzes.length > 0 && (
+                                                                <div className="pl-8 space-y-4 mt-4">
+                                                                    {lesson.quizzes.map((quiz: any, qIdx: number) => (
+                                                                        <QuizItem key={quiz.id || qIdx} quiz={quiz} />
+                                                                    ))}
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     ))}
                                                 </div>
@@ -267,28 +315,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Quizzes</h2>
                                 <div className="space-y-4">
                                     {course.quizzes.map((quiz: any, idx: number) => (
-                                        <div key={quiz.id || idx} className="border border-slate-100 bg-slate-50 rounded-xl p-4 flex flex-col gap-3">
-                                            <div className="flex items-start gap-3">
-                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 shrink-0 mt-0.5">
-                                                    <FileText className="w-4 h-4" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className="font-bold text-slate-800 leading-snug">{quiz.question || quiz.quiz_title || quiz.title || `Quiz ${idx + 1}`}</p>
-                                                    {quiz.points && (
-                                                        <p className="text-xs font-semibold text-emerald-600 mt-1">Points: {quiz.points}</p>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {(quiz.option_a || quiz.option_b || quiz.option_c || quiz.option_d) && (
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 ml-11">
-                                                    {quiz.option_a && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">A. {quiz.option_a}</div>}
-                                                    {quiz.option_b && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">B. {quiz.option_b}</div>}
-                                                    {quiz.option_c && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">C. {quiz.option_c}</div>}
-                                                    {quiz.option_d && <div className="text-sm text-slate-600 bg-white border border-slate-200 px-3 py-2 rounded-lg">D. {quiz.option_d}</div>}
-                                                </div>
-                                            )}
-                                        </div>
+                                        <QuizItem key={quiz.id || idx} quiz={quiz} />
                                     ))}
                                 </div>
                             </div>
