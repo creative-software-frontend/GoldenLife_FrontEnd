@@ -1,9 +1,50 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import axios from 'axios';
 import { X, FileText, CheckCircle, Loader2, PlayCircle, BookOpen } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+
+const resolveMediaUrl = (url: string): string => {
+  if (!url) return '';
+  const cleanUrl = url.trim();
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+    return cleanUrl;
+  }
+  const path = cleanUrl.startsWith('/') ? cleanUrl.substring(1) : cleanUrl;
+  return `https://admin.goldenlifeltd.com/${path}`;
+};
+
+const getEmbedUrl = (url: string): { src: string; type: 'youtube' | 'document' } | null => {
+  if (!url) return null;
+  try {
+    if (url.includes('youtu.be/')) {
+      const id = url.split('youtu.be/')[1].split('?')[0];
+      return { src: `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`, type: 'youtube' };
+    }
+    if (url.includes('youtube.com/watch')) {
+      const id = new URL(url).searchParams.get('v');
+      if (id) return { src: `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`, type: 'youtube' };
+    }
+    if (url.includes('youtube.com/shorts/')) {
+      const id = url.split('youtube.com/shorts/')[1].split('?')[0];
+      return { src: `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1`, type: 'youtube' };
+    }
+    if (url.includes('drive.google.com/file/d/')) {
+      const match = url.match(/\/file\/d\/([^/?]+)/);
+      if (match) return { src: `https://drive.google.com/file/d/${match[1]}/preview`, type: 'document' };
+    }
+    if (url.includes('docs.google.com/document/d/')) {
+      const match = url.match(/\/document\/d\/([^/?]+)/);
+      if (match) return { src: `https://docs.google.com/document/d/${match[1]}/preview`, type: 'document' };
+    }
+    if (url.toLowerCase().endsWith('.pdf')) {
+      return { src: url, type: 'document' };
+    }
+  } catch { /* ignore */ }
+  return null;
+};
 
 const OPTION_KEYS = ['option_a', 'option_b', 'option_c', 'option_d'] as const;
 const OPTION_LABELS = ['A', 'B', 'C', 'D'];
@@ -78,7 +119,6 @@ const QuizCard = ({ quiz }: { quiz: any }) => {
                 ? 'border-indigo-500 bg-indigo-50'
                 : 'border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/40';
         }
-        // After submission: selected option turns green if correct, red if wrong
         if (selected === key) {
             return result.correct
                 ? 'border-emerald-500 bg-emerald-50'
@@ -103,7 +143,6 @@ const QuizCard = ({ quiz }: { quiz: any }) => {
 
     return (
         <div className="border border-slate-200 bg-white rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
-            {/* Question */}
             <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
                     <FileText className="w-4 h-4 text-indigo-600" />
@@ -120,7 +159,6 @@ const QuizCard = ({ quiz }: { quiz: any }) => {
                 </div>
             </div>
 
-            {/* Options */}
             {OPTION_KEYS.some(k => quiz[k]) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:ml-12">
                     {OPTION_KEYS.map((key, i) =>
@@ -131,7 +169,6 @@ const QuizCard = ({ quiz }: { quiz: any }) => {
                                 onClick={() => !result && !submitting && setSelected(key)}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition-all duration-150 ${optionStyle(key)} ${result ? 'cursor-default' : 'cursor-pointer'}`}
                             >
-                                {/* Radio circle */}
                                 <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${radioStyle(key)}`}>
                                     {(selected === key) && (
                                         <span className="w-2 h-2 rounded-full bg-white block" />
@@ -146,7 +183,6 @@ const QuizCard = ({ quiz }: { quiz: any }) => {
                 </div>
             )}
 
-            {/* Submit / Result */}
             <div className="sm:ml-12">
                 {!result ? (
                     <button
@@ -208,7 +244,6 @@ export const QuizModal = ({ courseId, courseName, onClose }: QuizModalProps) => 
                 );
                 const courseData = data?.data || data;
 
-                // Collect quizzes from modules > lessons > quizzes AND top-level quizzes
                 const collected: any[] = [];
                 (courseData?.modules || []).forEach((mod: any) => {
                     (mod.lessons || []).forEach((les: any) => {
@@ -236,7 +271,6 @@ export const QuizModal = ({ courseId, courseName, onClose }: QuizModalProps) => 
                 style={{ maxHeight: 'calc(100vh - 4rem)' }}
                 onClick={e => e.stopPropagation()}
             >
-                {/* Header */}
                 <div className="flex items-center justify-between p-5 sm:p-6 bg-white border-b border-slate-200 rounded-t-3xl shrink-0">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
@@ -255,7 +289,6 @@ export const QuizModal = ({ courseId, courseName, onClose }: QuizModalProps) => 
                     </button>
                 </div>
 
-                {/* Scrollable Body */}
                 <div
                     className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4"
                     style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
@@ -297,41 +330,117 @@ interface CourseActionButtonsProps {
 
 export const CourseActionButtons = ({ item }: CourseActionButtonsProps) => {
     const [showQuizModal, setShowQuizModal] = useState(false);
+    const [playingMedia, setPlayingMedia] = useState<string | null>(null);
 
     const type = (item.course_type || '').toLowerCase();
     const isEbook = type.includes('ebook');
 
+    // Opens videos/PDFs inline; new-tab fallback for unknown formats
+    const handlePlayMedia = (url: string | null | undefined) => {
+        if (!url || url.trim() === '' || url === '#') {
+            toast.error('Media link not available yet.');
+            return;
+        }
+        if (url.includes('[suspicious link removed]') || url.toLowerCase().includes('suspicious')) {
+            toast.error('This media link has been flagged or removed.');
+            return;
+        }
+        const fullUrl = resolveMediaUrl(url);
+        const embed = getEmbedUrl(fullUrl);
+        if (
+            embed ||
+            fullUrl.toLowerCase().endsWith('.mp4') ||
+            fullUrl.toLowerCase().endsWith('.webm') ||
+            fullUrl.toLowerCase().endsWith('.pdf')
+        ) {
+            setPlayingMedia(fullUrl);
+        } else {
+            window.open(fullUrl, '_blank', 'noopener,noreferrer');
+        }
+    };
+
+    // Synchronous download — works within user gesture, never popup-blocked
+    const handleDownloadPDF = (url: string | null | undefined) => {
+        if (!url || url.trim() === '' || url === '#') {
+            toast.error('PDF link not available yet.');
+            return;
+        }
+        const fullUrl = resolveMediaUrl(url);
+        const embed = getEmbedUrl(fullUrl);
+
+        // Google Drive / Docs / YouTube → show in inline viewer
+        if (embed) {
+            setPlayingMedia(fullUrl);
+            return;
+        }
+
+        // Direct file: synchronous anchor click — retains user-gesture context
+        const link = document.createElement('a');
+        link.href = fullUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.download = fullUrl.split('/').pop()?.split('?')[0] || 'document.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    // ── Ebook / PDF course ──────────────────────────────────────
     if (isEbook) {
-        return item.download_url ? (
-            <button
-                onClick={() => window.open(item.download_url!, '_blank', 'noopener,noreferrer')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition shadow-sm"
-            >
-                <BookOpen className="w-3.5 h-3.5" /> Download PDF
-            </button>
-        ) : (
-            <span className="text-[10px] text-slate-400 font-bold uppercase italic">PDF Pending</span>
+        return (
+            <>
+                {item.download_url ? (
+                    <button
+                        onClick={() => handleDownloadPDF(item.download_url)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition shadow-sm"
+                    >
+                        <BookOpen className="w-3.5 h-3.5" /> Download PDF
+                    </button>
+                ) : (
+                    <span className="text-[10px] text-slate-400 font-bold uppercase italic">PDF Pending</span>
+                )}
+
+                {/* Inline viewer for embeddable PDFs (Google Drive etc.) */}
+                {playingMedia && createPortal(
+                    <div
+                        className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+                        onClick={() => setPlayingMedia(null)}
+                    >
+                        <div
+                            className="bg-black rounded-2xl overflow-hidden w-full max-w-5xl h-[85vh] relative shadow-2xl border border-white/10"
+                            onClick={e => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setPlayingMedia(null)}
+                                className="absolute top-4 right-4 z-20 w-10 h-10 bg-black/60 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+                            >
+                                <X className="w-5 h-5 text-white" />
+                            </button>
+                            <iframe
+                                src={getEmbedUrl(playingMedia)?.src || playingMedia}
+                                className="w-full h-full border-0"
+                                allowFullScreen
+                                title="PDF Viewer"
+                            />
+                        </div>
+                    </div>,
+                    document.body
+                )}
+            </>
         );
     }
 
+    // ── Video / Course ──────────────────────────────────────────
     return (
         <>
             <div className="flex flex-wrap gap-2">
-                {/* Lesson Video button — opens URL directly */}
                 <button
-                    onClick={() => {
-                        if (item.download_url) {
-                            window.open(item.download_url, '_blank', 'noopener,noreferrer');
-                        } else {
-                            toast.info('Video link not available yet.');
-                        }
-                    }}
+                    onClick={() => handlePlayMedia(item.download_url)}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold uppercase tracking-wider transition shadow-sm shadow-indigo-100"
                 >
                     <PlayCircle className="w-3.5 h-3.5" /> Lesson Video
                 </button>
 
-                {/* Quiz button — opens modal */}
                 {item.product_id && (
                     <button
                         onClick={() => setShowQuizModal(true)}
@@ -348,6 +457,41 @@ export const CourseActionButtons = ({ item }: CourseActionButtonsProps) => {
                     courseName={item.product_name}
                     onClose={() => setShowQuizModal(false)}
                 />
+            )}
+
+            {/* Inline Media Viewer Portal */}
+            {playingMedia && createPortal(
+                <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+                    onClick={() => setPlayingMedia(null)}
+                >
+                    <div
+                        className={`bg-black rounded-2xl overflow-hidden w-full relative shadow-2xl border border-white/10 ${
+                            getEmbedUrl(playingMedia)?.type === 'document' || playingMedia.toLowerCase().endsWith('.pdf')
+                                ? 'max-w-5xl h-[85vh]'
+                                : 'max-w-4xl aspect-video'
+                        }`}
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setPlayingMedia(null)}
+                            className="absolute top-4 right-4 z-20 w-10 h-10 bg-black/60 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+                        >
+                            <X className="w-5 h-5 text-white" />
+                        </button>
+                        {(() => {
+                            const embed = getEmbedUrl(playingMedia);
+                            const isNativeVideo = !embed && (
+                                playingMedia.toLowerCase().endsWith('.mp4') ||
+                                playingMedia.toLowerCase().endsWith('.webm')
+                            );
+                            if (embed) return <iframe src={embed.src} className="w-full h-full border-0" allowFullScreen title="Media Player" />;
+                            if (isNativeVideo) return <video src={playingMedia} controls autoPlay className="w-full h-full" />;
+                            return null;
+                        })()}
+                    </div>
+                </div>,
+                document.body
             )}
         </>
     );

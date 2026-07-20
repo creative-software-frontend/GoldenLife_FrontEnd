@@ -458,6 +458,8 @@ export interface CourseData {
   course_details_bangla: string;
   video_url?: string;
   image?: string;
+  status?: string | number;
+  download_url?: string | null;
   modules?: Array<{
     id: number;
     module_title: string;
