@@ -28,7 +28,7 @@ export default function VendorInfo() {
   const [vendor, setVendor] = useState<VendorData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   useEffect(() => {
     const fetchVendor = async () => {
@@ -58,7 +58,7 @@ export default function VendorInfo() {
   if (!vendor) return null;
 
   // Corrected Image Logic
-  const fallbackBanner = 'https://admin.goldenlifeltd.com/uploads/vendor/banner/69c793580dd6b.jpg';
+  const fallbackBanner = 'https://app.goldenlifeltd.com/uploads/vendor/banner/69c793580dd6b.jpg';
   const bannerImg = vendor.banner
     ? (vendor.banner.startsWith('http') ? vendor.banner : `${baseURL}/uploads/vendor/banner/${vendor.banner}`)
     : fallbackBanner;

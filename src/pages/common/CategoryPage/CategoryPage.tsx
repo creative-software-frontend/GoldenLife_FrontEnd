@@ -13,7 +13,7 @@ const CategoryPage = () => {
     const { addItem } = useCartStore();
 
     const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 30, seconds: 0 });
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // 1. TIMER LOGIC
     useEffect(() => {

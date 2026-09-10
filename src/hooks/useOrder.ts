@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useAppStore } from '@/store/useAppStore';
 import useModalStore from '@/store/modalStore';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
 const getStudentToken = () => {
     const session = sessionStorage.getItem('student_session');

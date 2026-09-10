@@ -26,7 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useInstructorCourseDetailsQuery } from '@/hooks/useInstructorAuth';
 import { toast } from 'react-toastify';
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 // ── Unified embed URL resolver ───────────────────────────────────
 const getEmbedUrl = (url: string): { src: string; type: 'youtube' | 'document' } | null => {
@@ -72,7 +72,7 @@ const resolveMediaUrl = (url: string): string => {
     return cleanUrl;
   }
   const path = cleanUrl.startsWith('/') ? cleanUrl.substring(1) : cleanUrl;
-  return `https://admin.goldenlifeltd.com/${path}`;
+  return `https://app.goldenlifeltd.com/${path}`;
 };
 
 const InstructorCourseDetails: React.FC = () => {

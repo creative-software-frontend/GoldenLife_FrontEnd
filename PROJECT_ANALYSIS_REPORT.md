@@ -3,7 +3,7 @@
 **প্রজেক্টের নাম:** Golden Life - Vendor Dashboard  
 **বর্তমান তারিখ:** March 18, 2026  
 **প্রজেক্ট রুট:** `Golden_Life_React`  
-**API Base URL:** `https://admin.goldenlifeltd.com`
+**API Base URL:** `https://app.goldenlifeltd.com`
 
 ---
 

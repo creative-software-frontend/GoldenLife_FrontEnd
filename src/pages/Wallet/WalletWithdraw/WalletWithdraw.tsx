@@ -89,7 +89,7 @@ const BANK_DETAILS = {
 export default function WalletWithdraw() {
     const navigate = useNavigate();
     const { triggerWalletUpdate } = useModalStore();
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // --- Tab & History States ---
     const [activeTab, setActiveTab] = useState<'withdraw' | 'history'>('withdraw');

@@ -37,7 +37,7 @@ export default function FreshSell() {
 
     const [searchParams] = useSearchParams();
     const keyword = searchParams.get("q");
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // Timer Logic
     useEffect(() => {

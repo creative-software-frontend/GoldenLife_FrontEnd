@@ -170,7 +170,7 @@ const InstructorRegister = () => {
     setOtpError("");
     try {
       // Call new resend OTP API (replaces old resendOtpMutation)
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://app.goldenlifeltd.com";
       const endpoint = `${baseUrl}/api/resend-otp`;
 
       const response = await fetch(endpoint, {

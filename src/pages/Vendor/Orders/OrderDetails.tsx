@@ -72,7 +72,7 @@ export default function OrderDetails() {
           if (session) {
             token = JSON.parse(session).token;
           }
-          const response = await fetch('https://admin.goldenlifeltd.com/api/getAll-OderAddress', {
+          const response = await fetch('https://app.goldenlifeltd.com/api/getAll-OderAddress', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export default function OrderDetails() {
         if (session) {
           token = JSON.parse(session).token;
         }
-        const response = await fetch('https://admin.goldenlifeltd.com/api/vendor/transactions/history', {
+        const response = await fetch('https://app.goldenlifeltd.com/api/vendor/transactions/history', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -207,7 +207,7 @@ export default function OrderDetails() {
         fullAddressText={fullAddressText}
         shippingInfo={shippingAddressObj}
         orderTransaction={orderTransaction}
-        baseURL="https://admin.goldenlifeltd.com"
+        baseURL="https://app.goldenlifeltd.com"
       />
 
       {/* 🖥️ Screen-Only UI Elements */}
@@ -316,7 +316,7 @@ export default function OrderDetails() {
                     <div key={product.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border border-gray-50 bg-gray-50/30 rounded-2xl hover:bg-white hover:border-primary-light/20 hover:shadow-md transition-all duration-300 group">
                       <div className="w-full sm:w-20 h-20 rounded-xl overflow-hidden bg-white flex-shrink-0 border border-gray-100 p-2 shadow-sm">
                         <img
-                          src={product.product_image?.startsWith('http') ? product.product_image : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`}
+                          src={product.product_image?.startsWith('http') ? product.product_image : `https://app.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`}
                           alt={product.product_name}
                           className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                           onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/80?text=No+Image'; }}

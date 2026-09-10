@@ -53,7 +53,7 @@ export default function ProductDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // For Lightbox
   const [currentIndex, setCurrentIndex] = useState(0); // For Slider
 
-  const baseURL = import.meta.env.VITE_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // Helper functions for safe formatting
   const formatPrice = (price: string | number | undefined | null): string => {

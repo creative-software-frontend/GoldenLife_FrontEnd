@@ -1,4 +1,4 @@
-export const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+export const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
 /**
  * Detects if the current context is for a Vendor (based on URL)

@@ -10,7 +10,7 @@ type RegistrationStep = 'form' | 'otp' | 'success';
 
 const VendorRegisterWithOTP: React.FC = () => {
   const navigate = useNavigate();
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // State Management
   const [step, setStep] = useState<RegistrationStep>('form');

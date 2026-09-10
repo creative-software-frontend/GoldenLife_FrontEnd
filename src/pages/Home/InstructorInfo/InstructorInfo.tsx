@@ -34,7 +34,7 @@ export default function InstructorInfo() {
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
     const baseImageURL = `${baseURL}/uploads/course/course_image/`;
 
     const { data: result, isLoading } = useQuery({

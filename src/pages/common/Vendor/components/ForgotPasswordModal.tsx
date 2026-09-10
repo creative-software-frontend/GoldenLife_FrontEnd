@@ -14,7 +14,7 @@ const ForgotPasswordModal = ({ onSendOtpSuccess, onClose }: ForgotPasswordModalP
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   const validateMobile = (mobile: string): boolean => {
     const mobileRegex = /^01[3-9]\d{8}$/;

@@ -8,7 +8,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [mobile, setMobile] = useState('');

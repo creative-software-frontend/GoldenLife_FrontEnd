@@ -44,7 +44,7 @@ const OurInventory: React.FC = () => {
           await Promise.all(
             categories.map(async (category) => {
               try {
-                const response = await fetch(`https://admin.goldenlifeltd.com/api/student/products/category?id=${category.id}`);
+                const response = await fetch(`https://app.goldenlifeltd.com/api/student/products/category?id=${category.id}`);
                 const resData = await response.json();
                 if (resData && typeof resData.product_count !== 'undefined') {
                   counts[category.id] = Number(resData.product_count);

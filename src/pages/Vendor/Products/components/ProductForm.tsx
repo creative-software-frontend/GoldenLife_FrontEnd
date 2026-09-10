@@ -499,7 +499,7 @@ export function ProductForm({
                 {mainImage ? (
                   <img src={URL.createObjectURL(mainImage)} alt="Main product" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : initialData?.existing_images?.[0] ? (
-                  <img src={initialData.existing_images[0] && initialData.existing_images[0].toString().startsWith('http') ? initialData.existing_images[0] : `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${initialData.existing_images[0]}`} alt="Current" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={initialData.existing_images[0] && initialData.existing_images[0].toString().startsWith('http') ? initialData.existing_images[0] : `https://app.goldenlifeltd.com/uploads/ecommarce/product_image/${initialData.existing_images[0]}`} alt="Current" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                 ) : (
                   <div className="p-6">
                     <div className="h-16 w-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4 shadow-sm group-hover:scale-110 transition-all group-hover:text-secondary group-hover:shadow-secondary/20">
@@ -558,7 +558,7 @@ export function ProductForm({
                     }
                     const srcUrl = imgName && imgName.toString().startsWith('http') 
                       ? imgName 
-                      : `https://admin.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgName}`;
+                      : `https://app.goldenlifeltd.com/uploads/ecommarce/gal_img/${imgName}`;
 
                     return (
                       <div key={`existing-${index}`} className="relative aspect-square rounded-lg overflow-hidden border border-slate-100 group shadow-sm">

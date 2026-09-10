@@ -53,7 +53,7 @@ import {
 } from "@/components/ui/select";
 import { useInstructorCoursesQuery, useCourseCategoriesQuery } from '@/hooks/useInstructorAuth';
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -108,7 +108,7 @@ const InstrutorCourseList: React.FC = () => {
     if (cleanImg.startsWith('http')) return cleanImg;
 
     const path = cleanImg.startsWith('/') ? cleanImg.substring(1) : cleanImg;
-    const baseURL = 'https://admin.goldenlifeltd.com';
+    const baseURL = 'https://app.goldenlifeltd.com';
 
     // If it already has the full internal path
     if (path.startsWith('uploads/')) return `${baseURL}/${path}`;

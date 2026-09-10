@@ -77,7 +77,7 @@ export default function ProjectOverviewTab() {
     const profileUpdateTrigger = useModalStore((s) => s.profileUpdateTrigger);
     const profileBlobPreview = useModalStore((s) => s.profileBlobPreview);
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     useEffect(() => {
         fetchProfile();

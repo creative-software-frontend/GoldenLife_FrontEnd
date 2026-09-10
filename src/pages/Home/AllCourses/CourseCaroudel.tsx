@@ -51,7 +51,7 @@ const InstructorName: React.FC<{ instructorId: string | number, fallbackName?: s
     );
 };
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 const CourseCarousel: React.FC<{
     courses: Lesson[],

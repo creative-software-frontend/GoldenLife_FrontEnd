@@ -85,7 +85,7 @@ export default function EditNomineeInfoTabModal({
   const nidFrontRef = useRef<HTMLInputElement>(null);
   const nidBackRef = useRef<HTMLInputElement>(null);
 
-  const effectiveBaseURL = baseURL || import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const effectiveBaseURL = baseURL || import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   useEffect(() => {
     if (data && isOpen) {

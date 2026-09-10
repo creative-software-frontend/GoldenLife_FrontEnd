@@ -47,7 +47,7 @@ export default function CategoryCourse() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { addItem } = useCartStore();
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     const { data: result, isLoading } = useQuery({
         queryKey: ['categoryWiseCourses', id],

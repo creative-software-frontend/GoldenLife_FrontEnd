@@ -81,7 +81,7 @@ export const getProductImageUrl = (filename: string | undefined): string => {
     return filename;
   }
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // If it's a relative path starting with /, prepend API base URL
   if (filename.startsWith('/')) {

@@ -16,7 +16,7 @@ import {
   useCourseCategoriesQuery
 } from '@/hooks/useInstructorAuth';
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface VideoItem { id: number; url: string; }

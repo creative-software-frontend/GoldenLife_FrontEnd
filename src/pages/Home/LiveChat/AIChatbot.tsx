@@ -34,7 +34,7 @@ const AIChatbot: React.FC<AIChatbotProps> = ({ isOpen, onClose, mode = 'student'
   // Pick correct message list based on mode
   const chatbotMessages = mode === 'student' ? studentMessages : mode === 'vendor' ? vendorMessages : instructorMessages;
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // Determine active user type from session storage
   const isVendorSession = !!sessionStorage.getItem('vendor_session');

@@ -489,7 +489,7 @@ const TicketModal = () => {
                                                     {selectedTicket.image && (
                                                         <div className="mt-4 rounded-xl overflow-hidden border border-gray-100 bg-white shadow-sm flex justify-center p-2">
                                                             <img
-                                                                src={`https://admin.goldenlifeltd.com/uploads/ticket/${selectedTicket.image}`}
+                                                                src={`https://app.goldenlifeltd.com/uploads/ticket/${selectedTicket.image}`}
                                                                 alt="attachment"
                                                                 className="w-full max-w-[140px] h-auto object-contain rounded-lg"
                                                                 onError={(e) => (e.currentTarget.style.display = 'none')}

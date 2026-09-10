@@ -19,7 +19,7 @@ interface Category {
 const Coursecatagory2 = () => {
     const { t } = useTranslation("global");
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     const { data: categories = [], isLoading } = useQuery<Category[]>({
         queryKey: ['coursesCategoryIndex'],

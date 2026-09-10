@@ -28,7 +28,7 @@ const VendorForgotPasswordModal = ({ isOpen, onClose }: VendorForgotPasswordModa
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // Countdown Timer
   const startCountdown = () => {

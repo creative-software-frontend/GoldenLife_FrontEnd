@@ -17,7 +17,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 /** Custom hook for debouncing state */
 function useDebounce<T>(value: T, delay: number): T {

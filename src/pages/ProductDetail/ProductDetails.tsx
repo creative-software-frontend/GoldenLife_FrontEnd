@@ -63,7 +63,7 @@ export default function ProductDetails() {
     // Vendor Switch State — removed blocking; items group by vendor in Cart
 
     // --- API & IMAGE PATHS ---
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
     const mainImgBase = `${baseURL}/uploads/ecommarce/product_image/`;
     const galleryImgBase = `${baseURL}/uploads/ecommarce/gal_img/`;
 

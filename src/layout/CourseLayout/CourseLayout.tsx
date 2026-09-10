@@ -54,7 +54,7 @@ export default function CourseLayout() {
     const containerRef = React.useRef<HTMLDivElement>(null);
     const mobileSearchRef = React.useRef<HTMLDivElement>(null);
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // 1. Helper to get Token
     const getAuthToken = () => {

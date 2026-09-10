@@ -22,7 +22,7 @@ export default function HelpLayout() {
     const { t } = useTranslation("global")
     const location = useLocation()
     const navigate = useNavigate()
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com'
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com'
 
     // --- STATE ---
     const [searchTerm, setSearchTerm] = React.useState('')

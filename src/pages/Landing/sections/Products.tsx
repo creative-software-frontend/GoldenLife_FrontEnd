@@ -32,7 +32,7 @@ const Products: React.FC = () => {
   const [isProductLoading, setIsProductLoading] = useState(true);
 
   // --- Configuration ---
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
   const cardColors = ["bg-blue-50 border-blue-100", "bg-green-50 border-green-100", "bg-orange-50 border-orange-100"];
 
   // --- Auth Helper ---

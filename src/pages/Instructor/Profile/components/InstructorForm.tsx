@@ -69,7 +69,7 @@ export function InstructorForm({
                   src={
                     instructor.image.startsWith('http') 
                       ? instructor.image 
-                      : `https://admin.goldenlifeltd.com/uploads/instructor/image/${instructor.image.replace(/^\/?(uploads\/instructor\/image\/)?/, '')}`
+                      : `https://app.goldenlifeltd.com/uploads/instructor/image/${instructor.image.replace(/^\/?(uploads\/instructor\/image\/)?/, '')}`
                   } 
                   alt="Current profile" 
                   className="w-full h-full object-cover" 

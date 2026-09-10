@@ -11,7 +11,7 @@ export default function WalletPurchase() {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     const getAuthToken = () => {
         try {

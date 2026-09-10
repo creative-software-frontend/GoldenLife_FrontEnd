@@ -54,7 +54,7 @@ const CheckoutSummaryView = ({
     // Convert string balance from store to number for calculations
     const walletBalance = parseFloat(storeWalletBalance) || 0;
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // 1. Initial Data Load
     useEffect(() => {

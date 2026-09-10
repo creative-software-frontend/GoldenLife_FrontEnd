@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/store/cartStore';
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 interface StudentCourseDetailsProps {
     courseId?: string;
@@ -328,7 +328,7 @@ const StudentCourseDetails: React.FC<StudentCourseDetailsProps> = ({ courseId, o
                                 <div className="flex flex-col md:flex-row gap-6 items-start">
                                     <div className="w-24 h-24 rounded-full overflow-hidden bg-slate-200 shrink-0 border-4 border-white shadow-lg">
                                         <img
-                                            src={course.instructor.image ? `https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image.replace('uploads/instructor/image/', '')}` : '/placeholder.svg'}
+                                            src={course.instructor.image ? `https://app.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image.replace('uploads/instructor/image/', '')}` : '/placeholder.svg'}
                                             alt={course.instructor.name}
                                             className="w-full h-full object-cover"
                                             onError={(e) => { (e.target as any).src = '/placeholder.svg' }}

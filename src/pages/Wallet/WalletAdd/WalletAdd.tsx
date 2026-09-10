@@ -19,7 +19,7 @@ export default function WalletAdd() {
     // Updated translation hook based on your request
     const { t } = useTranslation('global');
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // --- State Management ---
     const [activeTab, setActiveTab] = useState<'add' | 'history'>('add');

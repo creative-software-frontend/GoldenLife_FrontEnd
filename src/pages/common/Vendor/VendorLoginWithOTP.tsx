@@ -9,7 +9,7 @@ type LoginMethod = 'mobile' | 'email';
 
 const VendorLoginWithOTP: React.FC = () => {
   const navigate = useNavigate();
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // --- Form States ---
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('mobile');

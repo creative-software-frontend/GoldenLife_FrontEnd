@@ -34,7 +34,7 @@ export default function VendorProfile() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { setIsAIChatOpen, setIsHotlineModalOpen, setIsFAQModalOpen, setIsTicketModalOpen } = useModalStore();
   const { profileLastUpdated } = useAppStore();
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // Debug logging for data changes
   console.log('📄 [VendorProfile] Component render:', {

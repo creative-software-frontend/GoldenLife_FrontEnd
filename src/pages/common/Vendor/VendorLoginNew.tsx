@@ -13,7 +13,7 @@ type ActiveTab = 'mobile' | 'email';
 
 const VendorLoginNew: React.FC = () => {
   const navigate = useNavigate();
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   // Tab State
   const [activeTab, setActiveTab] = useState<ActiveTab>('mobile');

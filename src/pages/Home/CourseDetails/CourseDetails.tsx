@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/store/cartStore';
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 interface CourseDetailsProps {
     courseId?: string;
@@ -183,7 +183,7 @@ export default function CourseDetails({ courseId, onClose }: CourseDetailsProps)
                                 <h2 className="text-2xl font-bold text-slate-900 mb-6">Instructor</h2>
                                 <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                                     <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 border-4 border-emerald-50">
-                                        <img src={course.instructor.image ? `https://admin.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image.replace('uploads/instructor/image/', '')}` : '/placeholder.svg'} alt={course.instructor.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = '/placeholder.svg' }} />
+                                        <img src={course.instructor.image ? `https://app.goldenlifeltd.com/uploads/instructor/image/${course.instructor.image.replace('uploads/instructor/image/', '')}` : '/placeholder.svg'} alt={course.instructor.name} className="w-full h-full object-cover" onError={(e) => { (e.target as any).src = '/placeholder.svg' }} />
                                     </div>
                                     <div className="text-center sm:text-left space-y-2">
                                         <h3 className="text-xl font-bold text-slate-800">{course.instructor.name}</h3>

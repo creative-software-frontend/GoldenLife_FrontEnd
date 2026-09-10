@@ -19,7 +19,7 @@ export default function ChangePassward() {
         confirm_password: ''
     });
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     const student = useAppStore(s => s.studentProfile);
 
@@ -107,7 +107,7 @@ export default function ChangePassward() {
                         <p className="text-sm font-bold text-amber-700/80 mt-1">Do not share your password with anyone. Keep your account secure.</p>
                     </div>
                     <div className="sm:ml-auto">
-                        <img src="https://admin.goldenlifeltd.com/uploads/student/image/security-shield.png" className="w-12 h-12 object-contain opacity-50 grayscale hover:grayscale-0 transition-all cursor-help" alt="Security"
+                        <img src="https://app.goldenlifeltd.com/uploads/student/image/security-shield.png" className="w-12 h-12 object-contain opacity-50 grayscale hover:grayscale-0 transition-all cursor-help" alt="Security"
                             onError={(e) => (e.currentTarget.style.display = 'none')}
                         />
                     </div>

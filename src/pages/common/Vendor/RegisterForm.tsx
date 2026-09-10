@@ -142,7 +142,7 @@ const RegisterForm = () => {
     clearMessages();
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://app.goldenlifeltd.com";
       const endpoint = `${baseUrl}/api/vendor/register`;
 
       const response = await fetch(endpoint, {
@@ -225,7 +225,7 @@ const RegisterForm = () => {
   // --- RESEND OTP ---
 const handleResendOtp = async () => {
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://app.goldenlifeltd.com";
       // New resend OTP API
       const endpoint = `${baseUrl}/api/resend-otp`;
 
@@ -278,7 +278,7 @@ const handleResendOtp = async () => {
     setOtpError("");
 
     try {
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "https://app.goldenlifeltd.com";
 
       // Use user_id from state (captured during registration)
       if (!userId) {

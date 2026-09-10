@@ -27,7 +27,7 @@ import StudentCourseDetails from "../StudentCourseDetails/StudentCourseDetails"
 
 import { useCartStore } from "@/store/cartStore"
 
-const baseImageURL = 'https://admin.goldenlifeltd.com/uploads/course/course_image/';
+const baseImageURL = 'https://app.goldenlifeltd.com/uploads/course/course_image/';
 
 export default function AllCourses() {
   const navigate = useNavigate();

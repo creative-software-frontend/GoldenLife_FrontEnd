@@ -82,7 +82,7 @@ const OrderHistory = () => {
 
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
   const goToDetails = (e: React.MouseEvent, orderId: number, orderNo: string) => {
     e.stopPropagation();

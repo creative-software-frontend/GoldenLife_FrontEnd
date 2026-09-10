@@ -4,7 +4,7 @@ import axios from 'axios';
 import { X, FileText, CheckCircle, Loader2, PlayCircle, BookOpen } from 'lucide-react';
 import { toast } from 'react-toastify';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
 const resolveMediaUrl = (url: string): string => {
   if (!url) return '';
@@ -13,7 +13,7 @@ const resolveMediaUrl = (url: string): string => {
     return cleanUrl;
   }
   const path = cleanUrl.startsWith('/') ? cleanUrl.substring(1) : cleanUrl;
-  return `https://admin.goldenlifeltd.com/${path}`;
+  return `https://app.goldenlifeltd.com/${path}`;
 };
 
 const getEmbedUrl = (url: string): { src: string; type: 'youtube' | 'document' } | null => {

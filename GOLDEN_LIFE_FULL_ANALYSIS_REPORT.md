@@ -504,7 +504,7 @@ npm run dev  # Start development server
 
 | Aspect | Details |
 |--------|---------|
-| **API Base URL** | `https://admin.goldenlifeltd.com` |
+| **API Base URL** | `https://app.goldenlifeltd.com` |
 | **API Type** | RESTful API |
 | **Authentication** | Token-based (Bearer tokens) |
 | **Storage** | Cookies + sessionStorage |

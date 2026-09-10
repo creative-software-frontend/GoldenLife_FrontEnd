@@ -84,7 +84,7 @@ export default function InstructorOrderDetails() {
           if (session) {
             token = JSON.parse(session).token;
           }
-          const response = await fetch('https://admin.goldenlifeltd.com/api/getAll-OderAddress', {
+          const response = await fetch('https://app.goldenlifeltd.com/api/getAll-OderAddress', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -202,7 +202,7 @@ export default function InstructorOrderDetails() {
         order={order as any}
         fullAddressText={fullAddressText}
         orderTransaction={null}
-        baseURL="https://admin.goldenlifeltd.com"
+        baseURL="https://app.goldenlifeltd.com"
       />
 
       {/* Header Section */}
@@ -284,8 +284,8 @@ export default function InstructorOrderDetails() {
                         src={product.product_image?.startsWith('http') 
                           ? product.product_image 
                           : product.service_type === 'product' || product.service_type === 'ecommarce'
-                            ? `https://admin.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`
-                            : `https://admin.goldenlifeltd.com/uploads/course/course_image/${product.product_image}`
+                            ? `https://app.goldenlifeltd.com/uploads/ecommarce/product_image/${product.product_image}`
+                            : `https://app.goldenlifeltd.com/uploads/course/course_image/${product.product_image}`
                         }
                         alt={product.product_name}
                         className="w-full h-full object-contain"

@@ -17,7 +17,7 @@ export default function ProfileSettings() {
     const [isClaiming, setIsClaiming] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     useEffect(() => {
         const fetchReferralLink = async () => {

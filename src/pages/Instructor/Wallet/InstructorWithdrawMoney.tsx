@@ -18,7 +18,7 @@ export default function InstructorWithdrawMoney() {
     const navigate = useNavigate();
     const { balance, transactions, withdrawMoney, isWithdrawingMoney, isBalanceLoading, refetchBalance, refetchTransactions } = useInstructorWallet();
     const { withdrawCharge, fetchCharges } = useAppStore();
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     const [activeTab, setActiveTab] = useState<'withdraw' | 'history'>('withdraw');
     const [amount, setAmount] = useState('');

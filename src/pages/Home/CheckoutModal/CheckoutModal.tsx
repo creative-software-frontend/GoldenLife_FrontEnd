@@ -31,7 +31,7 @@ const CheckoutModal = () => {
     const { cartItems } = useCartStore();
 
     // Config
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
     const getAuthToken = () => {
         const session = sessionStorage.getItem("student_session");
         return session ? JSON.parse(session).token : null;

@@ -62,7 +62,7 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
     const [imageError, setImageError] = useState(false);
 
     // Add cache buster for avatar to ensure it updates visually after being changed
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     const getAvatarUrl = () => {
         if (imageError) return null;
@@ -113,7 +113,7 @@ const InstructorNavbar: React.FC<{ toggleSidebar: () => void; isOpen: boolean }>
         try {
             const session = sessionStorage.getItem('instructor_session');
             const token = session ? JSON.parse(session).token : null;
-            const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+            const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
             if (token) {
                 await axios.post(`${baseURL}/api/vendor/logout`, {}, {

@@ -289,4 +289,4 @@ function ImagePreview({ file }: { file: File }) {
 }
 
 // Need to define baseURL for image URLs
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';

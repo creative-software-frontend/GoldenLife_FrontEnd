@@ -27,7 +27,7 @@ export default function VendorAddMoney() {
     const navigate = useNavigate();
     // Updated translation hook based on your request
     const { t, i18n } = useTranslation('global');
-    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://admin.goldenlifeltd.com';
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://app.goldenlifeltd.com';
 
     // --- Store Integration ---
     const {

@@ -47,7 +47,7 @@ export const useEcommerceCategories = (): UseCategoriesReturn => {
       // Make API call with timeout
       console.log('Fetching categories from API...');
       const response = await axios.get(
-        'https://admin.goldenlifeltd.com/api/getProductCategory',
+        'https://app.goldenlifeltd.com/api/getProductCategory',
 
       );
 

@@ -74,7 +74,7 @@ const LoginForm = () => {
     clearMessages();
 
     try {
-      const baseUrl = import.meta.env.VITE_API_URL || "https://admin.goldenlifeltd.com";
+      const baseUrl = import.meta.env.VITE_API_URL || "https://app.goldenlifeltd.com";
       const endpoint = `${baseUrl}/api/vendor/login`;
 
       const response = await fetch(endpoint, {
