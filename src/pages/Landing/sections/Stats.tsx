@@ -87,7 +87,7 @@ export default function Stats() {
           {!play && (
             <>
               <img
-                src="https://img.youtube.com/vi/ie5vl25VGRY/maxresdefault.jpg"
+                src=""
                 alt="About video"
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
@@ -115,7 +115,7 @@ export default function Stats() {
           {play && (
             <iframe
               className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/ie5vl25VGRY?autoplay=1"
+              src="https://www.youtube.com/embed/xFAme_LJDcU?autoplay=1"
               title="About SuperBiz BD"
               allow="autoplay; encrypted-media"
               allowFullScreen
